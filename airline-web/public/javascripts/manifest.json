@@ -1,0 +1,14 @@
+{
+  "name": "Airline Club",
+  "short_name": "AC",
+  "start_url": "index.scala.html",
+  "display": "standalone",
+  "background_color": "#293140",
+  "theme_color": "#b0d9ef",
+  "icons": [
+    {
+      "src": "/assets/images/icons/globe-with-airplane.png",
+      "type": "image/png", "sizes": "16x16"
+    }
+  ]
+}
