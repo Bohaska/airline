@@ -129,8 +129,17 @@ object AirportSizeAdjust {
         "YYC" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Africa
         "JNB" -> 7,
+        "CAI" -> 7,
+        "ADD" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Asia
         "JED" -> 7,
+        //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Europe
+        "DUB" -> 7,
+        "ZRH" -> 7,
+        "LIS" -> 7,
+        "CPH" -> 7,
+        "MXP" -> 7,
+        "OSL" -> 7,
         
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Thailand
         "HKT" -> 5,
