@@ -84,6 +84,7 @@ object AirportSizeAdjust {
         "MXP" -> 7,
         "VCE" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Spain
+        "MAD" -> 7,
         "AGP" -> 7,
         "ALC" -> 7,
         "LPA" -> 7,
@@ -130,7 +131,6 @@ object AirportSizeAdjust {
         
         //Adjustment on country with 1m pop+ but w/o a level 4 airport
         //https://en.wikipedia.org/wiki/List_of_airports_in_Afghanistan
-        "KBL" -> 4,
         "KDH" -> 5,
         //https://en.wikipedia.org/wiki/List_of_airports_in_Albania
         "TIA" -> 5,
