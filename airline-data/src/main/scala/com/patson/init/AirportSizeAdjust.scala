@@ -59,6 +59,7 @@ object AirportSizeAdjust {
         "KMG" -> 7,
         "XIY" -> 7,
         "SVO" -> 7,
+        "PKX" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_the_United_States
         "DTW" -> 7,
         "PHL" -> 7,
@@ -108,6 +109,11 @@ object AirportSizeAdjust {
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Brazil
         "BSB" -> 7,
         "GIG" -> 7,
+        "CGH" -> 5,
+        //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_South_America
+        "BOG" -> 7,
+        "LIM" -> 7,
+        "SCL" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Mexico
         "CUN" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Russia
@@ -123,8 +129,8 @@ object AirportSizeAdjust {
         "YYC" -> 7,
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Africa
         "JNB" -> 7,
-        "CSX" -> 6,
-        "KHN" -> 5,
+        //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Asia
+        "JED" -> 7,
         
         //https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Thailand
         "HKT" -> 5,
