@@ -388,11 +388,11 @@ object GeoDataGenerator extends App {
             var veryLongRunway = 0
             var megaRunway = 0
             runways.filter(_.lighted).foreach { runway => //only count lighted runways
-              if (runway.length >= 10000 * 0.3048) { //old logic (for example 10000, was in feet) while runway.length is in meter now
+              if (runway.length >= 3000) { //old logic (for example 10000, was in feet) while runway.length is in meter now
                 megaRunway += 1
-              } else if (runway.length >= 9000 * 0.3048) {
+              } else if (runway.length >= 2800) {
                 veryLongRunway += 1
-              } else if (runway.length >= 7000 * 0.3048) {
+              } else if (runway.length >= 2100) {
                 longRunway += 1
               }
             }
