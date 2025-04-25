@@ -1819,11 +1819,16 @@ function createLink() {
 		    	var isSuccessful
 		    	closeModal($('#linkConfirmationModal'))
                 if (savedLink.negotiationResult) {
-                    isSuccessful = savedLink.negotiationResult.isSuccessful
-                    if (isSuccessful) {
-                        negotiationAnimation(savedLink, refreshSavedLink, savedLink)
+		    if (savedLink.negotiationResult.odds === 1) {
+                        // Probability is 100%, skip animation and refresh directly
+                        refreshSavedLink(savedLink);
                     } else {
-                        negotiationAnimation(savedLink, updateTopBarDelegates, activeAirline.id)
+                        var isSuccessful = savedLink.negotiationResult.isSuccessful;
+                        if (isSuccessful) {
+                            negotiationAnimation(savedLink, refreshSavedLink, savedLink);
+                        } else {
+                            negotiationAnimation(savedLink, updateTopBarDelegates, activeAirline.id);
+                        }
                     }
                 } else {
                     refreshSavedLink(savedLink)
