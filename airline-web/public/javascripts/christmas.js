@@ -1,9 +1,9 @@
-var christmasFlag = true
+var christmasFlag = false
 var santaFound = false
 
 function initSantaClaus() {
     $('#santaClausModal').hide()
-    $("#santaClausButton").hide() //valid target
+    $("#santaClausButton").hide()
     if (activeAirline) {
         updateSantaClausModal()
     }
@@ -42,11 +42,15 @@ function updateSantaClausModal() {
                     $("#santaClausModal .difficultyLabel").text(result.difficulty)
                 }
 
+                var guessedThisAirport = false
     	        $.each(result.guesses, function(index, guess) {
                     var row = $("<div class='table-row'></div>")
                     row.append("<div class='cell label'>" + getAirportText(guess.city, guess.airportCode) + "</div>")
                     row.append("<div class='cell label'>" + guess.distanceText + "</div>")
                     table.append(row)
+                    if (guess.airportId == activeAirportId) {
+                        guessedThisAirport = true
+                    }
                 });
                 if (result.guesses.length == 0) {
                     var row = $("<div class='table-row'></div>")
@@ -84,12 +88,17 @@ function updateSantaClausModal() {
                  } else {
                     if (result.attemptsLeft <= 0) {
                         $("#santaClausExhausted").show()
+                        $(".santaLocation").text(getAirportText(result.santaAirport.city, result.santaAirport.iata))
                     } else {
+                        if (guessedThisAirport) {
+                            disableButton($("#santaClausModal .guessButton"), 'Santa is not here! Try another airport! 🎅')
+                        } else {
+                            enableButton($("#santaClausModal .guessButton"))
+                        }
                         $("#santaClausModal .guessButton").show()
                     }
                  }
                  $("#santaClausButton").show() //valid target
-
     	    },
             error: function(jqXHR, textStatus, errorThrown) {
     	            console.log(JSON.stringify(jqXHR));
@@ -173,7 +182,13 @@ function guessSantaClaus() {
         error: function(jqXHR, textStatus, errorThrown) {
 	            console.log(JSON.stringify(jqXHR));
 	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
+	    },
+	    beforeSend: function() {
+            $('body .loadingSpinner').show()
+        },
+        complete: function(){
+            $('body .loadingSpinner').hide()
+        }
 	});
 }
 

@@ -167,7 +167,7 @@
 				<span style="width: 95px;"><span class="cycleDeltaText"></span>&nbsp;week(s) ago</span>
 				<img class="clickable next" title="View passenger map of next week" src='@routes.Assets.versioned("images/icons/arrow.png")'/>
 			</div>
-			<div class="button glow" onclick="hideLinkHistoryView()" style="margin-top : 10px">Exit Passenger Map</div>
+			<div class="button glow exitPaxMap" onclick="hideLinkHistoryView()" style="margin-top : 10px">Exit Passenger Map</div>
 		</div>
 	</div>
 	  <div id="heatmapControlPanel" class="section mapControlPanel" style="display: none; width: 250px; flex-direction: column; align-items:center">
@@ -188,8 +188,18 @@
 
 	  </div>
 
-	<div id="hideAirportLinksButton" class="button glow" style="display: none;" onclick="hideAirportLinksView()">
-		Exit Airport Flight Map
+  	<div id="topAirportLinksPanel" class="section mapControlPanel" style="display: none; width: 600px; max-width: 95vw;">
+		<h4>Top Destinations</h4>
+	  	<div style="width : 100%; display: flex; flex-direction: column;">
+		  <div style="width : 100%" class="topDestinations table data">
+			  <div class="table-header">
+				  <div class="cell" style="width: 30%; min-width: 100px;">Destination</div>
+				  <div class="cell" style="width: 30%">Cap (Freq)</div>
+				  <div class="cell" style="width: 40%">Operators</div>
+			  </div>
+		  </div>
+		  <div class="button glow" onclick="hideAirportLinksView()" style="margin-top: 10px; align-self: center;">Exit Airport Flight Map</div>
+	  </div>
 	</div>
 
 	<div style="width: 100%; display: none;" class="extendedTopBarDetails">
@@ -202,7 +212,7 @@
 		</div>
 	</div>
   	<div id="topBar" data-scroll="false" class="menubar">
-  		<div class="desktopOnly">
+  		<div class="desktopOnly hide-empty">
   			<span class="topBarDetails" style="display: none;">
 				<span style="display: flex; flex-align: center;">
 					<span class="currentTime label" style="margin: 0px 10px"></span>
@@ -405,7 +415,7 @@
                     </li>
                     <li class="button left-tab user-specific-tab airplaneCanvasTab">
                         <div style="display:flex; align-items: center;">
-                            <div class="tab-icon" data-link="airplane" onclick="showAirplaneCanvas();">
+                            <div class="tab-icon" data-link="airplane" onclick="showAirplaneCanvas();" onback="showAirplaneCanvas(true)">
                                 <img src='@routes.Assets.versioned("images/icons/airplane-gear.png")' style="margin: auto;">
                             </div>
                             <span class="label floatLabel">Airplane</span>
@@ -636,7 +646,7 @@
 											<div class="value" id="linkCancellations"></div>
 										</div>
 									</div>
-									<div class="button viewLinkHistory" onclick="showLinkHistoryView()">View Passenger Map</div>
+									<div class="button viewLinkHistory" onclick="showLinkHistoryView()">Passenger Map</div>
 									<div class="button viewLinkComposition" onclick="showLinkComposition($('#actionLinkId').val())">Survey</div>
 									<div class="button viewLinkEvent" onclick="showLinkEventHistory($('#actionLinkId').val())">Events</div>
 
@@ -747,13 +757,13 @@
 									<div class="table-row">
 										<div class="label"><h5>Direct Competitions:</h5></div>
 										<div class="value">
-											<div class="table data" id="planLinkCompetitons" style="width: 100%">
+											<div class="table data" id="planLinkCompetitors" style="width: 100%">
 												<div class='table-header'>
 													<div class="cell" style="width: 30%;"><h5>Airline</h5></div>
-													<div class="cell" style="width: 30%;"><h5>Price</h5></div>
-													<div class="cell" style="width: 25%;"><h5>Capacity</h5></div>
-													<div class="cell" style="width: 8%;"><h5>Quality</h5></div>
-                                                    <div class="cell" style="width: 7%;"><h5>Freq.</h5></div>
+													<div class="cell" style="width: 26%;"><h5>Price</h5></div>
+													<div class="cell" style="width: 30%;"><h5>Cap (Freq)</h5></div>
+													<div class="cell" style="width: 6%;" title="Quality"><h5>Ql.</h5></div>
+                                                    <div class="cell" style="width: 8%;" title="Load Factor"><h5>LF</h5></div>
 												</div>
 											</div>
 										</div>
@@ -1291,7 +1301,7 @@
 										<span style="display: flex; align-items: center;">
 											<span class="airportLoyalty" id="airportDetailsLoyalty" style="display: flex; align-items: center;"></span>
 											<span class="airportLoyaltyBonus"></span>
-											<img src='@routes.Assets.versioned("images/icons/information.png")' class="clickable airportLoyaltyBonusTrigger" style="vertical-align:text-bottom" onmouseover="showAppealBreakdown($(this), $('#appealBonusDetailsTooltip').data('loyaltyBreakdown'))" onmouseout="hideAppealBreakdown()">
+											<img src='@routes.Assets.versioned("images/icons/information.png")' class="clickable airportLoyaltyBonusTrigger" style="vertical-align:text-bottom" onmouseover="showAppealBreakdown($(this), $('#airportDetailsLoyalty').data('loyaltyBreakdown'))" onmouseout="hideAppealBreakdown()">
 										</span>
 									</div>
 								</div>
@@ -2577,6 +2587,14 @@
 								<div class="cell" style="width: 30%" align="right">Route Weekly Profit</div>
 							</div>
 						</div>
+						<div class="table data section" id="internationPaxRank" style="width: 95%">
+							<div class="table-header">
+								<div class="cell" style="width: 10%">Rank</div>
+								<div class="cell" style="width: 10%">Movement</div>
+								<div class="cell" style="width: 50%">Airports</div>
+								<div class="cell" style="width: 30%" align="right">Intl. Flight Weekly Pax</div>
+							</div>
+						</div>
 						<div class="table data section" id="airportRank" style="width: 95%">
 							<div class="table-header">
 								<div class="cell" style="width: 10%">Rank</div>
@@ -2633,6 +2651,14 @@
 								<div class="cell" style="width: 10%">Movement</div>
 								<div class="cell" style="width: 50%">Airline</div>
 								<div class="cell" style="width: 30%" align="right">Airline Reputation</div>
+							</div>
+						</div>
+						<div class="table data section" id="domesticPaxRank" style="width: 95%">
+							<div class="table-header">
+								<div class="cell" style="width: 10%">Rank</div>
+								<div class="cell" style="width: 10%">Movement</div>
+								<div class="cell" style="width: 50%">Airports</div>
+								<div class="cell" style="width: 30%" align="right">Domestic Flight Weekly Pax</div>
 							</div>
 						</div>
 						<div class="table data section" id="loungeRank" style="width: 95%">
@@ -3310,14 +3336,14 @@
 							  <div style="float: left; width : 50%; position: relative;">
 								  <div class="searchInput" data-search-type="airport">
 									  <input type="text" style="width: 80%" tabindex="101" class="fromAirport" placeholder="From" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.searchFieldContainer input.fromAirport'))" onkeydown="searchKeyDown(event, $('div.searchFieldContainer input.fromAirport'))">
-									  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+									  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 								  </div>
 								  <div class="searchResult"></div>
 							  </div>
 							  <div style="float: left; width : 50%; position: relative;">
 								  <div class="searchInput" data-search-type="airport">
 									  <input type="text" style="width: 80%" tabindex="102" class="toAirport" placeholder="To" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.searchFieldContainer input.toAirport'))" onkeydown="searchKeyDown(event, $('div.searchFieldContainer input.toAirport'))">
-									  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+									  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 								  </div>
 								  <div class="searchResult"></div>
 							  </div>
@@ -3340,14 +3366,14 @@
 								  <div style="float: left; width : 50%; position: relative;">
 									  <div class="searchInput" data-search-type="airport">
 										  <input type="text" style="width: 80%" tabindex="101" class="fromAirport" data-search-group="fromDestination" placeholder="From Airport (Any)" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.fromAirport'))" onkeydown="searchKeyDown(event, $('div.historySearch input.fromAirport'))">
-										  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+										  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 									  </div>
 									  <div class="searchResult"></div>
 								  </div>
 								  <div style="float: left; width : 50%; position: relative;">
 									  <div class="searchInput" data-search-type="airport">
 										  <input type="text" style="width: 80%" tabindex="102" class="toAirport" data-search-group="toDestination" placeholder="To Airport (Any)" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.toAirport'))" onkeydown="searchKeyDown(event, $('div.historySearch input.toAirport'))">
-										  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+										  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 									  </div>
 									  <div class="searchResult"></div>
 								  </div>
@@ -3357,14 +3383,14 @@
 								  <div style="float: left; width : 50%; position: relative;">
 									  <div class="searchInput" data-search-type="country">
 										  <input type="text" style="width: 80%" tabindex="103" class="fromCountry" data-search-group="fromDestination" placeholder="From Country (Any)" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.fromCountry'))" onkeydown="searchKeyDown(event, $('div.historySearch input.fromCountry'))">
-										  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+										  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 									  </div>
 									  <div class="searchResult"></div>
 								  </div>
 								  <div style="float: left; width : 50%; position: relative;">
 									  <div class="searchInput" data-search-type="country">
 										  <input type="text" style="width: 80%" tabindex="104" class="toCountry" data-search-group="toDestination" placeholder="To Country (Any)" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.toCountry'))" onkeydown="searchKeyDown(event, $('div.historySearch input.toCountry'))">
-										  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+										  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 									  </div>
 									  <div class="searchResult"></div>
 								  </div>
@@ -3374,14 +3400,14 @@
 								  <div style="float: left; width : 50%; position: relative;">
 									  <div class="searchInput" data-search-type="zone">
 										  <input type="text" style="width: 80%" tabindex="105" class="fromZone" data-search-group="fromDestination" placeholder="From Zone (Any)" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.fromZone'))" onkeydown="searchKeyDown(event, $('div.historySearch input.fromZone'))">
-										  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+										  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 									  </div>
 									  <div class="searchResult"></div>
 								  </div>
 								  <div style="float: left; width : 50%; position: relative;">
 									  <div class="searchInput" data-search-type="zone">
 										  <input type="text" style="width: 80%" tabindex="106" class="toZone" data-search-group="toDestination" placeholder="To Zone (Any)" autocomplete="no"  oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.toZone'))" onkeydown="searchKeyDown(event, $('div.historySearch input.toZone'))">
-										  <span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+										  <span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 									  </div>
 									  <div class="searchResult"></div>
 								  </div>
@@ -3393,14 +3419,14 @@
 									<div class = "searchCriterion">
 										<div class="searchInput" data-search-type="airline">
 											<input type="text" style="width: 80%" tabindex="107" class="airline" data-search-group="entity" placeholder="Airline (Any)" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.airline'))" onkeydown="searchKeyDown(event, $('div.historySearch input.airline'))">
-											<span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+											<span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 										</div>
 										<div class="searchResult"></div>
 									</div>
 									<div class = "searchCriterion">
 										<div class="searchInput" data-search-type="alliance">
 											<input type="text" style="width: 80%" tabindex="108" class="alliance" data-search-group="entity" placeholder="Alliance (Any)" autocomplete="no"  oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $('div.historySearch input.alliance'))" onkeydown="searchKeyDown(event, $('div.historySearch input.alliance'))">
-											<span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span>
+											<span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span>
 										</div>
 										<div class="searchResult"></div>
 									</div>
@@ -3460,7 +3486,7 @@
 							  <div style="width: 600px; max-width:100%; margin: auto;">
 								  <div style=" float: left; width:50%; min-width: 200px; padding-left: 10%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; " class="fromAirport">
 									  <img class="fromAirport roundImage" style="height: 150px; width:150px; max-height: 30vw; max-width: 30vw;">
-									  <div style="display:inline-block; align-self: center; margin-top:5px; font-weight: bold;" class="fromAirportText"></div>
+									  <div style="display:inline-block; align-self: center; margin-top:5px; font-weight: bold;" class="fromAirportText clickable" data-link="airport"></div>
 									  <div class="table" style="width: 100%">
 										  <div class="table-row">
 											  <div class="label"><h5>Population</h5></div>
@@ -3474,7 +3500,7 @@
 								  </div>
 								  <div style=" float: right; width:50%; min-width: 200px; padding-right: 10%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;" class="toAirport">
 									  <img class="toAirport roundImage" style="height: 150px; width:150px; max-height: 30vw; max-width: 30vw;">
-									  <div style="display:inline-block; align-self: center; margin-top:5px; font-weight: bold;" class="toAirportText"></div>
+									  <div style="display:inline-block; align-self: center; margin-top:5px; font-weight: bold;" class="toAirportText clickable" data-link="airport"></div>
 									  <div class="table" style="width: 100%">
 										  <div class="table-row">
 											  <div class="label"><h5>Population</h5></div>
@@ -3555,9 +3581,9 @@
     <div style="display: none; width: 100%; white-space: normal;" id="airportPopup" class="mapPopup">
     	<input type="hidden" id="airportPopupId">
     	<div>
-    		<h4><span id="airportPopupName"></span>&nbsp;(<span id="airportPopupIata"></span>)</h4>
+    		<h4 style="margin-bottom: 0px"><span id="airportPopupName"></span>&nbsp;(<span id="airportPopupIata"></span>)</h4>
     	</div>
-		<h5><span id="airportPopupCity"></span>(<span id="airportPopupZone"></span>)</h5>
+		<h5><span id="airportPopupCity" style="display:inline-flex; align-items: center;"></span>(<span id="airportPopupZone"></span>)&nbsp;<span id="airportPopupOpennessIcon"></span></h5>
     	<div id="airportIcons" class="airportFeatures">
     		<img title="Your Headquarter" src='@routes.Assets.versioned("images/icons/building-hedge.png")' id="popupHeadquarterIcon" class="baseIcon" style="display: none">
     		<img title="Your Base" src='@routes.Assets.versioned("images/icons/building-low.png")' id="popupBaseIcon" class="baseIcon" style="display:none">
@@ -3700,17 +3726,21 @@
     	<input type="hidden" id="airportLinkPopupId">
     	<div class="table" style="width: 100%">
    			<div class="table-row">
-   				<div class="label" style="width:60%"><h5>From :</h5></div>
-   				<div class="value" style="width:40%" id="airportLinkPopupFrom"></div>
+   				<div class="label" style="width:30%"><h5>From :</h5></div>
+   				<div class="value" style="width:70%" id="airportLinkPopupFrom"></div>
    			</div>
    			<div class="table-row">
-   				<div class="label"><h5>To:</h5></div>
-   				<div class="value" id="airportLinkPopupTo"></div>
+   				<div class="label" style="width:30%"><h5>To:</h5></div>
+   				<div class="value" style="width:70%" id="airportLinkPopupTo"></div>
    			</div>
    			<div class="table-row">
-   				<div class="label"><h5>Passengers:</h5></div>
-   				<div class="value" id="airportLinkPopupPassengers"></div>
+   				<div class="label" style="width:30%"><h5>Cap(Freq):</h5></div>
+   				<div class="value" style="width:70%" id="airportLinkPopupCapacity"></div>
    			</div>
+			<div class="table-row">
+				<div class="label" style="width:30%"><h5>Operators:</h5></div>
+				<div class="value" style="width:70%" id="airportLinkOperators"></div>
+			</div>
 		</div>
     </div>
 
@@ -3791,7 +3821,7 @@
 	    <div style="margin-bottom: 10px;">
 	    	<img src='@routes.Assets.versioned("images/icons/32px/question.png")'><span style="font-size: 20px;">Confirmation</span>
 	    </div>
-	    <h3 id="confirmationPrompt" style="margin-bottom: 10px;"></h3>
+	    <h3 id="confirmationPrompt" style="margin-bottom: 10px; padding: 0 5px;"></h3>
 	    <div class="button confirmationButton" onclick="closeModal($('#confirmationModal')); executeConfirmationTarget();">Confirm</div>
 	    <div class="button" onclick="closeModal($('#confirmationModal'))">Cancel</div>
 	  </div>
@@ -3996,6 +4026,7 @@
 			<div class="button guessButton glow" onclick="guessSantaClaus()">Search for Santa here</div>
 			<div id="santaClausExhausted" style="display: none;">
 				<div style="float:left"><img src='@routes.Assets.versioned("images/icons/balloon-smiley-sad.png")'></div>
+				<div style="float:left"><h4>Santa is at <span class="santaLocation"></span></h4></div>
 				<div style="float:left"><h4>You have exhausted all your attempts! Try again next week!</h4></div>
 				<div style="clear:both; margin-bottom: 15px"></div>
 			</div>
@@ -4348,8 +4379,8 @@
 		  </div>
 
 		  <div class="controlButtons">
-			  <div class="button confirmButton" onclick="createLink()">Confirm</div>
-			  <div class="button negotiateButton" onclick="createLink()">Negotiate</div>
+			  <div class="button confirmButton">Confirm</div>
+			  <div class="button negotiateButton">Negotiate</div>
 			  <div class="button cancel" onclick="closeModal($('#linkConfirmationModal'))">Cancel</div>
 		  </div>
 	  </div>
@@ -4973,6 +5004,7 @@
 						  </div>
 					  </div>
 				  </div>
+				  <h5><span class="dot"/>Cannot assign temporary delegates awarded as bonus</h5>
 				  <h5><span class="dot"/>Require&nbsp;<span class="delegatesRequired"></span>&nbsp;delegates to maintain current bases in this country</h5>
 				  <h5><span class="dot"/>Each delegate level provides&nbsp;<span class="delegateMultiplier"></span>&nbsp;relationship points. Delegate starts at level 0 and progress over time. Hover over each delegate above to see details</h5>
 				  <div class="button" onclick="updateCountryDelegates()">Confirm</div>
@@ -5019,7 +5051,7 @@
 				<div style="position: relative; display: inline-block;">
 					<div class="searchInput" data-search-type="airport">
 						<input type="text" tabindex="101" class="airport" placeholder="Airport/City Area" autocomplete="no" oninput="searchChange($(this))" onfocus="$(this).select();" onfocusout="searchFocusOut($(this))" onkeyup="searchKeyUp(event, $(this))" onkeydown="searchKeyDown(event, $(this))">
-						<div style="width: 20px; display: inline-block" ><span class="spinner" style="display: none;"><img src='https://i.stack.imgur.com/FhHRx.gif' style="height: 16px"></span></div>
+						<div style="width: 20px; display: inline-block" ><span class="spinner" style="display: none;"><img src='assets/images/icons/spinning-wheel.gif' style="height: 16px"></span></div>
 					</div>
 					<div class="searchResult"></div>
 				</div>
@@ -5090,6 +5122,7 @@
 										</div>
 									</div>
 								</div>
+								<h5><span class="dot"/>Cannot assign temporary delegates awarded as bonus</h5>
 								<h5><span class="dot"/>Each delegate level provides&nbsp;<span class="loyaltyBonus"></span>&nbsp;loyalty. Delegate starts at level 0 and progress over time. Hover over each delegate above to see details</h5>
 							</div>
 						</div>

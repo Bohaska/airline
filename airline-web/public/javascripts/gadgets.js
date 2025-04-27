@@ -1,4 +1,4 @@
-var noFlags = ["BL", "CW", "IM", "GG", "JE", "BQ", "MF", "SS", "SX", "XK"]
+var noFlags = ["BL", "GG", "JE", "BQ", "MF", "SS"]
 
 function htmlEncode(str){
   return String(str).replace(/[^\w. ]/gi, function(c){
@@ -226,7 +226,7 @@ function getCountryFlagUrl(countryCode) {
 }
 
 function getAirlineLogoImg(airlineId) {
-	return "<img class='logo' src='" + "/airlines/" + airlineId + "/logo' style='vertical-align:middle;'/>"
+	return "<img class='logo' loading='lazy' width='24px' height='12px' src='" + "/airlines/" + airlineId + "/logo' style='vertical-align:middle;'/>"
 }
 
 
@@ -244,6 +244,13 @@ function getAirlineSpan(airlineId, airlineName) {
 	$airlineSpan.append(getAirlineLabelSpan(airlineId, airlineName))
 
 	return $airlineSpan[0].outerHTML
+}
+
+function getAirlineLogoSpan(airlineId, airlineName) {
+    var $airlineLogoSpan = $('<span></span>')
+	$airlineLogoSpan.append(getAirlineLogoImg(airlineId))
+	$airlineLogoSpan.attr("title", airlineName)
+    return $airlineLogoSpan
 }
 
 function getUserLevelImg(level) {
@@ -338,12 +345,15 @@ function getRankingImg(ranking) {
 	} else if (ranking <= 10) {
 		rankingIcon = "assets/images/icons/trophy-" + ranking + ".png"
 		rankingTitle = ranking + "th place"
+	} else if (ranking <= 20) {
+		rankingIcon = "assets/images/icons/counter-" + ranking + ".png"
+        rankingTitle = ranking + "th place"
 	}
 	
 	if (rankingIcon) {
 		return "<img src='" + rankingIcon + "' title='" + rankingTitle + "' style='vertical-align:middle;'/>"
 	} else {
-		return ""
+		return "<span>" + ranking + "</span>"
 	}
 }
 
@@ -359,7 +369,7 @@ function getDurationText(duration) {
 
 function getYearMonthText(weekDuration) {
 	var year = Math.floor(weekDuration / 52)
-	var month = Math.floor(weekDuration / 4) % 12
+	var month = Math.floor(weekDuration / (52/12)) % 12
 	if (year > 0) {
 		return year + " year(s) " + month + " month(s)"
 	} else {
@@ -384,9 +394,24 @@ function getOpennessSpan(openness) {
 		description = "No Foreign Airline"
 		icon = "prohibition.png"
 	}*/
-	return "<span>" + description + "(" + openness + ")&nbsp;<img src='assets/images/icons/" + icon + "'/></span>"
+	return "<span>" + description + "(" + openness + ")&nbsp;" + getOpennessIcon(openness) + "</span>"
 	
 }
+
+
+function getOpennessIcon(openness) {
+	var description
+	var icon
+	if (openness >= 7) {
+		description = "Opened Market"
+		icon = "globe--plus.png"
+	} else {
+		description = "No International Connection"
+		icon = "globe--exclamation.png"
+    }
+	return "<img src='assets/images/icons/" + icon + "' title='" + description + "' style='vertical-align: middle;'/>"
+}
+
 
 function scrollToRow($matchingRow, $container) {
     var row = $matchingRow[0]
@@ -591,11 +616,14 @@ function closeModal(modal) {
 }
 
 function closeAllModals() {
+    var closedModals = []
     $.each($(".modal"), function(index, modal) {
         if ($(modal).is(":visible")) {
             closeModal($(modal))
+             closedModals.push(modal);  // Add the closed modal to the array
         }
     });
+    return closedModals
 }
 
 function disableButton(button, reason) {

@@ -2,13 +2,13 @@ package controllers
 
 import com.patson.AllianceSimulation
 import com.patson.AllianceMissionSimulation
-import com.patson.data.{AirlineSource, AllianceMissionSource, AllianceSource, CycleSource, LinkSource}
+import com.patson.data.{AirlineSource, AllianceMissionSource, AllianceSource, CycleSource, LinkSource, UserSource}
 import com.patson.model.AllianceEvent._
 import com.patson.model.AllianceRole._
 import com.patson.model.AllianceStatus._
 import com.patson.model.{AllianceHistory, AllianceMember, _}
 import com.patson.model.alliance.{AirportRankingCount, AllianceMission, AllianceMissionReward, AllianceMissionStatus, AllianceStats, CountryRankingCount}
-import com.patson.util.{AirlineCache, AirportChampionInfo, AllianceCache, AllianceRankingUtil, ChampionUtil, CountryChampionInfo}
+import com.patson.util.{AirlineCache, AirportChampionInfo, AllianceCache, AllianceRankingUtil, ChampionUtil, CountryChampionInfo, UserCache}
 import controllers.AuthenticationObject.AuthenticatedAirline
 
 import javax.inject.Inject
@@ -16,8 +16,10 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json._
 import play.api.mvc._
+import websocket.chat.ChatControllerActor
 
-import scala.collection.MapView
+import java.util.Calendar
+import scala.collection.{MapView, mutable}
 import scala.math.BigDecimal.{RoundingMode, int2bigDecimal}
 
 
@@ -198,7 +200,7 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
   }
 
   def formAlliance(airlineId : Int) = AuthenticatedAirline(airlineId) { implicit request =>
-    formAllianceForm.bindFromRequest.fold(
+    formAllianceForm.bindFromRequest().fold(
       // Form has errors, redisplay it
       erroredForm => Ok(Json.obj("rejection" -> JsString(erroredForm.error("allianceName").get.message))), { formAllianceInput =>
         //make sure the current airline is not in any alliance
@@ -329,6 +331,43 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
 
         Ok(Json.obj("links" -> Json.toJson(links)(SimpleLinkWrites),
           "members" -> Json.toJson(alliance.members.map(member => (member.airline, member.role)))(AllianceAirlinesWrites)))
+      }
+    }
+  }
+
+  def getMemberLoginStatus(allianceId : Int) = Action { request =>
+    AllianceCache.getAlliance(allianceId, true) match {
+      case None => NotFound("Alliance with " + allianceId + " is not found")
+      case Some(alliance) => {
+        val userByAirlineId = mutable.HashMap[Int, User]()
+        alliance.members.foreach { allianceMember =>
+          UserSource.loadUserByAirlineId(allianceMember.airline.id).foreach { user =>
+            userByAirlineId.put(allianceMember.airline.id, user)
+          }
+        }
+
+        val onlineUserIds = ChatControllerActor.getActiveUsers().map(_.id)
+        val sevenDaysAgo = Calendar.getInstance();
+        sevenDaysAgo.add(Calendar.DATE, -7)
+        val thirtyDaysAgo = Calendar.getInstance()
+        thirtyDaysAgo.add(Calendar.DATE, -30)
+
+        val loginStatusIdByAirlineId = userByAirlineId.map {
+          case (airlineId, user) =>
+            val loginStatus =
+              if (onlineUserIds.contains(user.id)) {
+                LoginStatus.ONLINE
+              } else if (user.lastActiveTime.after(sevenDaysAgo)) {
+                LoginStatus.ACTIVE_7_DAYS
+              } else if (user.lastActiveTime.after(thirtyDaysAgo)) {
+                LoginStatus.ACTIVE_30_DAYS
+              } else {
+                LoginStatus.INACTIVE
+              }
+            (airlineId.toString, loginStatus.id)
+        }.toMap
+
+        Ok(Json.toJson(loginStatusIdByAirlineId))
       }
     }
   }
@@ -466,7 +505,7 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
         getApplyRejection(request.user, alliance) match {
             case Some(rejection) => BadRequest(rejection)
             case None => //ok
-              val currentCycle = CycleSource.loadCycle
+              val currentCycle = CycleSource.loadCycle()
               val newMember = AllianceMember(allianceId = alliance.id, airline = request.user, role = APPLICANT, joinedCycle = currentCycle)
               AllianceSource.saveAllianceMember(newMember)
               val history = AllianceHistory(allianceName = alliance.name, airline = request.user, event = APPLY_ALLIANCE, cycle = currentCycle)
@@ -506,7 +545,7 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
   }
 
   def addToAlliance(airlineId : Int, targetAirlineId : Int) = AuthenticatedAirline(airlineId) { implicit request =>
-       val currentCycle = CycleSource.loadCycle
+       val currentCycle = CycleSource.loadCycle()
 
        AllianceSource.loadAllianceMemberByAirline(request.user) match {
           case None => BadRequest("Current airline " + request.user + " cannot add airline id "+ targetAirlineId + " to alliance as current airline does not belong to any alliance")
@@ -544,7 +583,7 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
   }
 
   def promoteMember(airlineId : Int, targetAirlineId : Int) = AuthenticatedAirline(airlineId) { implicit request =>
-    val currentCycle = CycleSource.loadCycle
+    val currentCycle = CycleSource.loadCycle()
     AllianceSource.loadAllianceMemberByAirline(request.user) match {
       case None => BadRequest("Current airline " + request.user + " cannot promote airline id " + targetAirlineId + " to alliance as current airline does not belong to any alliance")
       case Some(currentMember) =>
@@ -578,7 +617,7 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
   }
 
   def demoteMember(airlineId : Int, targetAirlineId : Int) = AuthenticatedAirline(airlineId) { implicit request =>
-    val currentCycle = CycleSource.loadCycle
+    val currentCycle = CycleSource.loadCycle()
     AllianceSource.loadAllianceMemberByAirline(request.user) match {
       case None => BadRequest("Current airline " + request.user + " cannot demote airline id " + targetAirlineId + " to alliance as current airline does not belong to any alliance")
       case Some(currentMember) =>
@@ -609,7 +648,7 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
   def getApplyRejection(airline : Airline, alliance : Alliance) : Option[String] = {
     val approvedMembers = alliance.members.filter(_.role != AllianceRole.APPLICANT)
     
-    if (airline.getHeadQuarter.isEmpty) { 
+    if (airline.getHeadQuarter().isEmpty) { 
       return Some("Airline does not have headquarters")
     }
     
@@ -618,16 +657,16 @@ class AllianceApplication @Inject()(cc: ControllerComponents) extends AbstractCo
     }
     
     
-    val allAllianceHeadquarters = approvedMembers.flatMap(_.airline.getHeadQuarter).map(_.airport)
+    val allAllianceHeadquarters = approvedMembers.flatMap(_.airline.getHeadQuarter()).map(_.airport)
 
-    val airlineHeadquarters = airline.getHeadQuarter.get.airport
+    val airlineHeadquarters = airline.getHeadQuarter().get.airport
     
     if (allAllianceHeadquarters.contains(airlineHeadquarters)) {
       return Some("One of the alliance members has Headquarters at " + getAirportText(airlineHeadquarters))
     }
     
     val allAllianceBases = approvedMembers.flatMap { _.airline.getBases().filter( !_.headquarter) }.map(_.airport)
-    val airlineBases = airline.getBases.filter(!_.headquarter).map(_.airport) 
+    val airlineBases = airline.getBases().filter(!_.headquarter).map(_.airport) 
     val overlappingBases = allAllianceBases.filter(allianceBase => airlineBases.contains(allianceBase))
    
 //     println("ALL " + allAllianceBases)

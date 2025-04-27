@@ -25,7 +25,7 @@ GET	 	 /airports/:airportId/link-statistics	        controllers.Application.getA
 GET	 	 /airports/:airportId/loyalist-data	        controllers.Application.getAirportLoyalistData(airportId : Int, airlineId: Option[Int])
 GET	 	 /airports/:airportId/departures/:dayOfWeek/:hour/:minute controllers.Application.getDepartures(airportId : Int, dayOfWeek : Int, hour : Int, minute : Int)
 GET		 /airports/:fromAirportId/to/:toAirportId				controllers.Application.getAirportLinkConsumptions(fromAirportId : Int, toAirportId : Int)
-GET		 /airports/:airportId/link-consumptions	controllers.Application.getLinkConsumptionsByAirport(airportId : Int)
+GET		 /airports/:airportId/links	controllers.Application.getLinksByAirport(airportId : Int)
 #GET	 	 /airports/:airportId/projects	      controllers.Application.getAirportProjects(airportId : Int)
 #PUT	 	 /airports/:airportId/projects	      controllers.Application.addAirportProject(airlineId : Int, airportId : Int)
 GET	 	 /airports/:airportId/assets	      controllers.AirportAssetApplication.getAirportAssets(airportId : Int)
@@ -108,6 +108,7 @@ GET		 /airlines/:airlineId/alliance-details  controllers.AllianceApplication.get
 GET      /airlines/:airlineId/fleet			  controllers.AirlineApplication.getFleet(airlineId : Int)
 GET		 /alliances  controllers.AllianceApplication.getAlliances(airlineId : Option[Int])
 GET		 /alliances/:allianceId/details  controllers.AllianceApplication.getAllAllianceDetails(allianceId : Int)
+GET		 /alliances/:allianceId/member-login-status  controllers.AllianceApplication.getMemberLoginStatus(allianceId : Int)
 GET		 /alliances/:allianceId/championed-airports	controllers.AllianceApplication.getAllianceAirportChampions(allianceId : Int)
 GET		 /alliances/:allianceId/championed-countries	controllers.AllianceApplication.getAllianceCountryChampions(allianceId : Int)
 POST	 /airlines/:airlineId/form-alliance  controllers.AllianceApplication.formAlliance(airlineId : Int)
@@ -208,7 +209,7 @@ GET     /research-link/:fromAirportId/:toAirportId  controllers.SearchApplicatio
 #GET		 /links							  controllers.LinkApplication.getAllLinks
 #GET		 /vip-routes					  controllers.LinkApplication.getVipRoutes
 #GET		 /link-consumptions				  controllers.LinkApplication.getAllLinkConsumptions
-GET		 /airplane-models				  controllers.AirplaneApplication.getAirplaneModels
+GET		 /airplane-models				  controllers.AirplaneApplication.getAirplaneModels()
 GET		 /airplane-models/:modelId/stats     controllers.AirplaneApplication.getAirplaneModelStats(modelId : Int)
 GET		 /rankings  		  		      controllers.RankingApplication.getRankings()
 GET		 /rankings/:airlineId  		      controllers.RankingApplication.getRankingsWithAirline(airlineId : Int)
@@ -228,6 +229,8 @@ GET     /event/:eventId/airline/:airlineId/reward/olympics-vote  controllers.Oly
 GET     /event/:eventId/airline/:airlineId/reward/olympics-passenger  controllers.OlympicsApplication.getOlympicsPassengerRewardOptions(airlineId : Int, eventId : Int)
 
 GET     /banner    controllers.BannerApplication.getBanner()
+
+GET     /broadcaster-direct/trigger-prompts-check/:airlineId  controllers.BroadcasterDirectApplication.triggerPromptsCheck(airlineId : Int)
 
 # Admin
 PUT		 /admin-action/:action/:targetUserId		controllers.AdminApplication.adminAction(action : String, targetUserId : Int)
@@ -254,12 +257,12 @@ GET     /signup/airline-name-check  controllers.SignUp.airlineNameCheck(airlineN
 # PasswordReset
 GET    /password-reset				controllers.AccountApplication.passwordResetForm(resetToken : String)
 POST   /password-reset				controllers.AccountApplication.passwordResetSubmit
-GET   /forgot-password				controllers.AccountApplication.forgotPassword
+GET   /forgot-password				controllers.AccountApplication.forgotPassword()
 POST   /forgot-password				controllers.AccountApplication.forgotPasswordSubmit
-GET   /forgot-id				controllers.AccountApplication.forgotId
+GET   /forgot-id				controllers.AccountApplication.forgotId()
 POST   /forgot-id				controllers.AccountApplication.forgotIdSubmit
 
-GET     /about      controllers.AboutApplication.about
+GET     /about      controllers.AboutApplication.about()
 
 OPTIONS    /*path     controllers.Application.options(path)
 
