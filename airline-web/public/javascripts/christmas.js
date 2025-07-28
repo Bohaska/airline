@@ -209,11 +209,11 @@ function toggleChristmasMarker() {
         document.getElementById('christmasMusic').pause()
         $.each(flightMarkers, function(index, markersByLinkId) {
             $.each(markersByLinkId.markers, function(index2, marker) {
-                marker.icon = {
-                    url: "assets/images/markers/dot.png",
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(6, 6),
-                };
+                marker.setIcon(L.icon({
+                    iconUrl: "assets/images/markers/dot.png",
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                }));
             })
         })
         $("body").removeClass('christmas')

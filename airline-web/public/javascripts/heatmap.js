@@ -44,11 +44,11 @@ function closeHeatmap() {
 
 function clearHeatmap() {
     if (heatmapPositive) {
-        heatmapPositive.setMap(null)
+        map.removeLayer(heatmapPositive)
         heatmapPositive = undefined
     }
     if (heatmapNegative) {
-        heatmapNegative.setMap(null)
+        map.removeLayer(heatmapNegative)
         heatmapPositive = undefined
     }
 }
@@ -95,8 +95,8 @@ const loyalistTrendHeatmapNegativeGradient = [
 
 function updateHeatmap(airlineId) {
 //    $.each(historyPaths, function(index, path) { //clear all history path
-//        path.setMap(null)
-//        path.shadowPath.setMap(null)
+//        map.removeLayer(path)
+//        map.removeLayer(path.shadow)
 //    })
 
     var cycleDelta = $('#heatmapControlPanel').data('cycleDelta')
@@ -115,9 +115,9 @@ function updateHeatmap(airlineId) {
             var heatmapNegativeData = []
             $.each(result.points, function(index, entry) {
               if (entry.weight >= 0) {
-                heatmapPositiveData.push({location: new google.maps.LatLng(entry.lat, entry.lng), weight: entry.weight})
+                heatmapPositiveData.push({lat: entry.lat, lng: entry.lng, count: entry.weight})
               } else {
-                heatmapNegativeData.push({location: new google.maps.LatLng(entry.lat, entry.lng), weight: entry.weight * -1})
+                heatmapNegativeData.push({lat: entry.lat, lng: entry.lng, count: entry.weight * -1})
               }
             })
 
@@ -131,27 +131,27 @@ function updateHeatmap(airlineId) {
             }
 
             if (heatmapPositiveData.length > 0) {
-                heatmapPositive = new google.maps.visualization.HeatmapLayer({
-                  data: heatmapPositiveData,
-                  dissipating: false,
-                  gradient: heatmapPositiveGradient,
-                  maxIntensity: result.maxIntensity,
-                  radius: 3
-                });
-
-                heatmapPositive.setMap(map);
+                heatmapPositive = L.heatmap({
+                  minOpacity: 0.05,
+                  maxZoom: 18,
+                  radius: 20,
+                  blur: 15,
+                  max: result.maxIntensity,
+                  gradient: heatmapPositiveGradient
+                }).addTo(map);
+                heatmapPositive.setData({data: heatmapPositiveData});
             }
 
             if (heatmapNegativeData.length > 0) {
-                heatmapNegative = new google.maps.visualization.HeatmapLayer({
-                  data: heatmapNegativeData,
-                  dissipating: false,
-                  gradient: heatmapNegativeGradient,
-                  maxIntensity: result.maxIntensity,
-                  radius: 3
-                });
-
-                heatmapNegative.setMap(map);
+                heatmapNegative = L.heatmap({
+                  minOpacity: 0.05,
+                  maxZoom: 18,
+                  radius: 20,
+                  blur: 15,
+                  max: result.maxIntensity,
+                  gradient: heatmapNegativeGradient
+                }).addTo(map);
+                heatmapNegative.setData({data: heatmapNegativeData});
             }
 
             updateHeatmapArrows(result.minDeltaCount, airlineId)

@@ -328,8 +328,9 @@ function updateAirportChampionDetails(airport) {
 
 }
 
+
 function initAirportMap() { //only called once, see https://stackoverflow.com/questions/10485582/what-is-the-proper-way-to-destroy-a-map-instance
-    airportMap = new google.maps.Map(document.getElementById('airportMap'), {
+    airportMap = L.map(document.getElementById('airportMap'), {
         //center: {lat: airport.latitude, lng: airport.longitude},
            //zoom : 6,
            minZoom : 2,
@@ -343,17 +344,28 @@ function initAirportMap() { //only called once, see https://stackoverflow.com/qu
            fullscreenControl: false,
            streetViewControl: false,
         zoomControl: true,
-           styles: getMapStyles()
+           attributionControl: false,
     });
+
+    L.maplibreGL({
+        style: 'https://tiles.openfreemap.org/styles/positron',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(airportMap);
 
     if (christmasFlag) {
         //<div id="santaClausButton" class="googleMapIcon glow" onclick="showSantaClausAttemptStatus()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/markers/christmas/santa-hat.png")' title='Santa, where are you?' style="vertical-align: middle;"/></div>-->
-        var santaClausButton = $('<div id="santaClausButton" class="googleMapIcon glow" onclick="showSantaClausAttemptStatus()" align="center" style="margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/markers/christmas/santa-hat.png" title=\'Santa, where are you!\' style="vertical-align: middle;"/></div>')
-
-        santaClausButton.index = 1
-        airportMap.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(santaClausButton[0]);
+        var santaClausButton = L.control({position: 'bottomright'});
+        santaClausButton.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'googleMapIcon glow');
+            div.innerHTML = '<img src="assets/images/markers/christmas/santa-hat.png" title="Santa, where are you!" style="vertical-align: middle;"/>';
+            div.onclick = showSantaClausAttemptStatus;
+            return div;
+        };
+        santaClausButton.addTo(airportMap);
     }
 }
+
+
 
 
 function populateAirportDetails(airport) {
@@ -363,12 +375,12 @@ function populateAirportDetails(airport) {
 
     // cleanup first
     for (var i = 0; i < airportMapMarkers.length; i++ ) {
-        airportMapMarkers[i].setMap(null);
+        airportMap.removeLayer(airportMapMarkers[i]);
     }
     airportMapMarkers = []
 
     if (airportMapCircle) { //remove the old circle
-        airportMapCircle.setMap(null)
+        airportMap.removeLayer(airportMapCircle)
     }
 
 
@@ -376,39 +388,35 @@ function populateAirportDetails(airport) {
     if (airport) {
         addCityMarkers(airportMap, airport)
         airportMap.setZoom(6)
-        airportMap.setCenter({lat: airport.latitude, lng: airport.longitude}); //this would eventually trigger an idle
+        airportMap.setView([airport.latitude, airport.longitude]); //this would eventually trigger an idle
 
-        var airportMarkerIcon = $("#airportMap").data("airportMarker")
-        var airportMarker = new google.maps.Marker({
-            position: {lat: airport.latitude, lng: airport.longitude},
-            map: airportMap,
+        var airportMarkerIcon = L.icon({ iconUrl: $("#airportMap").data("airportMarker"), iconSize: [32, 32] });
+        var airportMarker = L.marker([airport.latitude, airport.longitude], {
             title: airport.name,
             icon : airportMarkerIcon,
-            zIndex : 999
-          });
+            zIndexOffset : 999
+          }).addTo(airportMap);
 
         airportMapMarkers.push(airportMarker)
 
         
-        airportMapCircle = new google.maps.Circle({
-                center: {lat: airport.latitude, lng: airport.longitude},
+        airportMapCircle = L.circle([airport.latitude, airport.longitude], {
                 radius: airport.radius * 1000, //in meter
-                strokeColor: "#32CF47",
-                strokeOpacity: 0.2,
-                strokeWeight: 2,
+                color: "#32CF47",
+                opacity: 0.2,
+                weight: 2,
                 fillColor: "#32CF47",
                 fillOpacity: 0.3,
-                map: airportMap
-            });
+            }).addTo(airportMap);
         loadAirportStatistics(airport)
         loadGenericTransits(airport)
         updateAirportLoyalistDetails(airport)
         showAirportAssets(airport)
 
-        google.maps.event.addListenerOnce(airportMap, 'idle', function() {
+        airportMap.whenReady(function() {
            setTimeout(function() { //set a timeout here, otherwise it might not render part of the map...
-             airportMap.setCenter({lat: airport.latitude, lng: airport.longitude}); //this would eventually trigger an idle
-             google.maps.event.trigger(airportMap, 'resize'); //this refreshes the map
+             airportMap.setView([airport.latitude, airport.longitude]); //this would eventually trigger an idle
+             airportMap.invalidateSize(); //this refreshes the map
            }, 2000);
         });
 
@@ -416,10 +424,8 @@ function populateAirportDetails(airport) {
             initSantaClaus()
         }
     }
-
-
-
 }
+
 
 
 function loadAirportStatistics(airport) {
@@ -623,42 +629,18 @@ function getAirports() {
 }
 
 function addMarkers(airports) {
-    var infoWindow = new google.maps.InfoWindow({
-        maxWidth : 250
-    })
     var originalOpacity = 0.7
     currentZoom = map.getZoom()
-
-    google.maps.event.addListener(infoWindow, 'closeclick',function(){
-       if (infoWindow.marker) {
-        infoWindow.marker.setOpacity(originalOpacity)
-       }
-    });
 
     var resultMarkers = {}
     for (i = 0; i < airports.length; i++) {
           var airportInfo = airports[i]
-          var position = {lat: airportInfo.latitude, lng: airportInfo.longitude};
-          var icon = getAirportIcon(airportInfo)
-//          if (airportInfo.championAirlineName) {
-//            console.log(airportInfo.name + "-> " + airportInfo.championAirlineName)
-//          }
+          var position = [airportInfo.latitude, airportInfo.longitude];
+          var iconUrl = getAirportIcon(airportInfo)
+          var icon = L.icon({ iconUrl: iconUrl, iconSize: [32, 32] });
 
-          
-          var marker = new google.maps.Marker({
-                position: position,
-                map: map,
+          var marker = L.marker(position, {
                 title: airportInfo.name,
-//                airportName: airportInfo.name,
-//                  airportCode: airportInfo.iata,
-//                  airportCity: airportInfo.city,
-//                  airportId: airportInfo.id,
-//                  airportSize: airportInfo.size,
-//                  airportPopulation: airportInfo.population,
-//                  airportIncomeLevel: airportInfo.incomeLevel,
-//                  airportCountryCode: airportInfo.countryCode,
-//                  airportZone : airportInfo.zone,
-//                  airportAvailableSlots: airportInfo.availableSlots,
                 opacity: originalOpacity,
                   airport : airportInfo,
                   icon: icon,
@@ -678,45 +660,38 @@ function addMarkers(airports) {
           }
           zIndex += sizeAdjust
           
-          marker.setZIndex(zIndex); //major airport should have higher index
+          marker.setZIndexOffset(zIndex); //major airport should have higher index
 
-          marker.addListener('click', function() {
-              infoWindow.close();
-              if (infoWindow.marker && infoWindow.marker != this) {
-                infoWindow.marker.setOpacity(originalOpacity)
-              }
-              
-              activeAirport = this.airport
+          marker.on('click', function(e) {
+              activeAirport = e.target.options.airport
               
               var isBase = false;
               
               if (activeAirline) {
-                  updateBaseInfo(this.airport.id)
+                  updateBaseInfo(e.target.options.airport.id)
               }
-              $("#airportPopupName").text(this.airport.name)
-              let $opennessIcon = $(getOpennessIcon(loadedCountriesByCode[this.airport.countryCode].openness))
+              $("#airportPopupName").text(e.target.options.airport.name)
+              let $opennessIcon = $(getOpennessIcon(loadedCountriesByCode[e.target.options.airport.countryCode].openness))
               $opennessIcon.css('vertical-align', 'middle');
               $("#airportPopupOpennessIcon").html($opennessIcon)
-              $("#airportPopupIata").text(this.airport.iata)
-              $("#airportPopupCity").html(this.airport.city + "&nbsp;" + getCountryFlagImg(this.airport.countryCode))
-              $("#airportPopupZone").text(zoneById[this.airport.zone])
-              $("#airportPopupSize").text(this.airport.size)
+              $("#airportPopupIata").text(e.target.options.airport.iata)
+              $("#airportPopupCity").html(e.target.options.airport.city + "&nbsp;" + getCountryFlagImg(e.target.options.airport.countryCode))
+              $("#airportPopupZone").text(zoneById[e.target.options.airport.zone])
+              $("#airportPopupSize").text(e.target.options.airport.size)
               $("#airportPopupPopulation").text('-') //wait for extended details
               $("#airportPopupIncomeLevel").text('-') //wait for extended details
-              $("#airportPopupOpenness").html(getOpennessSpan(loadedCountriesByCode[this.airport.countryCode].openness))
-              $("#airportPopupMaxRunwayLength").html(this.airport.runwayLength + "&nbsp;m")
-              updateAirportExtendedDetails(this.airport.id, this.airport.countryCode)
+              $("#airportPopupOpenness").html(getOpennessSpan(loadedCountriesByCode[e.target.options.airport.countryCode].openness))
+              $("#airportPopupMaxRunwayLength").html(e.target.options.airport.runwayLength + "&nbsp;m")
+              updateAirportExtendedDetails(e.target.options.airport.id, e.target.options.airport.countryCode)
               //updateAirportSlots(this.airport.id)
               
-              $("#airportPopupId").val(this.airport.id)
+              $("#airportPopupId").val(e.target.options.airport.id)
               var popup = $("#airportPopup").clone()
               populateNavigation(popup)
               popup.show()
-              infoWindow.setContent(popup[0])
-              infoWindow.open(map, this);
-              infoWindow.marker = this
               
-              activeAirportPopupInfoWindow = infoWindow
+              e.target.bindPopup(popup[0], { maxWidth : 250 }).openPopup();
+              activeAirportPopupInfoWindow = e.target.getPopup()
               
               if (activeAirline) {
                   if (!activeAirline.headquarterAirport) {
@@ -730,17 +705,19 @@ function addMarkers(airports) {
               
           });
 
-          marker.addListener('mouseover', function(event) {
-               this.setOpacity(0.9)
+          marker.on('mouseover', function(e) {
+               e.target.setOpacity(0.9)
             })
-            marker.addListener('mouseout', function(event) {
-                if (infoWindow.marker != this) {
-                    this.setOpacity(originalOpacity)
+            marker.on('mouseout', function(e) {
+                if (!e.target.isPopupOpen()) {
+                    e.target.setOpacity(originalOpacity)
                 }
             })
 
 
-          marker.setVisible(isShowMarker(marker, currentZoom))
+          if (isShowMarker(marker, currentZoom)) {
+            marker.addTo(map)
+          }
 
 
           resultMarkers[airportInfo.id] = marker
@@ -756,19 +733,17 @@ function planToAirportFromInfoWindow() {
 
 function removeMarkers() {
     $.each(markers, function(key, marker) {
-        marker.setMap(null)
+        marker.remove()
     });
     markers = {}
 }
 
+
 function addCityMarkers(airportMap, airport) {
     var cities = airport.citiesServed
-    var infoWindow = new google.maps.InfoWindow({
-        maxWidth : 500
-    })
-    var cityMarkerIcon = $("#airportMap").data("cityMarker")
-    var townMarkerIcon = $("#airportMap").data("townMarker")
-    var villageMarkerIcon = $("#airportMap").data("villageMarker")
+    var cityMarkerIcon = L.icon({ iconUrl: $("#airportMap").data("cityMarker"), iconSize: [32, 32] });
+    var townMarkerIcon = L.icon({ iconUrl: $("#airportMap").data("townMarker"), iconSize: [32, 32] });
+    var villageMarkerIcon = L.icon({ iconUrl: $("#airportMap").data("villageMarker"), iconSize: [32, 32] });
     
 
     cities.sort(sortByProperty("population", false))
@@ -785,19 +760,16 @@ function addCityMarkers(airportMap, airport) {
         } else {
             icon = villageMarkerIcon
         }
-        var position = {lat: city.latitude, lng: city.longitude};
-          var marker = new google.maps.Marker({
-                position: position,
-                map: airportMap,
+        var position = [city.latitude, city.longitude];
+          var marker = L.marker(position, {
                 title: city.name,
                 cityInfo : city,
                 icon : icon
-              });
+              }).addTo(airportMap);
           airportMapMarkers.push(marker)
           
-          marker.addListener('click', function() {
-              infoWindow.close();
-              var city = this.cityInfo
+          marker.on('click', function(e) {
+              var city = e.target.options.cityInfo
               $("#cityPopupName").text(city.name)
               $("#cityPopupPopulation").text(commaSeparateNumber(city.population))
               $("#cityPopupIncomeLevel").text(city.incomeLevel)
@@ -805,7 +777,6 @@ function addCityMarkers(airportMap, airport) {
               $("#cityPopupCountryCode").append("<img class='flag' src='assets/images/flags/" + city.countryCode + ".png' />")
               $("#cityPopupId").val(city.id)
                
-              
               
 ///////////////
                  ///////////////////////////!!!!!!!!!!
@@ -826,8 +797,7 @@ function addCityMarkers(airportMap, airport) {
 
             var popup = $("#cityPopup").clone()
             popup.show()
-            infoWindow.setContent(popup[0])
-            infoWindow.open(airportMap, this);
+            e.target.bindPopup(popup[0], { maxWidth : 500 }).openPopup();
               
               
             /////////////////////!!!!!!!!!!!!!!!
@@ -836,6 +806,7 @@ function addCityMarkers(airportMap, airport) {
           //marker.setVisible()
     });
 }
+
 
 
 
@@ -1079,8 +1050,7 @@ function toggleChampionMap() {
                 //marker.setIcon(marker.championIcon)
                 marker.setIcon(marker.championIcon)
                 var title = marker.title + " - " + marker.championAirlineName
-        //        google.maps.event.clearListeners(marker, 'mouseover');
-        //        google.maps.event.clearListeners(marker, 'mouseout');
+        
                 if (marker.contested) {
                     addContestedMarker(marker)
                     title += " (contested by " + marker.contested + ")"
@@ -1097,7 +1067,7 @@ function toggleChampionMap() {
             }
             while (contestedMarkers.length > 0) {
                 var contestedMarker = contestedMarkers.pop()
-                contestedMarker.setMap(null)
+                contestedMarker.remove()
             }
             marker.setVisible(isShowMarker(marker, zoom))
             updateAirportMarkers(activeAirline)
@@ -1107,16 +1077,14 @@ function toggleChampionMap() {
 }
 
 function addContestedMarker(airportMarker) {
-    var contestedMarker = new google.maps.Marker({
-        position: airportMarker.getPosition(),
-        map,
+    var contestedIcon = L.icon({ iconUrl: "assets/images/icons/fire.png", iconSize: [32, 32], iconAnchor: [-5, 15] });
+    var contestedMarker = L.marker(airportMarker.getLatLng(), {
         title: "Contested",
-        icon: { anchor: new google.maps.Point(-5,15), url: "assets/images/icons/fire.png" },
-        zIndex: 500
-      });
+        icon: contestedIcon,
+        zIndexOffset: 500
+      }).addTo(map);
     //marker.setVisible(isShowMarker(airportMarker, zoom))
-    contestedMarker.bindTo("visible", airportMarker)
-    contestedMarker.setZIndex(airportMarker.getZIndex() + 1)
+    contestedMarker.setZIndexOffset(airportMarker.options.zIndexOffset + 1)
     contestedMarkers.push(contestedMarker)
 }
 
@@ -1124,17 +1092,19 @@ function addContestedMarker(airportMarker) {
 function updateAirportBaseMarkers(newBaseAirports, relatedFlightPaths) {
     //reset baseMarkers
     $.each(baseMarkers, function(index, marker) {
-        marker.setIcon(marker.originalIcon)
+        marker.setIcon(marker.options.originalIcon)
         marker.isBase = false
-        marker.setVisible(isShowMarker(marker, map.getZoom()))
+        if (!isShowMarker(marker, map.getZoom())) {
+            map.removeLayer(marker)
+        }
         marker.baseInfo = undefined
-        google.maps.event.clearListeners(marker, 'mouseover');
-        google.maps.event.clearListeners(marker, 'mouseout');
+        marker.off('mouseover');
+        marker.off('mouseout');
 
     })
     baseMarkers = []
-    var headquarterMarkerIcon = $("#map").data("headquarterMarker")
-    var baseMarkerIcon = $("#map").data("baseMarker")
+    var headquarterMarkerIcon = L.icon({ iconUrl: $("#map").data("headquarterMarker"), iconSize: [32, 32] });
+    var baseMarkerIcon = L.icon({ iconUrl: $("#map").data("baseMarker"), iconSize: [32, 32] });
     $.each(newBaseAirports, function(key, baseAirport) {
         var marker = markers[baseAirport.airportId]
         if (baseAirport.headquarter) {
@@ -1142,31 +1112,33 @@ function updateAirportBaseMarkers(newBaseAirports, relatedFlightPaths) {
         } else {
             marker.setIcon(baseMarkerIcon)
         }
-        marker.setZIndex(999)
+        marker.setZIndexOffset(999)
         marker.isBase = true
-        marker.setVisible(true)
+        if (!map.hasLayer(marker)) {
+            marker.addTo(map)
+        }
         marker.baseInfo = baseAirport
-        var originalOpacity = marker.getOpacity()
-        marker.addListener('mouseover', function(event) {
+        var originalOpacity = marker.options.opacity
+        marker.on('mouseover', function(event) {
                     $.each(relatedFlightPaths, function(linkId, pathEntry) {
                         var path = pathEntry.path
                         var link = pathEntry.path.link
                         if (!$(path).data("originalOpacity")) {
-                            $(path).data("originalOpacity", path.strokeOpacity)
+                            $(path).data("originalOpacity", path.options.opacity)
                         }
                         if (link.fromAirportId != baseAirport.airportId || link.airlineId != baseAirport.airlineId) {
-                            path.setOptions({ strokeOpacity : 0.1 })
+                            path.setStyle({ opacity : 0.1 })
                         } else {
-                            path.setOptions({ strokeOpacity : 0.8 })
+                            path.setStyle({ opacity : 0.8 })
                         }
                     })
                 })
-        marker.addListener('mouseout', function(event) {
+        marker.on('mouseout', function(event) {
             $.each(relatedFlightPaths, function(linkId, pathEntry) {
                 var path = pathEntry.path
                 var originalOpacity = $(path).data("originalOpacity")
                 if (originalOpacity !== undefined) {
-                    path.setOptions({ strokeOpacity : originalOpacity })
+                    path.setStyle({ opacity : originalOpacity })
                 }
             })
         })
@@ -1261,8 +1233,8 @@ function toggleAirportLinks(airport) {
 
 function drawAirportLinkPath(localAirport, details) {
     var remoteAirport = details.remoteAirport
-    var from = new google.maps.LatLng({lat: localAirport.latitude, lng: localAirport.longitude})
-    var to = new google.maps.LatLng({lat: remoteAirport.latitude, lng: remoteAirport.longitude})
+    var from = [localAirport.latitude, localAirport.longitude]
+    var to = [remoteAirport.latitude, remoteAirport.longitude]
     var pathKey = remoteAirport.id
 
     var totalCapacity = details.capacity.total
@@ -1273,47 +1245,39 @@ function drawAirportLinkPath(localAirport, details) {
     } else {
         opacity = 0.8
     }
-    var airportLinkPath = new google.maps.Polyline({
-             geodesic: true,
-             strokeColor: "#DC83FC",
-             strokeOpacity: opacity,
-             strokeWeight: 2,
-             path: [from, to],
-             zIndex : 1100,
-             map: map,
-        });
+    var airportLinkPath = L.polyline([from, to], {
+             color: "#DC83FC",
+             opacity: opacity,
+             weight: 2,
+        }).addTo(map);
         
     var fromAirport = getAirportText(localAirport.city, localAirport.iata)
     var toAirport = getAirportText(remoteAirport.city, remoteAirport.iata)
     
     
-    shadowPath = new google.maps.Polyline({
-         geodesic: true,
-         strokeColor: "#DC83FC",
-         strokeOpacity: 0.0001,
-         strokeWeight: 25,
-         path: [from, to],
-         zIndex : 401,
+    var shadowPath = L.polyline([from, to], {
+         color: "#DC83FC",
+         opacity: 0.0001,
+         weight: 25,
          fromAirport : fromAirport,
          fromCountry : localAirport.countryCode, 
          toAirport : toAirport,
          toCountry : remoteAirport.countryCode,
          details: details,
-         map: map,
-    });
+    }).addTo(map);
     polylines.push(airportLinkPath)
     polylines.push(shadowPath)
     
     airportLinkPath.shadowPath = shadowPath
     
     var infowindow;
-    shadowPath.addListener('mouseover', function(event) {
+    shadowPath.on('mouseover', function(e) {
         highlightPath(airportLinkPath, false)
-        $("#airportLinkPopupFrom").html(getCountryFlagImg(this.fromCountry) + this.fromAirport)
-        $("#airportLinkPopupTo").html(getCountryFlagImg(this.toCountry) + this.toAirport)
-        $("#airportLinkPopupCapacity").text(toLinkClassValueString(this.details.capacity) + "(" + this.details.frequency + ")")
+        $("#airportLinkPopupFrom").html(getCountryFlagImg(this.options.fromCountry) + this.options.fromAirport)
+        $("#airportLinkPopupTo").html(getCountryFlagImg(this.options.toCountry) + this.options.toAirport)
+        $("#airportLinkPopupCapacity").text(toLinkClassValueString(this.options.details.capacity) + "(" + this.options.details.frequency + ")")
         $("#airportLinkOperators").empty()
-        $.each(this.details.operators, function(index, operator){
+        $.each(this.options.details.operators, function(index, operator){
             var $operatorDiv = $('<div></div>')
             $operatorDiv.append(getAirlineLogoSpan(operator.airlineId, operator.airlineName))
             $operatorDiv.append('<span>' + operator.frequency + '&nbsp;flight(s) weekly&nbsp;' + toLinkClassValueString(operator.capacity) + '</span>')
@@ -1321,19 +1285,17 @@ function drawAirportLinkPath(localAirport, details) {
         })
 
 
-        infowindow = new google.maps.InfoWindow({
-             maxWidth : 400
-             });
         var popup = $("#airportLinkPopup").clone()
         popup.show()
-        infowindow.setContent(popup[0])
         
-        infowindow.setPosition(event.latLng);
-        infowindow.open(map);
+        infowindow = L.popup({ maxWidth : 400 })
+        .setLatLng(e.latlng)
+        .setContent(popup[0])
+        .openOn(map);
     })        
-    shadowPath.addListener('mouseout', function(event) {
+    shadowPath.on('mouseout', function(e) {
         unhighlightPath(airportLinkPath)
-        infowindow.close()
+        map.closePopup(infowindow)
     })
     
     airportLinkPaths[pathKey] = airportLinkPath
@@ -1341,8 +1303,8 @@ function drawAirportLinkPath(localAirport, details) {
 
 function clearAirportLinkPaths() {
     $.each(airportLinkPaths, function(key, airportLinkPath) {
-        airportLinkPath.setMap(null)
-        airportLinkPath.shadowPath.setMap(null)
+        airportLinkPath.remove()
+    airportLinkPath.shadowPath.remove()
     })
     
     airportLinkPaths = {}

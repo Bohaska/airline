@@ -112,10 +112,10 @@ function shimmeringDiv(div) {
 //        marker.setOpacity(marker.opacities[0])
 //        marker.opacities.shift()
 //        var icon = marker.getIcon()
-//        icon.anchor = new google.maps.Point(icon.anchor.x, icon.anchor.y + 2),
+
 //        setTimeout(function() { fadeOutMarkerRecursive(marker) }, 50)
 //    } else {
-//        marker.setMap(null)
+//        marker.remove()
 //    }
 //}
 

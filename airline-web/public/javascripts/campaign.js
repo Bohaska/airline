@@ -1,3 +1,4 @@
+
 function showCampaignModal() {
 //    if (airlineId) {
 //        updateHeatmap(airlineId)
@@ -10,14 +11,17 @@ function showCampaignModal() {
     })
 
     if (!campaignMap) {
-     campaignMap = new google.maps.Map($('#campaignModal .campaignMap')[0], {
+     campaignMap = L.map($('#campaignModal .campaignMap')[0], {
                                               //gestureHandling: 'none',
-                                              disableDefaultUI: true,
                                               scrollwheel: false,
                                               draggable: true,
                                               panControl: true,
-                                              styles: getMapStyles()
-                                          })
+                                              attributionControl: false,
+                                          });
+    L.maplibreGL({
+        style: 'https://tiles.openfreemap.org/styles/positron',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(campaignMap);
     }
 
     updateAirlineDelegateStatus($('#campaignModal div.delegateStatus'), function(delegateInfo) {
@@ -29,6 +33,7 @@ function showCampaignModal() {
     $('#campaignModal').data('closeCallback', updateCampaignSummary)
     $('#campaignModal').fadeIn(500)
 }
+
 
 function toggleDraftCampaign() {
     $('#campaignModal .campaignDetails').hide()
@@ -230,32 +235,30 @@ var campaignMap
 var campaignMapElements = []
 
 function populateCampaignMap(principalAirport, campaignArea, candidateArea, radius) {
-    $.each(campaignMapElements, function() { this.setMap(null)})
+    $.each(campaignMapElements, function() { campaignMap.removeLayer(this)})
     campaignMapElements = []
 
     //+ 200 to include candidate area * 1000 to convert to meters, * 2 to convert to diameter, * 1.2 to make in a slight bigger than what needs to be
     var zoom = getGoogleZoomLevel((radius + 200) * 1000 * 2 * 1.2, $('#campaignModal .campaignMap'), principalAirport.latitude)
     campaignMap.setZoom(zoom)
 
-    campaignMap.setCenter({lat: principalAirport.latitude, lng: principalAirport.longitude}); //this would eventually trigger an idle
+    campaignMap.setView([principalAirport.latitude, principalAirport.longitude]); //this would eventually trigger an idle
 
-    var airportMapCircle = new google.maps.Circle({
-                center: {lat: principalAirport.latitude, lng: principalAirport.longitude},
+    var airportMapCircle = L.circle([principalAirport.latitude, principalAirport.longitude], {
                 radius: radius * 1000, //in meter
-                strokeColor: "#32CF47",
-                strokeOpacity: 0.2,
-                strokeWeight: 2,
+                color: "#32CF47",
+                opacity: 0.2,
+                weight: 2,
                 fillColor: "#32CF47",
                 fillOpacity: 0.3,
-                map: campaignMap
-            });
+            }).addTo(campaignMap);
     campaignMapElements.push(airportMapCircle)
     populateCampaignAirportMarkers(campaignMap, campaignArea, true)
     populateCampaignAirportMarkers(campaignMap, candidateArea, false)
-    google.maps.event.addListenerOnce(campaignMap, 'idle', function() {
+    campaignMap.whenReady(function() {
         setTimeout(function() { //set a timeout here, otherwise it might not render part of the map...
-            campaignMap.setCenter({lat: principalAirport.latitude, lng: principalAirport.longitude}); //this would eventually trigger an idle
-            google.maps.event.trigger(campaignMap, 'resize'); //this refreshes the map
+            campaignMap.setView([principalAirport.latitude, principalAirport.longitude]); //this would eventually trigger an idle
+            campaignMap.invalidateSize(); //this refreshes the map
             console.log('resize')
         }, 2000);
     });
@@ -263,38 +266,30 @@ function populateCampaignMap(principalAirport, campaignArea, candidateArea, radi
 
 function populateCampaignAirportMarkers(campaignMap, airports, hasCoverage) {
     $.each(airports, function(index, airport) {
-        var icon
+        var iconUrl
         if (hasCoverage) {
-            icon = getAirportIcon(airport)
+            iconUrl = getAirportIcon(airport)
         } else {
-            icon = $("#map").data("disabledAirportMarker")
+            iconUrl = $("#map").data("disabledAirportMarker")
         }
-        var position = {lat: airport.latitude, lng: airport.longitude};
-          var marker = new google.maps.Marker({
-                position: position,
-                map: campaignMap,
+        var icon = L.icon({ iconUrl: iconUrl, iconSize: [32, 32] });
+        var position = [airport.latitude, airport.longitude];
+          var marker = L.marker(position, {
                 airport: airport,
                 icon : icon
-              });
+              }).addTo(campaignMap);
 
             var infowindow
-               marker.addListener('mouseover', function(event) {
+               marker.on('mouseover', function(event) {
                    $("#campaignAirportPopup .airportName").text(getAirportText(airport.city, airport.iata))
                    $("#campaignAirportPopup .airportPopulation").text(airport.population)
-                   infowindow = new google.maps.InfoWindow({
-                          disableAutoPan : true
-                 });
-
+                   
                  var popup = $("#campaignAirportPopup").clone()
                  popup.show()
-                 infowindow.setContent(popup[0])
-
-
-                   infowindow.open(campaignMap, marker);
+                 infowindow = L.popup({ disableAutoPan : true }).setLatLng(event.latlng).setContent(popup[0]).openOn(campaignMap);
                })
-               marker.addListener('mouseout', function(event) {
-                   infowindow.close()
-                   infowindow.setMap(null)
+               marker.on('mouseout', function(event) {
+                   campaignMap.closePopup(infowindow)
                })
                campaignMapElements.push(marker)
 

@@ -166,7 +166,7 @@ div#topBar {
     }
 }
 /**/
-/* back button for when you place the google maps man */
+
 div[jstcache="0"] > div:is([style="z-index: 24601; position: absolute; left: 0px; top: 0px;"]) {
     top: 50px !important;
     left: 50px !important

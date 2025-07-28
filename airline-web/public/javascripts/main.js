@@ -309,86 +309,89 @@ function hideUserSpecificElements() {
 }
 
 
+
 function initMap() {
-    initStyles()
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 20, lng: 150.644},
-       zoom : 2,
-       minZoom : 2,
-       gestureHandling: 'greedy',
-       styles: getMapStyles(),
-    mapTypeId: getMapTypes(),
-       restriction: {
-                latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
-              }
-  });
-    
-  google.maps.event.addListener(map, 'zoom_changed', function() {
+    map = L.map('map', {
+        center: [20, 150.644],
+        zoom: 2,
+        minZoom: 2,
+        attributionControl: false,
+    });
+
+    L.maplibreGL({
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+    }).addTo(map);
+
+    map.on('zoomend', function() {
         var zoom = map.getZoom();
         // iterate over markers and call setVisible
         $.each(markers, function( key, marker ) {
-            marker.setVisible(isShowMarker(marker, zoom));
+            if (isShowMarker(marker, zoom)) {
+                if (!map.hasLayer(marker)) {
+                    marker.addTo(map);
+                }
+            } else {
+                if (map.hasLayer(marker)) {
+                    map.removeLayer(marker);
+                }
+            }
         })
-  });
-  
-  google.maps.event.addListener(map, 'maptypeid_changed', function() { 
-        var mapType = map.getMapTypeId();
-        $.cookie('currentMapTypes', mapType);
-  });
+    });
 
-  addCustomMapControls(map)
+    addCustomMapControls(map);
 }
 
 function addCustomMapControls(map) {
-//            <div id="toggleMapChristmasButton" class="googleMapIcon" onclick="toggleChristmasMarker()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/bauble.png")' title='Merry Christmas!' style="vertical-align: middle;"/></div>-->
-//            <div id="toggleMapAnimationButton" class="googleMapIcon" onclick="toggleMapAnimation()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/arrow-step-over.png")' title='toggle flight marker animation' style="vertical-align: middle;"/></div>-->
-//            <div id="toggleMapLightButton" class="googleMapIcon" onclick="toggleMapLight()" align="center" style="display: none;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/switch.png")' title='toggle dark/light themed map' style="vertical-align: middle;"/></div>-->
-   var toggleMapChristmasButton = $('<div id="toggleMapChristmasButton" class="googleMapIcon" onclick="toggleChristmasMarker()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/bauble.png" title=\'Merry Christmas!\' style="vertical-align: middle;"/></div>')
-   var toggleMapAnimationButton = $('<div id="toggleMapAnimationButton" class="googleMapIcon" onclick="toggleMapAnimation()" align="center" style="margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/arrow-step-over.png" title=\'toggle flight marker animation\' style="vertical-align: middle;"/></div>')
-   var toggleChampionButton = $('<div id="toggleChampionButton" class="googleMapIcon" onclick="toggleChampionMap()" align="center"  style="margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/crown.png" title=\'toggle champion\' style="vertical-align: middle;"/></div>')
-   var toggleMapLightButton = $('<div id="toggleMapLightButton" class="googleMapIcon" onclick="toggleMapLight()" align="center" style=""><span class="alignHelper"></span><img src="assets/images/icons/switch.png" title=\'toggle dark/light themed map\' style="vertical-align: middle;"/></div>')
+    var toggleMapAnimationButton = L.control({position: 'bottomright'});
+    toggleMapAnimationButton.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'googleMapIcon');
+        div.innerHTML = '<img src="assets/images/icons/arrow-step-over.png" title="toggle flight marker animation"/>';
+        div.onclick = toggleMapAnimation;
+        return div;
+    };
+    toggleMapAnimationButton.addTo(map);
 
+    var toggleChampionButton = L.control({position: 'bottomright'});
+    toggleChampionButton.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'googleMapIcon');
+        div.innerHTML = '<img src="assets/images/icons/crown.png" title="toggle champion"/>';
+        div.onclick = toggleChampionMap;
+        return div;
+    };
+    toggleChampionButton.addTo(map);
 
-  toggleMapLightButton.index = 1
-  toggleMapAnimationButton.index = 2
-  toggleChampionButton.index = 3
-  toggleMapChristmasButton.index = 5
-
-
-  if ($("#map").height() > 500) {
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(toggleMapLightButton[0]);
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(toggleMapAnimationButton[0]);
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(toggleChampionButton[0])
-    //map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(toggleHeatmapButton[0])
-
-    if (christmasFlag) {
-       map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(toggleMapChristmasButton[0]);
-       toggleMapChristmasButton.show()
-    }
-
-  } else {
-    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(toggleMapLightButton[0]);
-    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(toggleMapAnimationButton[0]);
-    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(toggleChampionButton[0])
-    //map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(toggleHeatmapButton[0])
+    var toggleMapLightButton = L.control({position: 'bottomright'});
+    toggleMapLightButton.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'googleMapIcon');
+        div.innerHTML = '<img src="assets/images/icons/switch.png" title="toggle dark/light themed map"/>';
+        div.onclick = toggleMapLight;
+        return div;
+    };
+    toggleMapLightButton.addTo(map);
 
     if (christmasFlag) {
-       map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(toggleMapChristmasButton[0]);
+        var toggleMapChristmasButton = L.control({position: 'bottomright'});
+        toggleMapChristmasButton.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'googleMapIcon');
+            div.innerHTML = '<img src="assets/images/icons/bauble.png" title="Merry Christmas!"/>';
+            div.onclick = toggleChristmasMarker;
+            return div;
+        };
+        toggleMapChristmasButton.addTo(map);
     }
-  }
 }
 
 function addAirlineSpecificMapControls(map) {
-    var toggleHeatmapButton = $('<div id="toggleMapHeatmapButton" class="googleMapIcon" onclick="toggleHeatmap()" align="center"  style="margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/table-heatmap.png" title=\'toggle heatmap\' style="vertical-align: middle;"/></div>')
-
-    toggleHeatmapButton.index = 4
-
-    if ($("#map").height() > 500) {
-        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].insertAt(3, toggleHeatmapButton[0])
-     } else {
-        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].insertAt(3, toggleHeatmapButton[0])
-    }
+    var toggleHeatmapButton = L.control({position: 'bottomright'});
+    toggleHeatmapButton.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'googleMapIcon');
+        div.innerHTML = '<img src="assets/images/icons/table-heatmap.png" title="toggle heatmap"/>';
+        div.onclick = toggleHeatmap;
+        return div;
+    };
+    toggleHeatmapButton.addTo(map);
 }
+
 
 function LinkHistoryControl(controlDiv, map) {
     // Set CSS for the control border.

@@ -210,13 +210,13 @@ function clearMarkerEntry(markerEntry) {
     
     //remove all markers
     $.each(markerEntry.markers, function(key, marker) {
-        marker.setMap(null)
+        map.removeLayer(marker)
     })
 }
 
 function clearPathEntry(pathEntry) {
-    pathEntry.path.setMap(null)
-    pathEntry.shadow.setMap(null)
+    map.removeLayer(pathEntry.path)
+    map.removeLayer(pathEntry.shadow)
 }
 
 function clearAllPaths() {
@@ -232,13 +232,13 @@ function clearAllPaths() {
     flightMarkers = {}
     
     $.each(polylines, function(index, polyline) {
-        if (polyline.getMap() != null) {
-            polyline.setMap(null)
+        if (map.hasLayer(polyline)) {
+            map.removeLayer(polyline)
         }
     })
     
     polylines = polylines.filter(function(polyline) { 
-        return polyline.getMap() != null
+        return map.hasLayer(polyline)
     })
 }
 
@@ -299,36 +299,28 @@ function drawFlightPath(link, linkColor) {
    if (!linkColor) {
        linkColor = getLinkColor(link.profit, link.revenue) 
    }
-   var flightPath = new google.maps.Polyline({
-     path: [{lat: link.fromLatitude, lng: link.fromLongitude}, {lat: link.toLatitude, lng: link.toLongitude}],
-     geodesic: true,
-     strokeColor: linkColor,
-     strokeOpacity: pathOpacityByStyle[currentStyles].normal,
-     strokeWeight: 2,
+   var flightPath = L.polyline([[{lat: link.fromLatitude, lng: link.fromLongitude}, {lat: link.toLatitude, lng: link.toLongitude}]], {
+     color: linkColor,
+     opacity: pathOpacityByStyle[currentStyles].normal,
+     weight: 2,
      frequency : link.frequency,
      modelId : link.modelId,
      link : link,
-     zIndex: 90
-   });
+   }).addTo(map);
    
    var icon = "assets/images/icons/airplane.png"
    
-   flightPath.setMap(map)
    polylines.push(flightPath)
    
-   var shadowPath = new google.maps.Polyline({
-         path: [{lat: link.fromLatitude, lng: link.fromLongitude}, {lat: link.toLatitude, lng: link.toLongitude}],
-         geodesic: true,
-         map: map,
-         strokeColor: getLinkColor(link.profit, link.revenue),
-         strokeOpacity: 0.001,
-         strokeWeight: 15,
-         zIndex: 100
-       });
+   var shadowPath = L.polyline([[{lat: link.fromLatitude, lng: link.fromLongitude}, {lat: link.toLatitude, lng: link.toLongitude}]], {
+         color: getLinkColor(link.profit, link.revenue),
+         opacity: 0.001,
+         weight: 15,
+       }).addTo(map);
    
    var resultPath = { path : flightPath, shadow : shadowPath }
    if (link.id) {
-      shadowPath.addListener('click', function() {
+      shadowPath.on('click', function() {
                selectLinkFromMap(link.id, false)
       });
       drawFlightMarker(flightPath, link);
@@ -405,19 +397,18 @@ function highlightPath(path, refocus) {
     refocus = refocus || false
     //focus to the from airport
     if (refocus) {
-        map.setCenter(path.getPath().getAt(0))
+        map.setView(path.getLatLngs()[0][0])
     }
 
     
     if (!path.highlighted) { //only highlight again if it's not already done so
-        var originalColorString = path.strokeColor
+        var originalColorString = path.options.color
         //keep track of original values so we can revert...shouldn't there be a better way to just get all options all at once?
         path.originalColor = originalColorString
-        path.originalStrokeWeight = path.strokeWeight
-        path.originalZIndex = path.zIndex
-        path.originalStrokeOpacity = path.strokeOpacity
+        path.originalWeight = path.options.weight
+        path.originalOpacity = path.options.opacity
 
-        path.setOptions({ strokeOpacity : pathOpacityByStyle[currentStyles].highlight })
+        path.setStyle({ opacity : pathOpacityByStyle[currentStyles].highlight })
         var totalFrames = 20
         
         var rgbHexValue = parseInt(originalColorString.substring(1), 16);
@@ -446,7 +437,7 @@ function highlightPath(path, refocus) {
             }
              
             var colorHexString = "#" + redHex + greenHex + blueHex
-            path.setOptions({ strokeColor : colorHexString , strokeWeight : 4, zIndex : 91})
+            path.setStyle({ color : colorHexString , weight : 4})
             
             currentFrame = (currentFrame + 1) % (totalFrames * 2)
             
@@ -460,7 +451,7 @@ function highlightPath(path, refocus) {
 function unhighlightPath(path) {
     window.clearInterval(path.animation)
     path["animation"] = undefined
-    path.setOptions({ strokeColor : path.originalColor , strokeWeight : path.originalStrokeWeight, zIndex : path.originalZIndex, strokeOpacity : path.originalStrokeOpacity})
+    path.setStyle({ color : path.originalColor , weight : path.originalWeight, opacity : path.originalOpacity})
     
     delete path.highlighted
 }
@@ -477,6 +468,23 @@ function toggleMapAnimation() {
 
 //Use the DOM setInterval() function to change the offset of the symbol
 //at fixed intervals.
+//Custom interpolation function
+L.Marker.prototype.interpolate = function(to, duration) {
+    var from = this.getLatLng();
+    var start = Date.now();
+    var timer = setInterval(function() {
+        var t = Date.now() - start;
+        if (t > duration) {
+            clearInterval(timer);
+            this.setLatLng(to);
+            return;
+        }
+        var lat = from.lat + (to.lat - from.lat) * t / duration;
+        var lng = from.lng + (to.lng - from.lng) * t / duration;
+        this.setLatLng([lat, lng]);
+    }.bind(this), 16);
+};
+
 function drawFlightMarker(line, link) {
     var linkId = link.id
     
@@ -487,13 +495,13 @@ function drawFlightMarker(line, link) {
     }
     
     if (currentAnimationStatus && link.assignedAirplanes && link.assignedAirplanes.length > 0) {
-        var from = line.getPath().getAt(0)
-        var to = line.getPath().getAt(1)
-        var image = {
-            url: "assets/images/markers/dot.png",
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(6, 6),
-        };
+        var from = line.getLatLngs()[0][0]
+        var to = line.getLatLngs()[0][1]
+        var image = L.icon({
+            iconUrl: "assets/images/markers/dot.png",
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
+        });
 
 
 
@@ -515,8 +523,7 @@ function drawFlightMarker(line, link) {
 
         var markersOfThisLink = []
         for (i = 0; i < markersRequired; i ++) {
-            var marker = new google.maps.Marker({
-                position: from,
+            var marker = L.marker(from, {
                 icon : image, 
                 totalDuration : link.duration * 2, //round trip
                 elapsedDuration : 0,
@@ -537,45 +544,45 @@ function drawFlightMarker(line, link) {
         var count = 0;
         var animation = window.setInterval(function() {
             $.each(markersOfThisLink, function(key, marker) { 
-                if (count == marker.nextDepartureFrame) {
+                if (count == marker.options.nextDepartureFrame) {
                     if (christmasMarker) {
-                        marker.icon = {
-                                url: randomFlightMarker(),
-                                origin: new google.maps.Point(0, 0),
-                                anchor: new google.maps.Point(6, 6),
-                            };
+                        marker.setIcon(L.icon({
+                                iconUrl: randomFlightMarker(),
+                                iconSize: [12, 12],
+                                iconAnchor: [6, 6]
+                            }));
                     }
-                    marker.status = "forward"
-                    marker.isActive = true
-                    marker.elapsedDuration = 0
-                    marker.setPosition(from)
-                    marker.setMap(map)
-                } else if (marker.isActive) {
-                    marker.elapsedDuration += minsPerInterval
+                    marker.options.status = "forward"
+                    marker.options.isActive = true
+                    marker.options.elapsedDuration = 0
+                    marker.setLatLng(from)
+                    marker.addTo(map)
+                } else if (marker.options.isActive) {
+                    marker.options.elapsedDuration += minsPerInterval
                     
-                    if (marker.elapsedDuration >= marker.totalDuration) { //finished a round trip
-                        //marker.setMap(null)
+                    if (marker.options.elapsedDuration >= marker.options.totalDuration) { //finished a round trip
+                        //marker.remove()
                         fadeOutMarker(marker, animationInterval)
-                        marker.isActive = false
-                        marker.nextDepartureFrame = (marker.nextDepartureFrame + marker.departureInterval) % totalIntervalsPerWeek
+                        marker.options.isActive = false
+                        marker.options.nextDepartureFrame = (marker.options.nextDepartureFrame + marker.options.departureInterval) % totalIntervalsPerWeek
                         //console.log("next departure " + marker.nextDepartureFrame)
                     } else {
-                        if (marker.status === "forward") {
-                             if (marker.elapsedDuration / marker.totalDuration >= 0.45) { //finished forward, now go into turnaround
-                                marker.status = "turnaround"
+                        if (marker.options.status === "forward") {
+                             if (marker.options.elapsedDuration / marker.options.totalDuration >= 0.45) { //finished forward, now go into turnaround
+                                marker.options.status = "turnaround"
                              } else {
-                                var newPosition = google.maps.geometry.spherical.interpolate(from, to, marker.elapsedDuration / marker.totalDuration / 0.45)
-                                marker.setPosition(newPosition)
+                                var newPosition = marker.getLatLng().lat + (to.lat - marker.getLatLng().lat) * (marker.options.elapsedDuration / marker.options.totalDuration / 0.45)
+                                marker.setLatLng([newPosition, marker.getLatLng().lng]);
                              }
                         }
-                        if (marker.status === "turnaround") {
-                             if (marker.elapsedDuration / marker.totalDuration >= 0.55) { //finished turnaround, now go into backward
-                                marker.status = "backward"
+                        if (marker.options.status === "turnaround") {
+                             if (marker.options.elapsedDuration / marker.options.totalDuration >= 0.55) { //finished turnaround, now go into backward
+                                marker.options.status = "backward"
                              }
                         }
-                        if (marker.status === "backward") {
-                            var newPosition = google.maps.geometry.spherical.interpolate(to, from, (marker.elapsedDuration / marker.totalDuration - 0.55) / 0.45)
-                            marker.setPosition(newPosition)
+                        if (marker.options.status === "backward") {
+                            var newPosition = marker.getLatLng().lat + (from.lat - marker.getLatLng().lat) * ((marker.options.elapsedDuration / marker.options.totalDuration - 0.55) / 0.45)
+                            marker.setLatLng([newPosition, marker.getLatLng().lng]);
                         }
 
                     }
@@ -847,7 +854,7 @@ function fadeOutMarker(marker, animationInterval) {
     var opacity = 1.0
     var animation = window.setInterval(function () {
         if (opacity <= 0) {
-            marker.setMap(null)
+            map.removeLayer(marker)
             marker.setOpacity(1)
             window.clearInterval(animation)
         } else {

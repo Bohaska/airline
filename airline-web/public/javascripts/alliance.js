@@ -758,7 +758,7 @@ function showAllianceMap() {
                 var airportMarkers = updateAirportBaseMarkers(allianceBases, alliancePaths)
                 //now add extra listener for alliance airports
                 $.each(airportMarkers, function(key, marker) {
-                        marker.addListener('mouseover', function(event) {
+                        marker.on('mouseover', function(event) {
                             closeAlliancePopups()
                             var baseInfo = marker.baseInfo
                             $("#allianceBasePopup .city").html(getCountryFlagImg(baseInfo.countryCode) + "&nbsp;" + baseInfo.city)
@@ -767,15 +767,11 @@ function showAllianceMap() {
                             $("#allianceBasePopup .airlineName").html(getAirlineLogoImg(baseInfo.airlineId) + "&nbsp;" + baseInfo.airlineName)
                             $("#allianceBasePopup .baseScale").html(baseInfo.scale)
 
-                            var infoWindow = new google.maps.InfoWindow({ maxWidth : 1200});
                             var popup = $("#allianceBasePopup").clone()
                             popup.show()
-                            infoWindow.setContent(popup[0])
-                            //infoWindow.setPosition(event.latLng);
-                            infoWindow.open(map, marker);
-                            map.allianceBasePopup = infoWindow
+                            map.allianceBasePopup = L.popup({ maxWidth : 1200}).setLatLng(event.latlng).setContent(popup[0]).openOn(map);
                         })
-                        marker.addListener('mouseout', function(event) {
+                        marker.on('mouseout', function(event) {
                             closeAlliancePopups()
                         })
                     })
@@ -783,7 +779,7 @@ function showAllianceMap() {
 
                 switchMap();
                 $("#worldMapCanvas").data("initCallback", function() { //if go back to world map, re-init the map
-                        map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+                        map.removeControl(map.exitButton)
                         clearAllPaths()
                         updateAirportMarkers(activeAirline)
                         updateLinksInfo() //redraw all flight paths
@@ -806,15 +802,16 @@ function showAllianceMap() {
 }
 
 function addExitButton() {
-    if (map.controls[google.maps.ControlPosition.TOP_CENTER].getLength() > 0) {
-        map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+    if (map.exitButton) {
+        map.removeControl(map.exitButton)
     }
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(createMapButton(map, 'Exit Alliance Flight Map', 'hideAllianceMap()', 'hideAllianceMapButton')[0]);
+    map.exitButton = createMapButton(map, 'Exit Alliance Flight Map', 'hideAllianceMap()', 'hideAllianceMapButton');
+    map.addControl(map.exitButton);
 }
 
 function drawAllianceLink(link) {
-    var from = new google.maps.LatLng({lat: link.fromLatitude, lng: link.fromLongitude})
-    var to = new google.maps.LatLng({lat: link.toLatitude, lng: link.toLongitude})
+    var from = [link.fromLatitude, link.fromLongitude]
+    var to = [link.toLatitude, link.toLongitude]
     //var pathKey = link.id
     
     var strokeColor = airlineColors[link.airlineId]
@@ -832,13 +829,10 @@ function drawAllianceLink(link) {
         strokeOpacity = maxOpacity
     }
         
-    var linkPath = new google.maps.Polyline({
-             geodesic: true,
-             strokeColor: strokeColor,
-             strokeOpacity: strokeOpacity,
-             strokeWeight: 2,
-             path: [from, to],
-             zIndex : 90,
+    var linkPath = L.polyline([from, to], {
+             color: strokeColor,
+             opacity: strokeOpacity,
+             weight: 2,
              link : link
         });
         
@@ -846,13 +840,10 @@ function drawAllianceLink(link) {
     var toAirport = getAirportText(link.toAirportCity, link.toAirportCode)
     
     
-    shadowPath = new google.maps.Polyline({
-         geodesic: true,
-         strokeColor: strokeColor,
-         strokeOpacity: 0.0001,
-         strokeWeight: 25,
-         path: [from, to],
-         zIndex : 100,
+    var shadowPath = L.polyline([from, to], {
+         color: strokeColor,
+         opacity: 0.0001,
+         weight: 25,
          fromAirport : fromAirport,
          fromCountry : link.fromCountryCode, 
          toAirport : toAirport,
@@ -865,32 +856,25 @@ function drawAllianceLink(link) {
     linkPath.shadowPath = shadowPath
     
 
-    shadowPath.addListener('mouseover', function(event) {
+    shadowPath.on('mouseover', function(event) {
         if (!map.allianceBasePopup) { //only do this if it is not hovered over base icon. This is a workaround as zIndex does not work - hovering over base icon triggers onmouseover event on the link below the icon
-            $("#linkPopupFrom").html(getCountryFlagImg(this.fromCountry) + "&nbsp;" + this.fromAirport)
-            $("#linkPopupTo").html(getCountryFlagImg(this.toCountry) + "&nbsp;" + this.toAirport)
-            $("#linkPopupCapacity").html(this.capacity)
-            $("#linkPopupAirline").html(getAirlineLogoImg(this.airlineId) + "&nbsp;" + this.airlineName)
+            $("#linkPopupFrom").html(getCountryFlagImg(this.options.fromCountry) + "&nbsp;" + this.options.fromAirport)
+            $("#linkPopupTo").html(getCountryFlagImg(this.options.toCountry) + "&nbsp;" + this.options.toAirport)
+            $("#linkPopupCapacity").html(this.options.capacity)
+            $("#linkPopupAirline").html(getAirlineLogoImg(this.options.airlineId) + "&nbsp;" + this.options.airlineName)
 
-
-            var infowindow = new google.maps.InfoWindow({
-                 maxWidth : 1200});
 
             var popup = $("#linkPopup").clone()
             popup.show()
-            infowindow.setContent(popup[0])
-
-            infowindow.setPosition(event.latLng);
-            infowindow.open(map);
-            map.allianceLinkPopup = infowindow
+            map.allianceLinkPopup = L.popup({ maxWidth : 1200}).setLatLng(event.latlng).setContent(popup[0]).openOn(map);
         }
     })        
-    shadowPath.addListener('mouseout', function(event) {
+    shadowPath.on('mouseout', function(event) {
         closeAllianceLinkPopup()
     })
     
-    linkPath.setMap(map)
-    linkPath.shadowPath.setMap(map)
+    linkPath.addTo(map)
+    linkPath.shadowPath.addTo(map)
     polylines.push(linkPath)
     polylines.push(linkPath.shadowPath)
 
@@ -1105,8 +1089,7 @@ function selectAllianceMission(mission, callback) {
 
 function closeAlliancePopups() {
     if (map.allianceBasePopup) {
-        map.allianceBasePopup.close()
-        map.allianceBasePopup.setMap(null)
+        map.closePopup(map.allianceBasePopup)
         map.allianceBasePopup = undefined
     }
     closeAllianceLinkPopup()
@@ -1114,15 +1097,14 @@ function closeAlliancePopups() {
 
 function closeAllianceLinkPopup() {
     if (map.allianceLinkPopup) {
-        map.allianceLinkPopup.close()
-        map.allianceLinkPopup.setMap(null)
+        map.closePopup(map.allianceLinkPopup)
         map.allianceLinkPopup = undefined
     }
 }
 
 
 function hideAllianceMap() {
-    map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+    map.removeControl(map.exitButton)
     clearAllPaths()
     updateAirportBaseMarkers([]) //revert base markers
     closeAlliancePopups()

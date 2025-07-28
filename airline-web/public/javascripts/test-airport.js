@@ -9,10 +9,15 @@ $( document ).ready(function() {
 })
 
 function initMap() {
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 20, lng: 150.644},
-       zoom : 2
+  map = L.map('map', {
+    center: [20, 150.644],
+       zoom : 2,
+       attributionControl: false,
   });
+  L.maplibreGL({
+        style: 'https://tiles.openfreemap.org/styles/positron',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
   
   getAirports()
   refreshLinks()
@@ -21,17 +26,15 @@ function initMap() {
 function addMarkers(airports) {
     for (i = 0; i < airports.length; i++) {
           var airportInfo = airports[i]
-          var position = {lat: airportInfo.latitude, lng: airportInfo.longitude};
-          var marker = new google.maps.Marker({
-                position: position,
-                map: map,
+          var position = [airportInfo.latitude, airportInfo.longitude];
+          var marker = L.marker(position, {
                 title: airportInfo.name,
                   airportCode: airportInfo.iata,
                   airportId: airportInfo.id
-              });
+              }).addTo(map);
           
-          marker.addListener('click', function() {
-              var airportId = this.airportId
+          marker.on('click', function(e) {
+              var airportId = e.target.options.airportId
               if (activeInput.is($("#fromAirport"))) {
                   $("#fromAirport").val(airportId)
                   activeInput = $("#toAirport")
@@ -123,10 +126,11 @@ function removeAllLinks() {
     
 }
 
+
 function refreshLinks() {
     //remove all links from UI first
     $.each(flightPaths, function( key, value ) {
-          value.setMap(null)
+          map.removeLayer(value)
         });
     flightPaths = []
     
@@ -147,18 +151,18 @@ function refreshLinks() {
     });
 }
 
+
+
 function drawFlightPath(link) {
-   var flightPath = new google.maps.Polyline({
-     path: [{lat: link.fromLatitude, lng: link.fromLongitude}, {lat: link.toLatitude, lng: link.toLongitude}], 
-     geodesic: true,
-     strokeColor: '#F2B022',
-     strokeOpacity: 1.0,
-     strokeWeight: 2
-                           });
+   var flightPath = L.polyline([[link.fromLatitude, link.fromLongitude], [link.toLatitude, link.toLongitude]], {
+     color: '#F2B022',
+     opacity: 1.0,
+     weight: 2
+   }).addTo(map);
    
-   flightPath.setMap(map)
    flightPaths.push(flightPath)
 }
+
 
 function appendConsole(message) {
     $('#console').append( message + '<br/>')
