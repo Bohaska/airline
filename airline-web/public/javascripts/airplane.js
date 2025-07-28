@@ -7,98 +7,98 @@ var closedAirplaneModals = []
 var currentAirplaneLoadCall
 
 function loadAirplaneModels() {
-	loadedModelsById = {}
-	$.ajax({
-		type: 'GET',
-		url: "airlines/" + activeAirline.id + "/airplane-models",
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: false,
-	    success: function(models) {
-	    	$.each(models, function( key, model ) {
-	    		loadedModelsById[model.id] = model
-	  		});
-	    	//updateModelInfo($('#modelInfo'))
-	    },
+    loadedModelsById = {}
+    $.ajax({
+        type: 'GET',
+        url: "airlines/" + activeAirline.id + "/airplane-models",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(models) {
+            $.each(models, function( key, model ) {
+                loadedModelsById[model.id] = model
+              });
+            //updateModelInfo($('#modelInfo'))
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 
 //load model info on airplanes that matches the model ID
 function loadAirplaneModelOwnerInfoByModelId(modelId) {
     var airlineId = activeAirline.id
-	$.ajax({
-		type: 'GET',
-		url: "airlines/"+ airlineId + "/airplanes/model/" + modelId,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: false,
-	    success: function(result) {
+    $.ajax({
+        type: 'GET',
+        url: "airlines/"+ airlineId + "/airplanes/model/" + modelId,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(result) {
             existingInfo = loadedModelsById[modelId] //find the existing info
             //update the existing info with the newly loaded result
             var newInfo = result[modelId]
             if (newInfo) { //then has owned airplanes with this model
                 existingInfo.assignedAirplanes = newInfo.assignedAirplanes
-	            existingInfo.assignedAirplanes.sort(sortByProperty('condition'))
+                existingInfo.assignedAirplanes.sort(sortByProperty('condition'))
                 existingInfo.availableAirplanes = newInfo.availableAirplanes
                 existingInfo.availableAirplanes.sort(sortByProperty('condition'))
                 existingInfo.constructingAirplanes = newInfo.constructingAirplanes
 
                 existingInfo.totalOwned = existingInfo.assignedAirplanes.length + existingInfo.availableAirplanes.length + existingInfo.constructingAirplanes.length
-	        } else { //no longer owned this model
-	            existingInfo.assignedAirplanes = []
+            } else { //no longer owned this model
+                existingInfo.assignedAirplanes = []
                 existingInfo.availableAirplanes = []
                 existingInfo.constructingAirplanes = []
                 existingInfo.totalOwned = 0
-	        }
-	        existingInfo.isFullLoad = true
+            }
+            existingInfo.isFullLoad = true
         },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 
 //load model info on all airplanes
 function loadAirplaneModelOwnerInfo() {
-	var airlineId = activeAirline.id
-	loadedModelsOwnerInfo = []
-	$.ajax({
-		type: 'GET',
-		url: "airlines/"+ airlineId + "/airplanes?simpleResult=true&groupedResult=true",
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: false,
-	    success: function(ownedModels) { //a list of model with airplanes
-	    	//add airplane ownership info to existing model entries
-	    	$.each(loadedModelsById, function(modelId, model) {
-	    	    var ownedAirplanesInfo = ownedModels[modelId]
-	    	    if (ownedAirplanesInfo) { //then own some airplanes of this model
-	    	        model.assignedAirplanes = ownedAirplanesInfo.assignedAirplanes
-	    	        model.availableAirplanes = ownedAirplanesInfo.availableAirplanes
-	    	        model.constructingAirplanes = ownedAirplanesInfo.constructingAirplanes
-	    	        model.assignedAirplanes.sort(sortByProperty('condition'))
+    var airlineId = activeAirline.id
+    loadedModelsOwnerInfo = []
+    $.ajax({
+        type: 'GET',
+        url: "airlines/"+ airlineId + "/airplanes?simpleResult=true&groupedResult=true",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(ownedModels) { //a list of model with airplanes
+            //add airplane ownership info to existing model entries
+            $.each(loadedModelsById, function(modelId, model) {
+                var ownedAirplanesInfo = ownedModels[modelId]
+                if (ownedAirplanesInfo) { //then own some airplanes of this model
+                    model.assignedAirplanes = ownedAirplanesInfo.assignedAirplanes
+                    model.availableAirplanes = ownedAirplanesInfo.availableAirplanes
+                    model.constructingAirplanes = ownedAirplanesInfo.constructingAirplanes
+                    model.assignedAirplanes.sort(sortByProperty('condition'))
                     model.availableAirplanes.sort(sortByProperty('condition'))
-	    	    } else {
-	    	        model.assignedAirplanes = []
+                } else {
+                    model.assignedAirplanes = []
                     model.availableAirplanes = []
                     model.constructingAirplanes = []
-	    	    }
+                }
                 model.totalOwned = model.assignedAirplanes.length + model.availableAirplanes.length + model.constructingAirplanes.length
-       			loadedModelsOwnerInfo.push(model)
-	    	})
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                   loadedModelsOwnerInfo.push(model)
+            })
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 
@@ -108,110 +108,110 @@ function updateAirplaneModelTable(sortProperty, sortOrder) {
         sortProperty = selectedSortHeader.data('sort-property')
         sortOrder = selectedSortHeader.data('sort-order')
     }
-	//sort the list
-	loadedModelsOwnerInfo.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
-	
-	var airplaneModelTable = $("#airplaneModelTable")
-	airplaneModelTable.children("div.table-row").remove()
-	
-	
-	$.each(loadedModelsOwnerInfo, function(index, modelOwnerInfo) {
-		var row = $("<div class='table-row clickable' data-model-id='" + modelOwnerInfo.id + "' onclick='selectAirplaneModel(loadedModelsById[" + modelOwnerInfo.id + "])'></div>")
-		if (modelOwnerInfo.isFavorite) {
-		    row.append("<div class='cell'>" + modelOwnerInfo.name + "<img src='assets/images/icons/heart.png' height='10px'></div>")
+    //sort the list
+    loadedModelsOwnerInfo.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
+    
+    var airplaneModelTable = $("#airplaneModelTable")
+    airplaneModelTable.children("div.table-row").remove()
+    
+    
+    $.each(loadedModelsOwnerInfo, function(index, modelOwnerInfo) {
+        var row = $("<div class='table-row clickable' data-model-id='" + modelOwnerInfo.id + "' onclick='selectAirplaneModel(loadedModelsById[" + modelOwnerInfo.id + "])'></div>")
+        if (modelOwnerInfo.isFavorite) {
+            row.append("<div class='cell'>" + modelOwnerInfo.name + "<img src='assets/images/icons/heart.png' height='10px'></div>")
         } else {
             row.append("<div class='cell'>" + modelOwnerInfo.name + "</div>")
-		}
-		row.append("<div class='cell'>" + modelOwnerInfo.family + "</div>")
-		row.append("<div class='cell' align='right'>" + commaSeparateNumber(modelOwnerInfo.price) + "</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.capacity + "</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.range + " km</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.fuelBurn + "</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.lifespan / 52 + " yrs</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.speed + " km/h</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.runwayRequirement + " m</div>")
-		row.append("<div class='cell' align='right'>" + modelOwnerInfo.assignedAirplanes.length + "/" + modelOwnerInfo.availableAirplanes.length + "/" + modelOwnerInfo.constructingAirplanes.length + "</div>")
+        }
+        row.append("<div class='cell'>" + modelOwnerInfo.family + "</div>")
+        row.append("<div class='cell' align='right'>" + commaSeparateNumber(modelOwnerInfo.price) + "</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.capacity + "</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.range + " km</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.fuelBurn + "</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.lifespan / 52 + " yrs</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.speed + " km/h</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.runwayRequirement + " m</div>")
+        row.append("<div class='cell' align='right'>" + modelOwnerInfo.assignedAirplanes.length + "/" + modelOwnerInfo.availableAirplanes.length + "/" + modelOwnerInfo.constructingAirplanes.length + "</div>")
 
-		
-		if (selectedModelId == modelOwnerInfo.id) {
-			row.addClass("selected")
-			selectAirplaneModel(modelOwnerInfo)
-		}
-		airplaneModelTable.append(row)
-	});
-	
+        
+        if (selectedModelId == modelOwnerInfo.id) {
+            row.addClass("selected")
+            selectAirplaneModel(modelOwnerInfo)
+        }
+        airplaneModelTable.append(row)
+    });
+    
 }
 
 function updateUsedAirplaneTable(sortProperty, sortOrder) {
-	var usedAirplaneTable = $("#airplaneCanvas #usedAirplaneTable")
-	usedAirplaneTable.children("div.table-row").remove()
-	
-	//sort the list
-	loadedUsedAirplanes.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
-	
-	$.each(loadedUsedAirplanes, function(index, usedAirplane) {
-		var row = $("<div class='table-row'></div>")
-		row.data("airplane", usedAirplane)
-		row.append("<div class='cell'>" + usedAirplane.id + "</div>")
+    var usedAirplaneTable = $("#airplaneCanvas #usedAirplaneTable")
+    usedAirplaneTable.children("div.table-row").remove()
+    
+    //sort the list
+    loadedUsedAirplanes.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
+    
+    $.each(loadedUsedAirplanes, function(index, usedAirplane) {
+        var row = $("<div class='table-row'></div>")
+        row.data("airplane", usedAirplane)
+        row.append("<div class='cell'>" + usedAirplane.id + "</div>")
 
-		row.append("<div class='cell'>" +  getAirlineSpan(usedAirplane.ownerId, usedAirplane.ownerName) + "</div>")
+        row.append("<div class='cell'>" +  getAirlineSpan(usedAirplane.ownerId, usedAirplane.ownerName) + "</div>")
 
-		var priceColor
-		if (usedAirplane.dealerRatio >= 1.1) { //expensive
-		    priceColor = "#D46A6A"
-		} else if (usedAirplane.dealerRatio <= 0.9) { //cheap
-		    priceColor = "#68A357"
-		}
-		var priceDiv = $("<div class='cell' align='right'>$" + commaSeparateNumber(usedAirplane.dealerValue) + "</div>")
-		if (priceColor) {
-		    priceDiv.css("color", priceColor)
-	    }
-		row.append(priceDiv)
-		row.append("<div class='cell' align='right'>" + usedAirplane.condition.toFixed(2) + "%</div>")
-		if (!usedAirplane.rejection) {
-			row.append("<div class='cell' align='right'><img class='clickable' src='assets/images/icons/airplane-plus.png' title='Purchase this airplane' onclick='promptBuyUsedAirplane($(this).closest(\".table-row\").data(\"airplane\"))'></div>")
-		} else {
-			row.append("<div class='cell' align='right'><img src='assets/images/icons/prohibition.png' title='" + usedAirplane.rejection + "'/></div>")
-		}
-		usedAirplaneTable.append(row)
-	});
-	
-	if (loadedUsedAirplanes.length == 0 ) {
-		var row = $("<div class='table-row'></div>")
-		row.append("<div class='cell'>-</div>")
-		row.append("<div class='cell' align='right'>-</div>")
-		row.append("<div class='cell' align='right'>-</div>")
-		row.append("<div class='cell' align='right'>-</div>")
-		row.append("<div class='cell' align='right'></div>")
-		usedAirplaneTable.append(row)
-	}
-	
+        var priceColor
+        if (usedAirplane.dealerRatio >= 1.1) { //expensive
+            priceColor = "#D46A6A"
+        } else if (usedAirplane.dealerRatio <= 0.9) { //cheap
+            priceColor = "#68A357"
+        }
+        var priceDiv = $("<div class='cell' align='right'>$" + commaSeparateNumber(usedAirplane.dealerValue) + "</div>")
+        if (priceColor) {
+            priceDiv.css("color", priceColor)
+        }
+        row.append(priceDiv)
+        row.append("<div class='cell' align='right'>" + usedAirplane.condition.toFixed(2) + "%</div>")
+        if (!usedAirplane.rejection) {
+            row.append("<div class='cell' align='right'><img class='clickable' src='assets/images/icons/airplane-plus.png' title='Purchase this airplane' onclick='promptBuyUsedAirplane($(this).closest(\".table-row\").data(\"airplane\"))'></div>")
+        } else {
+            row.append("<div class='cell' align='right'><img src='assets/images/icons/prohibition.png' title='" + usedAirplane.rejection + "'/></div>")
+        }
+        usedAirplaneTable.append(row)
+    });
+    
+    if (loadedUsedAirplanes.length == 0 ) {
+        var row = $("<div class='table-row'></div>")
+        row.append("<div class='cell'>-</div>")
+        row.append("<div class='cell' align='right'>-</div>")
+        row.append("<div class='cell' align='right'>-</div>")
+        row.append("<div class='cell' align='right'>-</div>")
+        row.append("<div class='cell' align='right'></div>")
+        usedAirplaneTable.append(row)
+    }
+    
 }
 
 function toggleAirplaneModelTableSortOrder(sortHeader) {
-	if (sortHeader.data("sort-order") == "ascending") {
-		sortHeader.data("sort-order", "descending")
-	} else {
-		sortHeader.data("sort-order", "ascending")
-	}
-	
-	sortHeader.siblings().removeClass("selected")
-	sortHeader.addClass("selected")
-	
-	updateAirplaneModelTable(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
+    if (sortHeader.data("sort-order") == "ascending") {
+        sortHeader.data("sort-order", "descending")
+    } else {
+        sortHeader.data("sort-order", "ascending")
+    }
+    
+    sortHeader.siblings().removeClass("selected")
+    sortHeader.addClass("selected")
+    
+    updateAirplaneModelTable(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
 }
 
 function toggleUsedAirplaneTableSortOrder(sortHeader) {
-	if (sortHeader.data("sort-order") == "ascending") {
-		sortHeader.data("sort-order", "descending")
-	} else {
-		sortHeader.data("sort-order", "ascending")
-	}
-	
-	sortHeader.siblings().removeClass("selected")
-	sortHeader.addClass("selected")
-	
-	updateUsedAirplaneTable(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
+    if (sortHeader.data("sort-order") == "ascending") {
+        sortHeader.data("sort-order", "descending")
+    } else {
+        sortHeader.data("sort-order", "ascending")
+    }
+    
+    sortHeader.siblings().removeClass("selected")
+    sortHeader.addClass("selected")
+    
+    updateUsedAirplaneTable(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
 }
 
 function promptBuyUsedAirplane(airplane) {
@@ -284,34 +284,34 @@ function promptBuyAirplane(modelId, condition, price, deliveryTime, explicitHome
 
     $('#buyAirplaneModal .modelName').text(model.name)
     if (deliveryTime == 0) {
-		$('#buyAirplaneModal .delivery').text("immediate")
-		$('#buyAirplaneModal .delivery').removeClass('warning')
-		$('#buyAirplaneModal .add').text('Purchase')
-	} else {
-		$('#buyAirplaneModal .delivery').text(deliveryTime + " weeks")
+        $('#buyAirplaneModal .delivery').text("immediate")
+        $('#buyAirplaneModal .delivery').removeClass('warning')
+        $('#buyAirplaneModal .add').text('Purchase')
+    } else {
+        $('#buyAirplaneModal .delivery').text(deliveryTime + " weeks")
         $('#buyAirplaneModal .delivery').addClass('warning')
         $('#buyAirplaneModal .add').text('Place Order')
-	}
+    }
 
-	$('#buyAirplaneModal .price').text("$" + commaSeparateNumber(price))
-	$('#buyAirplaneModal .condition').text(condition + "%")
+    $('#buyAirplaneModal .price').text("$" + commaSeparateNumber(price))
+    $('#buyAirplaneModal .condition').text(condition + "%")
 
     var quantity = 1;
-	if (multipleAble) {
-	    $('#buyAirplaneModal .quantity .input').val(1)
-	    $('#buyAirplaneModal .quantity .input').on('input', function(e){
-	        quantity = validateAirplaneQuantity()
+    if (multipleAble) {
+        $('#buyAirplaneModal .quantity .input').val(1)
+        $('#buyAirplaneModal .quantity .input').on('input', function(e){
+            quantity = validateAirplaneQuantity()
             updateAirplaneTotalPrice(quantity * price)
         });
-	    $('#buyAirplaneModal .quantity').show()
+        $('#buyAirplaneModal .quantity').show()
 
-	    updateAirplaneTotalPrice(1 * price)
-	    $('#buyAirplaneModal .totalPrice').show()
-	} else {
-	    $('#buyAirplaneModal .quantity').hide()
-	    $('#buyAirplaneModal .totalPrice').hide()
-	    enableButton($('#buyAirplaneModal .add'))
-	}
+        updateAirplaneTotalPrice(1 * price)
+        $('#buyAirplaneModal .totalPrice').show()
+    } else {
+        $('#buyAirplaneModal .quantity').hide()
+        $('#buyAirplaneModal .totalPrice').hide()
+        enableButton($('#buyAirplaneModal .add'))
+    }
 
     var homeOptionsSelect = $("#buyAirplaneModal .homeOptions").empty()
     var hasValidBase = false
@@ -418,223 +418,223 @@ function promptBuyAirplane(modelId, condition, price, deliveryTime, explicitHome
 
 
 function buyAirplane(modelId, quantity, homeAirportId, configurationId, callback) {
-	var airlineId = activeAirline.id
-	var url = "airlines/" + airlineId + "/airplanes?modelId=" + modelId + "&quantity=" + quantity + "&airlineId=" + airlineId + "&homeAirportId=" + homeAirportId + "&configurationId=" + configurationId
-	$.ajax({
-		type: 'PUT',
-		data: JSON.stringify({}),
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(response) {
-	    	refreshPanels(airlineId)
-	    	if (callback) {
-	    		callback()
-	    	} else {
-	    		showAirplaneCanvas()
-	    	}
-	    	closeModal($('#buyAirplaneModal'))
-	    },
+    var airlineId = activeAirline.id
+    var url = "airlines/" + airlineId + "/airplanes?modelId=" + modelId + "&quantity=" + quantity + "&airlineId=" + airlineId + "&homeAirportId=" + homeAirportId + "&configurationId=" + configurationId
+    $.ajax({
+        type: 'PUT',
+        data: JSON.stringify({}),
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(response) {
+            refreshPanels(airlineId)
+            if (callback) {
+                callback()
+            } else {
+                showAirplaneCanvas()
+            }
+            closeModal($('#buyAirplaneModal'))
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
-	    beforeSend: function() {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
+        beforeSend: function() {
             $('body .loadingSpinner').show()
         },
         complete: function(){
             $('body .loadingSpinner').hide()
         }
-	});
+    });
 }
 
 function sellAirplane(airplaneId) {
-	$.ajax({
-		type: 'DELETE',
-		url: "airlines/" + activeAirline.id + "/airplanes/" + airplaneId,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(response) {
-	        refreshPanels(activeAirline.id)
-	    	$("#ownedAirplaneDetailModal").data("hasChange", true)
-	    	showAirplaneCanvas()
-	    	closeModal($('#ownedAirplaneDetailModal'))
-	    },
+    $.ajax({
+        type: 'DELETE',
+        url: "airlines/" + activeAirline.id + "/airplanes/" + airplaneId,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(response) {
+            refreshPanels(activeAirline.id)
+            $("#ownedAirplaneDetailModal").data("hasChange", true)
+            showAirplaneCanvas()
+            closeModal($('#ownedAirplaneDetailModal'))
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
         beforeSend: function() {
              $('body .loadingSpinner').show()
          },
          complete: function(){
              $('body .loadingSpinner').hide()
          }
-	});
+    });
 }
 
 function replaceAirplane(airplaneId) {
-	var airlineId = activeAirline.id
-	var url = "airlines/" + airlineId + "/airplanes/" + airplaneId
-	$.ajax({
-		type: 'PUT',
-		data: JSON.stringify({}),
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(response) {
-	        $("#ownedAirplaneDetailModal").data("hasChange", true)
-	        closeModal($('#ownedAirplaneDetailModal'))
-	        refreshPanels(airlineId)
-	    },
+    var airlineId = activeAirline.id
+    var url = "airlines/" + airlineId + "/airplanes/" + airplaneId
+    $.ajax({
+        type: 'PUT',
+        data: JSON.stringify({}),
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(response) {
+            $("#ownedAirplaneDetailModal").data("hasChange", true)
+            closeModal($('#ownedAirplaneDetailModal'))
+            refreshPanels(airlineId)
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
         beforeSend: function() {
              $('body .loadingSpinner').show()
          },
          complete: function(){
              $('body .loadingSpinner').hide()
          }
-	});
+    });
 }
 
 function buyUsedAirplane(airplaneId, homeAirportId, configurationId) {
-	var airlineId = activeAirline.id
-	var url = "airlines/" + airlineId + "/used-airplanes/airplanes/" + airplaneId + "?homeAirportId=" + homeAirportId + "&configurationId=" + configurationId
-	$.ajax({
-		type: 'PUT',
-		data: JSON.stringify({}),
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(response) {
-	    	refreshPanels(airlineId)
-	    	showAirplaneCanvas()
-	    	closeModal($('#buyAirplaneModal'))
-	    },
+    var airlineId = activeAirline.id
+    var url = "airlines/" + airlineId + "/used-airplanes/airplanes/" + airplaneId + "?homeAirportId=" + homeAirportId + "&configurationId=" + configurationId
+    $.ajax({
+        type: 'PUT',
+        data: JSON.stringify({}),
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(response) {
+            refreshPanels(airlineId)
+            showAirplaneCanvas()
+            closeModal($('#buyAirplaneModal'))
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
         beforeSend: function() {
              $('body .loadingSpinner').show()
         },
         complete: function(){
              $('body .loadingSpinner').hide()
         }
-	});
+    });
 }
 
 
 function updateModelInfo(modelId) {
-	loadAirplaneModels()
-	model = loadedModelsById[modelId]
-	$('#airplaneModelDetails .selectedModel').val(modelId)
-	$('#airplaneModelDetails #modelName').text(model.name)
-	$('#airplaneModelDetails .modelFamily').text(model.family)
-	$('#airplaneModelDetails #capacity').text(model.capacity)
-	$('#airplaneModelDetails #airplaneType').text(model.airplaneType)
-	$('#airplaneModelDetails .turnaroundTime').text(model.turnaroundTime)
-	$('#airplaneModelDetails .runwayRequirement').text(model.runwayRequirement)
-	$('#airplaneModelDetails #fuelBurn').text(model.fuelBurn)
-	$('#airplaneModelDetails #range').text(model.range + "km")
-	$('#airplaneModelDetails #speed').text(model.speed + "km/h")
-	$('#airplaneModelDetails #lifespan').text(model.lifespan / 52 + " years")
+    loadAirplaneModels()
+    model = loadedModelsById[modelId]
+    $('#airplaneModelDetails .selectedModel').val(modelId)
+    $('#airplaneModelDetails #modelName').text(model.name)
+    $('#airplaneModelDetails .modelFamily').text(model.family)
+    $('#airplaneModelDetails #capacity').text(model.capacity)
+    $('#airplaneModelDetails #airplaneType').text(model.airplaneType)
+    $('#airplaneModelDetails .turnaroundTime').text(model.turnaroundTime)
+    $('#airplaneModelDetails .runwayRequirement').text(model.runwayRequirement)
+    $('#airplaneModelDetails #fuelBurn').text(model.fuelBurn)
+    $('#airplaneModelDetails #range').text(model.range + "km")
+    $('#airplaneModelDetails #speed').text(model.speed + "km/h")
+    $('#airplaneModelDetails #lifespan').text(model.lifespan / 52 + " years")
 
-	var $manufacturerSpan = $('<span>' + model.manufacturer + '&nbsp;</span>')
-	$manufacturerSpan.append(getCountryFlagImg(model.countryCode))
-	$('#airplaneModelDetails .manufacturer').empty()
-	$('#airplaneModelDetails .manufacturer').append($manufacturerSpan)
-	$('#airplaneModelDetails .price').text("$" + commaSeparateNumber(model.price))
-	
-	if (model.constructionTime == 0) {
-		$('#airplaneModelDetails .delivery').text("immediate")
-		$('#airplaneModelDetails .delivery').removeClass('warning')
-		$('#airplaneModelDetails .add').text('Purchase')
-	} else {
-		$('#airplaneModelDetails .delivery').text(model.constructionTime + " weeks")
-		$('#airplaneModelDetails .delivery').addClass('warning')
-		$('#airplaneModelDetails .add').text('Place Order')
-	}
-	
-	if (model.rejection) {
-		disableButton($('#airplaneModelDetails .add'), model.rejection)
-	} else {
-		enableButton($('#airplaneModelDetails .add'))
-	}
+    var $manufacturerSpan = $('<span>' + model.manufacturer + '&nbsp;</span>')
+    $manufacturerSpan.append(getCountryFlagImg(model.countryCode))
+    $('#airplaneModelDetails .manufacturer').empty()
+    $('#airplaneModelDetails .manufacturer').append($manufacturerSpan)
+    $('#airplaneModelDetails .price').text("$" + commaSeparateNumber(model.price))
+    
+    if (model.constructionTime == 0) {
+        $('#airplaneModelDetails .delivery').text("immediate")
+        $('#airplaneModelDetails .delivery').removeClass('warning')
+        $('#airplaneModelDetails .add').text('Purchase')
+    } else {
+        $('#airplaneModelDetails .delivery').text(model.constructionTime + " weeks")
+        $('#airplaneModelDetails .delivery').addClass('warning')
+        $('#airplaneModelDetails .add').text('Place Order')
+    }
+    
+    if (model.rejection) {
+        disableButton($('#airplaneModelDetails .add'), model.rejection)
+    } else {
+        enableButton($('#airplaneModelDetails .add'))
+    }
 }
 
 function selectAirplaneModel(model) {
-	selectedModel = model
-	selectedModelId = model.id
-	$("#airplaneCanvas #airplaneModelTable div.selected").removeClass("selected")
-	//highlight the selected model
-	$("#airplaneCanvas #airplaneModelTable div[data-model-id='" + model.id +"']").addClass("selected")
-	
-	loadUsedAirplanes(model)
+    selectedModel = model
+    selectedModelId = model.id
+    $("#airplaneCanvas #airplaneModelTable div.selected").removeClass("selected")
+    //highlight the selected model
+    $("#airplaneCanvas #airplaneModelTable div[data-model-id='" + model.id +"']").addClass("selected")
+    
+    loadUsedAirplanes(model)
 
 
-	//show basic airplane model details
-	//model = loadedModels[modelId]
-	if (model.imageUrl) {
-		var imageLocation = 'assets/images/airplanes/' + model.name.replace(/\s+/g, '-').toLowerCase() + '.png'
-		$('#airplaneCanvas .modelIllustration img').attr('src', imageLocation)
-		$('#airplaneCanvas .modelIllustration a').attr('href', model.imageUrl)
-		$('#airplaneCanvas .modelIllustration').show()
-	} else {
-		$('#airplaneCanvas .modelIllustration').hide()
-	}
-	
-	$('#airplaneCanvas .selectedModel').val(model.id)
-	$('#airplaneCanvas .modelName').text(model.name)
-	$('#airplaneCanvas .modelFamily').text(model.family)
-	$('#airplaneCanvas #capacity').text(model.capacity)
-	$('#airplaneCanvas #airplaneType').text(model.airplaneType)
-	$('#airplaneCanvas .turnaroundTime').text(model.turnaroundTime)
-	$('#airplaneCanvas .runwayRequirement').text(model.runwayRequirement)
-	$('#airplaneCanvas #fuelBurn').text(model.fuelBurn)
-	$('#airplaneCanvas #range').text(model.range + " km")
-	$('#airplaneCanvas #speed').text(model.speed + " km/h")
-	$('#airplaneCanvas #lifespan').text(model.lifespan / 52 + " years")
+    //show basic airplane model details
+    //model = loadedModels[modelId]
+    if (model.imageUrl) {
+        var imageLocation = 'assets/images/airplanes/' + model.name.replace(/\s+/g, '-').toLowerCase() + '.png'
+        $('#airplaneCanvas .modelIllustration img').attr('src', imageLocation)
+        $('#airplaneCanvas .modelIllustration a').attr('href', model.imageUrl)
+        $('#airplaneCanvas .modelIllustration').show()
+    } else {
+        $('#airplaneCanvas .modelIllustration').hide()
+    }
+    
+    $('#airplaneCanvas .selectedModel').val(model.id)
+    $('#airplaneCanvas .modelName').text(model.name)
+    $('#airplaneCanvas .modelFamily').text(model.family)
+    $('#airplaneCanvas #capacity').text(model.capacity)
+    $('#airplaneCanvas #airplaneType').text(model.airplaneType)
+    $('#airplaneCanvas .turnaroundTime').text(model.turnaroundTime)
+    $('#airplaneCanvas .runwayRequirement').text(model.runwayRequirement)
+    $('#airplaneCanvas #fuelBurn').text(model.fuelBurn)
+    $('#airplaneCanvas #range').text(model.range + " km")
+    $('#airplaneCanvas #speed').text(model.speed + " km/h")
+    $('#airplaneCanvas #lifespan').text(model.lifespan / 52 + " years")
 
     $('#airplaneCanvas .manufacturer').empty()
     var $manufacturerSpan = $('<span>' + model.manufacturer + '&nbsp;</span>')
     $manufacturerSpan.append(getCountryFlagImg(model.countryCode))
     $('#airplaneCanvas .manufacturer').append($manufacturerSpan)
 
-	if (model.originalPrice) {
-	    var priceSpan = $("<span><span style='text-decoration: line-through'>$" + commaSeparateNumber(model.originalPrice) + "</span>&nbsp;$" + commaSeparateNumber(model.price) + "</span>")
-	    priceSpan.append(getDiscountsTooltip(model.discounts.price))
-	    $('#airplaneCanvas .price').html(priceSpan)
-	} else {
-	    $('#airplaneCanvas .price').text("$" + commaSeparateNumber(model.price))
+    if (model.originalPrice) {
+        var priceSpan = $("<span><span style='text-decoration: line-through'>$" + commaSeparateNumber(model.originalPrice) + "</span>&nbsp;$" + commaSeparateNumber(model.price) + "</span>")
+        priceSpan.append(getDiscountsTooltip(model.discounts.price))
+        $('#airplaneCanvas .price').html(priceSpan)
+    } else {
+        $('#airplaneCanvas .price').text("$" + commaSeparateNumber(model.price))
     }
-	
-	if (model.constructionTime == 0) {
-		$('#airplaneCanvas .delivery').text("immediate")
-		$('#airplaneCanvas .delivery').removeClass('warning')
-		$('#airplaneCanvas .add').text('Purchase')
-	} else {
-	    if (model.originalConstructionTime) {
+    
+    if (model.constructionTime == 0) {
+        $('#airplaneCanvas .delivery').text("immediate")
+        $('#airplaneCanvas .delivery').removeClass('warning')
+        $('#airplaneCanvas .add').text('Purchase')
+    } else {
+        if (model.originalConstructionTime) {
             var deliverySpan = $("<span><span style='text-decoration: line-through'>" + model.originalConstructionTime + " weeks</span>&nbsp;" + model.constructionTime + " weeks</span>")
             deliverySpan.append(getDiscountsTooltip(model.discounts.construction_time))
             $('#airplaneCanvas .delivery').html(deliverySpan)
         } else {
             $('#airplaneCanvas .delivery').text(model.constructionTime + " weeks")
         }
-		$('#airplaneCanvas .delivery').addClass('warning')
-		$('#airplaneCanvas .add').text('Place Order')
-	}
-	if (model.rejection) {
-		disableButton($('#airplaneCanvas .add'), model.rejection)
-	} else {
-		enableButton($('#airplaneCanvas .add'))
-	}
-	loadAirplaneModelStats(model)
+        $('#airplaneCanvas .delivery').addClass('warning')
+        $('#airplaneCanvas .add').text('Place Order')
+    }
+    if (model.rejection) {
+        disableButton($('#airplaneCanvas .add'), model.rejection)
+    } else {
+        enableButton($('#airplaneCanvas .add'))
+    }
+    loadAirplaneModelStats(model)
 
-	$('#airplaneCanvas #airplaneModelDetail').fadeIn(200)
+    $('#airplaneCanvas #airplaneModelDetail').fadeIn(200)
 
 }
 
@@ -664,17 +664,17 @@ function loadAirplaneModelStats(modelInfo) {
         favoriteIcon.hide()
     }
 
-	$.ajax({
-		type: 'GET',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    async: false,
-	    dataType: 'json',
-	    success: function(stats) {
-	    	updateTopOperatorsTable(stats)
-	    	$('#airplaneCanvas .total').text(stats.total)
-	    	if (stats.favorite !== undefined) {
-	    	    favoriteIcon.off() //remove all listeners
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        async: false,
+        dataType: 'json',
+        success: function(stats) {
+            updateTopOperatorsTable(stats)
+            $('#airplaneCanvas .total').text(stats.total)
+            if (stats.favorite !== undefined) {
+                favoriteIcon.off() //remove all listeners
 
                 if (stats.favorite.rejection) {
                     $("#setFavoriteModal").data("rejection", stats.favorite.rejection)
@@ -690,31 +690,31 @@ function loadAirplaneModelStats(modelInfo) {
                 }
 
                 $("#setFavoriteModal").data("model", model)
-	    	}
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function updateTopOperatorsTable(stats) {
     var statsTable = $("#airplaneModelDetail .topOperators")
-	statsTable.children("div.table-row").remove()
+    statsTable.children("div.table-row").remove()
 
 
-	$.each(stats.topAirlines, function(index, entry) {
-		var row = $("<div class='table-row'></div>")
-		var airline = entry.airline
-		row.append("<div class='cell'>" + getAirlineSpan(airline.id, airline.name) + "</div>")
-		row.append("<div class='cell' align='right'>" + entry.airplaneCount + "</div>")
+    $.each(stats.topAirlines, function(index, entry) {
+        var row = $("<div class='table-row'></div>")
+        var airline = entry.airline
+        row.append("<div class='cell'>" + getAirlineSpan(airline.id, airline.name) + "</div>")
+        row.append("<div class='cell' align='right'>" + entry.airplaneCount + "</div>")
 
-		var percentage = (entry.airplaneCount * 100.0 / stats.total).toFixed(2)
-		row.append("<div class='cell' align='right'>" + percentage + "%</div>")
-		statsTable.append(row)
-	});
-	//append total row
+        var percentage = (entry.airplaneCount * 100.0 / stats.total).toFixed(2)
+        row.append("<div class='cell' align='right'>" + percentage + "%</div>")
+        statsTable.append(row)
+    });
+    //append total row
     var row = $("<div style='display:table-row'></div>")
     row.append("<div class='cell' style='border-top: 1px solid #6093e7;'>All</div>")
     row.append("<div class='cell' align='right' style='border-top: 1px solid #6093e7;'>" + stats.total + "</div>")
@@ -723,21 +723,21 @@ function updateTopOperatorsTable(stats) {
 }
 
 function loadUsedAirplanes(modelInfo) {
-	$.ajax({
-		type: 'GET',
-		url: "airlines/" + activeAirline.id + "/used-airplanes/models/" + modelInfo.id,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(usedAirplanes) { 
-	    	loadedUsedAirplanes = usedAirplanes
-	    	var selectedSortHeader = $('#usedAirplaneSortHeader .cell.selected')
-	    	updateUsedAirplaneTable(selectedSortHeader.data("sort-property"), selectedSortHeader.data("sort-order"))
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+    $.ajax({
+        type: 'GET',
+        url: "airlines/" + activeAirline.id + "/used-airplanes/models/" + modelInfo.id,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(usedAirplanes) { 
+            loadedUsedAirplanes = usedAirplanes
+            var selectedSortHeader = $('#usedAirplaneSortHeader .cell.selected')
+            updateUsedAirplaneTable(selectedSortHeader.data("sort-property"), selectedSortHeader.data("sort-order"))
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function toggleUtilizationRate(container, checkbox) {
@@ -940,20 +940,20 @@ function getAirplaneIconImg(airplane, badConditionThreshold, isAssigned) {
             src = 'assets/images/icons/airplane-empty-construct.png'
         }
     } else if (condition < badConditionThreshold) {
-		if (isAssigned) {
-			src = 'assets/images/icons/airplane-exclamation.png'
-		} else {
-			src = 'assets/images/icons/airplane-empty-exclamation.png'
-		}
-	} else {
-		if (isAssigned) {
-			src = 'assets/images/icons/airplane.png'
-		} else {
-			src = 'assets/images/icons/airplane-empty.png'
-		}
-	}
-	img.attr("src", src)
-	return img
+        if (isAssigned) {
+            src = 'assets/images/icons/airplane-exclamation.png'
+        } else {
+            src = 'assets/images/icons/airplane-empty-exclamation.png'
+        }
+    } else {
+        if (isAssigned) {
+            src = 'assets/images/icons/airplane.png'
+        } else {
+            src = 'assets/images/icons/airplane-empty.png'
+        }
+    }
+    img.attr("src", src)
+    return img
 }
 
 function getAirplaneIcon(airplane, badConditionThreshold, explicitIsAssigned) {
@@ -976,7 +976,7 @@ function getAirplaneIcon(airplane, badConditionThreshold, explicitIsAssigned) {
     div.append(img)
 
     //utilization label
-	var utilization = Math.round((airplane.maxFlightMinutes - airplane.availableFlightMinutes) / airplane.maxFlightMinutes * 100)
+    var utilization = Math.round((airplane.maxFlightMinutes - airplane.availableFlightMinutes) / airplane.maxFlightMinutes * 100)
     var color
     if (utilization < 25) {
         color = "#FF9973"
@@ -988,12 +988,12 @@ function getAirplaneIcon(airplane, badConditionThreshold, explicitIsAssigned) {
         color = "#8CB9D9"
     }
 
-	var utilizationDiv = $("<div class='utilization' style='position: absolute; right: 0; bottom: 0; color: #454544; background-color: " + color + "; font-size: 8px; font-weight: bold; display: none;'></div>")
-	utilizationDiv.text(utilization)
-	div.append(utilizationDiv)
+    var utilizationDiv = $("<div class='utilization' style='position: absolute; right: 0; bottom: 0; color: #454544; background-color: " + color + "; font-size: 8px; font-weight: bold; display: none;'></div>")
+    utilizationDiv.text(utilization)
+    div.append(utilizationDiv)
 
-	//condition label
-	if (condition < 20) {
+    //condition label
+    if (condition < 20) {
         color = "#FF9973"
     } else if (condition < 40) {
         color = "#FFC273"
@@ -1109,15 +1109,15 @@ function closeAllAndStoreAirplaneModals() {
 }
 
 function loadOwnedAirplaneDetails(airplaneId, selectedItem, closeCallback, disableChangeHome) {
-	//highlight the selected model
-//	if (selectedItem) {
-//	    selectedItem.addClass("selected")
+    //highlight the selected model
+//    if (selectedItem) {
+//        selectedItem.addClass("selected")
 //    }
-	
-	var airlineId = activeAirline.id 
-	$("#actionAirplaneId").val(airplaneId)
-	var currentCycle
-	$.ajax({
+    
+    var airlineId = activeAirline.id 
+    $("#actionAirplaneId").val(airplaneId)
+    var currentCycle
+    $.ajax({
         type: 'GET',
         url: "current-cycle",
         contentType: 'application/json; charset=utf-8',
@@ -1134,12 +1134,12 @@ function loadOwnedAirplaneDetails(airplaneId, selectedItem, closeCallback, disab
 
     currentAirplaneLoadCall =
     {
-    		type: 'GET',
-    		url: "airlines/" + airlineId + "/airplanes/" + airplaneId,
-    	    contentType: 'application/json; charset=utf-8',
-    	    dataType: 'json',
-    	    success: function(airplane) {
-    	        var model = loadedModelsById[airplane.modelId]
+            type: 'GET',
+            url: "airlines/" + airlineId + "/airplanes/" + airplaneId,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(airplane) {
+                var model = loadedModelsById[airplane.modelId]
                 if (model.imageUrl) {
                     var imageLocation = 'assets/images/airplanes/' + model.name.replace(/\s+/g, '-').toLowerCase() + '.png'
                     $('#ownedAirplaneDetail .modelIllustration img').attr('src', imageLocation)
@@ -1149,61 +1149,61 @@ function loadOwnedAirplaneDetails(airplaneId, selectedItem, closeCallback, disab
                     $('#ownedAirplaneDetail .modelIllustration').hide()
                 }
 
-    	    	$("#airplaneDetailsId").text(airplane.id)
-        		$("#airplaneDetailsCondition").text(airplane.condition.toFixed(2) + "%")
-        		$("#airplaneDetailsCondition").removeClass("warning fatal")
-        		if (airplane.condition < airplane.criticalConditionThreshold) {
-        			$("#airplaneDetailsCondition").addClass("fatal")
-        		} else if (airplane.condition < airplane.badConditionThreshold) {
-        			$("#airplaneDetailsCondition").addClass("warning")
-        		}
-        		var age = currentCycle - airplane.constructedCycle
+                $("#airplaneDetailsId").text(airplane.id)
+                $("#airplaneDetailsCondition").text(airplane.condition.toFixed(2) + "%")
+                $("#airplaneDetailsCondition").removeClass("warning fatal")
+                if (airplane.condition < airplane.criticalConditionThreshold) {
+                    $("#airplaneDetailsCondition").addClass("fatal")
+                } else if (airplane.condition < airplane.badConditionThreshold) {
+                    $("#airplaneDetailsCondition").addClass("warning")
+                }
+                var age = currentCycle - airplane.constructedCycle
 
-        		if (age >= 0) {
-        			$("#airplaneDetailsAge").text(getYearMonthText(age))
-        			$("#airplaneDetailsAgeRow").show()
-        			$("#airplaneDetailsDeliveryRow").hide()
-        		} else {
-        			$("#airplaneDetailsDelivery").text(age * -1 + "week(s)")
-        			$("#airplaneDetailsAgeRow").hide()
-        			$("#airplaneDetailsDeliveryRow").show()
-        		}
-    	    	$("#airplaneDetailsSellValue").text("$" + commaSeparateNumber(airplane.sellValue))
-    	    	var replaceCost = model.price - airplane.sellValue
+                if (age >= 0) {
+                    $("#airplaneDetailsAge").text(getYearMonthText(age))
+                    $("#airplaneDetailsAgeRow").show()
+                    $("#airplaneDetailsDeliveryRow").hide()
+                } else {
+                    $("#airplaneDetailsDelivery").text(age * -1 + "week(s)")
+                    $("#airplaneDetailsAgeRow").hide()
+                    $("#airplaneDetailsDeliveryRow").show()
+                }
+                $("#airplaneDetailsSellValue").text("$" + commaSeparateNumber(airplane.sellValue))
+                var replaceCost = model.price - airplane.sellValue
                 $("#airplaneDetailsReplaceCost").text("$" + commaSeparateNumber(replaceCost))
-    	    	$("#airplaneDetailsLink").empty()
-    	    	if (airplane.links.length > 0) {
-    	    	    $.each(airplane.links, function(index, linkEntry) {
-    	    	        var link = linkEntry.link
-    	    	        var linkDescription = "<div style='display: flex; align-items: center;'>" + getAirportText(link.fromAirportCity, link.fromAirportCode) + "<img src='assets/images/icons/arrow.png'>" + getAirportText(link.toAirportCity, link.toAirportCode) + " " + linkEntry.frequency + " flight(s) per week</div>"
-    	    	        $("#airplaneDetailsLink").append("<div><a data-link='show-link-from-airplane' href='javascript:void(0)' onclick='closeAllAndStoreAirplaneModals(); showWorldMap(); selectLinkFromMap(" + link.id + ", true)'>" + linkDescription + "</a></div>" )
-    	    	        populateNavigation($("#airplaneDetailsLink"))
-    	    	    })
-    	    		disableButton("#sellAirplaneButton", "Cannot sell airplanes with route assigned")
-    	    	} else {
-    	    		$("#airplaneDetailsLink").text("-")
-    	    		if (age >= 0) {
-    	    		    enableButton("#sellAirplaneButton")
-    	    		} else {
-    	    			disableButton("#sellAirplaneButton", "Cannot sell airplanes that are still under construction")
-    	    		}
+                $("#airplaneDetailsLink").empty()
+                if (airplane.links.length > 0) {
+                    $.each(airplane.links, function(index, linkEntry) {
+                        var link = linkEntry.link
+                        var linkDescription = "<div style='display: flex; align-items: center;'>" + getAirportText(link.fromAirportCity, link.fromAirportCode) + "<img src='assets/images/icons/arrow.png'>" + getAirportText(link.toAirportCity, link.toAirportCode) + " " + linkEntry.frequency + " flight(s) per week</div>"
+                        $("#airplaneDetailsLink").append("<div><a data-link='show-link-from-airplane' href='javascript:void(0)' onclick='closeAllAndStoreAirplaneModals(); showWorldMap(); selectLinkFromMap(" + link.id + ", true)'>" + linkDescription + "</a></div>" )
+                        populateNavigation($("#airplaneDetailsLink"))
+                    })
+                    disableButton("#sellAirplaneButton", "Cannot sell airplanes with route assigned")
+                } else {
+                    $("#airplaneDetailsLink").text("-")
+                    if (age >= 0) {
+                        enableButton("#sellAirplaneButton")
+                    } else {
+                        disableButton("#sellAirplaneButton", "Cannot sell airplanes that are still under construction")
+                    }
 
-    	    	}
-    	    	$("#ownedAirplaneDetail .availableFlightMinutes").text(airplane.availableFlightMinutes)
-    	    	populateAirplaneHome(airplane, disableChangeHome)
+                }
+                $("#ownedAirplaneDetail .availableFlightMinutes").text(airplane.availableFlightMinutes)
+                populateAirplaneHome(airplane, disableChangeHome)
 
                 var weeksRemainingBeforeReplacement = airplane.constructionTime - (currentCycle - airplane.purchasedCycle)
-    	    	if (weeksRemainingBeforeReplacement <= 0) {
-    	    	    if (activeAirline.balance < replaceCost) {
-                	    disableButton("#replaceAirplaneButton", "Not enough cash to replace this airplane")
-                	} else {
-    	    	        enableButton("#replaceAirplaneButton")
+                if (weeksRemainingBeforeReplacement <= 0) {
+                    if (activeAirline.balance < replaceCost) {
+                        disableButton("#replaceAirplaneButton", "Not enough cash to replace this airplane")
+                    } else {
+                        enableButton("#replaceAirplaneButton")
                     }
-    	    	} else {
+                } else {
                     disableButton("#replaceAirplaneButton", "Can only replace this airplane " + weeksRemainingBeforeReplacement + " week(s) from now")
-    	    	}
+                }
 
-    	    	$("#ownedAirplaneDetail").data("airplane", airplane)
+                $("#ownedAirplaneDetail").data("airplane", airplane)
 
                 $.ajax({
                     type: 'GET',
@@ -1270,21 +1270,21 @@ function loadOwnedAirplaneDetails(airplaneId, selectedItem, closeCallback, disab
                         $("#ownedAirplaneDetailModal").fadeIn(200)
                     },
                      error: function(jqXHR, textStatus, errorThrown) {
-                    	            console.log(JSON.stringify(jqXHR));
-                    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-                    	    }
+                                    console.log(JSON.stringify(jqXHR));
+                                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                            }
                 });
 
 
 
 
-    	    },
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
-    	}
-	$.ajax(currentAirplaneLoadCall);
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+        }
+    $.ajax(currentAirplaneLoadCall);
 }
 
 function populateAirplaneHome(airplane, disableChangeHome) {
@@ -1339,8 +1339,8 @@ function toggleAirplaneHome() {
 }
 
 function showAirplaneCanvas(restoreClosedModals) {
-	setActiveDiv($("#airplaneCanvas"))
-	highlightTab($('.airplaneCanvasTab'))
+    setActiveDiv($("#airplaneCanvas"))
+    highlightTab($('.airplaneCanvasTab'))
 
     var $selectedTab = $("#airplaneCanvas .detailsSelection.selected")
     selectAirplaneTab($selectedTab)

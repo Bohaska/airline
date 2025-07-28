@@ -1,76 +1,76 @@
 function plotMaintenanceLevelGauge(container, maintenanceLevelInput, onchangeFunction) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var dataSource = { 
-			"chart": {
-		    	"theme": "fint",
-		        "lowerLimit": "0",
-		        "upperLimit": "100",
-		        "showTickMarks": "0",
-		        "showTickValues": "0",
-		        "showborder": "0",
-		        "showtooltip": "0",
-		        "chartBottomMargin": "0",
-		        "bgAlpha":"0",
-		        "containerBackgroundOpacity" :'0',
-		        "valueFontSize": "11",  
-		        "valueFontBold": "0",
-		        "animation": "0",
-		        "editMode": "1",
-		        "decimals": "0",
-		        "baseFontColor": "#FFFFFF"
-		    },
-		    "pointers": {
-		        //Multiple pointers defined here
-		        "pointer": [
-		            {
-		                "bgColor": "#FFE62B",
-		                "bgAlpha": "50",
-		                "showValue": "0",
-		                "sides" : "3",
-		                "borderColor": "#FFE62B",
-		                "borderAlpha": "20",
-		                "value" : maintenanceLevelInput.val()
-		            }
-		        ]
-		    },
-		    "colorRange" : {
-		    	"color": [
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var dataSource = { 
+            "chart": {
+                "theme": "fint",
+                "lowerLimit": "0",
+                "upperLimit": "100",
+                "showTickMarks": "0",
+                "showTickValues": "0",
+                "showborder": "0",
+                "showtooltip": "0",
+                "chartBottomMargin": "0",
+                "bgAlpha":"0",
+                "containerBackgroundOpacity" :'0',
+                "valueFontSize": "11",  
+                "valueFontBold": "0",
+                "animation": "0",
+                "editMode": "1",
+                "decimals": "0",
+                "baseFontColor": "#FFFFFF"
+            },
+            "pointers": {
+                //Multiple pointers defined here
+                "pointer": [
+                    {
+                        "bgColor": "#FFE62B",
+                        "bgAlpha": "50",
+                        "showValue": "0",
+                        "sides" : "3",
+                        "borderColor": "#FFE62B",
+                        "borderAlpha": "20",
+                        "value" : maintenanceLevelInput.val()
+                    }
+                ]
+            },
+            "colorRange" : {
+                "color": [
                       {
-                    	  "minValue": "0",
+                          "minValue": "0",
                           "maxValue": "100",
                           "label": maintenanceLevelInput.val() + "%",
                           "code": "#6baa01"
                       }]
-		    }
-		}
-	var chart = container.insertFusionCharts(
-			{	
-				type: 'hlineargauge',
-				width: '100%',
-		        height: '40px',
-		        dataFormat: 'json',
-			    dataSource: dataSource,
-				events: {
-		            //Event is raised when a real-time gauge or chart completes updating data.
-		            //Where we can get the updated data and display the same.
-		            "realTimeUpdateComplete" : function (evt, arg){
-		                var newLevel = evt.sender.getData(1)
-		                //take the floor
-		                newLevel = Math.floor(newLevel)
-		                dataSource["pointers"]["pointer"][0].value = newLevel
-		                dataSource["colorRange"]["color"][0].label = newLevel + "%"
-		                maintenanceLevelInput.val(newLevel)
-		                container.updateFusionCharts({
-		                	"dataSource": dataSource
-		                });
-		                onchangeFunction(newLevel)
-		            }
-		        }
-			})
-	
+            }
+        }
+    var chart = container.insertFusionCharts(
+            {    
+                type: 'hlineargauge',
+                width: '100%',
+                height: '40px',
+                dataFormat: 'json',
+                dataSource: dataSource,
+                events: {
+                    //Event is raised when a real-time gauge or chart completes updating data.
+                    //Where we can get the updated data and display the same.
+                    "realTimeUpdateComplete" : function (evt, arg){
+                        var newLevel = evt.sender.getData(1)
+                        //take the floor
+                        newLevel = Math.floor(newLevel)
+                        dataSource["pointers"]["pointer"][0].value = newLevel
+                        dataSource["colorRange"]["color"][0].label = newLevel + "%"
+                        maintenanceLevelInput.val(newLevel)
+                        container.updateFusionCharts({
+                            "dataSource": dataSource
+                        });
+                        onchangeFunction(newLevel)
+                    }
+                }
+            })
+    
 }
 
 //unmodifiable seat configuration bar
@@ -148,68 +148,68 @@ function plotSeatConfigurationBar(container, configuration, maxSeats, spaceMulti
 }
 
 function plotSeatConfigurationGauge(container, configuration, maxSeats, spaceMultipliers, callback) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	container.empty()
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    container.empty()
 
-	var chartConfig = {
-                      	    	"theme": "fint",
-                      	        "lowerLimit": "0",
-                      	        "upperLimit": "100",
-                      	        "showTickMarks": "0",
-                      	        "showTickValues": "0",
-                      	        "showborder": "0",
-                      	        "showtooltip": "0",
-                      	        "chartBottomMargin": "0",
-                      	        "bgAlpha":"0",
-                      	        "valueFontSize": "11",
-                      	        "valueFontBold": "0",
-                      	        "animation": "0",
-                      	        "editMode": "0",
-                      	        "pointerBgAlpha":"0",
+    var chartConfig = {
+                                  "theme": "fint",
+                                  "lowerLimit": "0",
+                                  "upperLimit": "100",
+                                  "showTickMarks": "0",
+                                  "showTickValues": "0",
+                                  "showborder": "0",
+                                  "showtooltip": "0",
+                                  "chartBottomMargin": "0",
+                                  "bgAlpha":"0",
+                                  "valueFontSize": "11",
+                                  "valueFontBold": "0",
+                                  "animation": "0",
+                                  "editMode": "0",
+                                  "pointerBgAlpha":"0",
                                   "pointerBorderAlpha":"0",
-                      	        containerBackgroundOpacity :'0',
-                      	        "baseFontColor": "#FFFFFF"
-                      	    }
+                                  containerBackgroundOpacity :'0',
+                                  "baseFontColor": "#FFFFFF"
+                              }
 
 
-	var dataSource = { 
-		"chart": chartConfig
-//	    ,
-//	    "pointers": {
-//	        //Multiple pointers defined here
-//	        "pointer": [
-//	            {
-//	                "bgColor": "#FFE62B",
-//	                "bgAlpha": "50",
-//	                "showValue": "0",
-//	                //"sides" : "4",
-//	                "borderColor": "#FFE62B",
-//	                "borderAlpha": "20",
-//	            },
-//	            {
-//	                "bgColor": "#0077CC",
-//	                "bgAlpha": "50",
-//	                "showValue": "0",
-//	                //"sides" : "3",
-//	                "borderColor": "#0077CC",
-//	                "borderAlpha": "20",
-//	            }
-//	        ]
-//	    }
-	}
-	
-	function updateDataSource(configuration) {
-		var businessPosition = configuration.economy / maxSeats * 100
-		var firstPosition
-		 if (configuration.business == 0) {
-		    firstPosition = businessPosition
-		 } else {
-		    firstPosition = (maxSeats - configuration.first * spaceMultipliers.first) / maxSeats * 100
-		 }
-		dataSource["colorRange"] = {
+    var dataSource = { 
+        "chart": chartConfig
+//        ,
+//        "pointers": {
+//            //Multiple pointers defined here
+//            "pointer": [
+//                {
+//                    "bgColor": "#FFE62B",
+//                    "bgAlpha": "50",
+//                    "showValue": "0",
+//                    //"sides" : "4",
+//                    "borderColor": "#FFE62B",
+//                    "borderAlpha": "20",
+//                },
+//                {
+//                    "bgColor": "#0077CC",
+//                    "bgAlpha": "50",
+//                    "showValue": "0",
+//                    //"sides" : "3",
+//                    "borderColor": "#0077CC",
+//                    "borderAlpha": "20",
+//                }
+//            ]
+//        }
+    }
+    
+    function updateDataSource(configuration) {
+        var businessPosition = configuration.economy / maxSeats * 100
+        var firstPosition
+         if (configuration.business == 0) {
+            firstPosition = businessPosition
+         } else {
+            firstPosition = (maxSeats - configuration.first * spaceMultipliers.first) / maxSeats * 100
+         }
+        dataSource["colorRange"] = {
             "color": [
                       {
                           "minValue": "0",
@@ -234,21 +234,21 @@ function plotSeatConfigurationGauge(container, configuration, maxSeats, spaceMul
                       }
                   ]
               }
-//	    dataSource["pointers"]["pointer"][0].value = firstPosition
-//	    dataSource["pointers"]["pointer"][1].value = businessPosition
-	}
-	
-	updateDataSource(configuration)
+//        dataSource["pointers"]["pointer"][0].value = firstPosition
+//        dataSource["pointers"]["pointer"][1].value = businessPosition
+    }
+    
+    updateDataSource(configuration)
 
-	var chart = container.insertFusionCharts(
-	{	
-		type: 'hlineargauge',
+    var chart = container.insertFusionCharts(
+    {    
+        type: 'hlineargauge',
         width: '100%',
         height: '40px',
         dataFormat: 'json',
         containerBackgroundOpacity :'0',
-	    dataSource: dataSource
-//	    ,
+        dataSource: dataSource
+//        ,
 //        "events": {
 //            "realTimeUpdateComplete" : function (evt, arg){
 //                var firstPosition = evt.sender.getData(1)
@@ -258,15 +258,15 @@ function plotSeatConfigurationGauge(container, configuration, maxSeats, spaceMul
 //                configuration["first"] = Math.floor(tinyAdjustment + maxSeats * (100 - firstPosition) / 100 / spaceMultipliers.first)
 //
 //                if (firstPosition < businessPosition) {  //dragging first past business to the left => eliminate all business
-//                	configuration["business"] = 0
+//                    configuration["business"] = 0
 //                } else {
-//                	configuration["business"] = Math.floor(tinyAdjustment + (maxSeats * (100 - businessPosition) / 100 - configuration["first"] * spaceMultipliers.first) / spaceMultipliers.business)
+//                    configuration["business"] = Math.floor(tinyAdjustment + (maxSeats * (100 - businessPosition) / 100 - configuration["first"] * spaceMultipliers.first) / spaceMultipliers.business)
 //                }
 //
 //                if (businessPosition == 0) { //allow elimination of all economy seats
-//                	configuration["economy"] = 0
+//                    configuration["economy"] = 0
 //                } else {
-//                	configuration["economy"] = Math.floor(tinyAdjustment + (maxSeats - configuration["first"] * spaceMultipliers.first - configuration["business"] * spaceMultipliers.business) / spaceMultipliers.economy)
+//                    configuration["economy"] = Math.floor(tinyAdjustment + (maxSeats - configuration["first"] * spaceMultipliers.first - configuration["business"] * spaceMultipliers.business) / spaceMultipliers.economy)
 //                }
 //
 //
@@ -276,41 +276,41 @@ function plotSeatConfigurationGauge(container, configuration, maxSeats, spaceMul
 //                callback(configuration)
 //
 //                container.updateFusionCharts({
-//                	"dataSource": dataSource
+//                    "dataSource": dataSource
 //                });
 //            }
 //        }
-	})
+    })
 }
 
 function plotAirportShares(airportShares, currentAirportId, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var data = []
-	$.each(airportShares, function(key, airportShare) {
-		var entry = {
-			label : airportShare.airportName,
-			value : airportShare.share
-		}
-//		if (currentAirportId == airportShare.airportId) {
-//			entry["sliced"] = true
-//			entry["selected"] = true
-//		}
-		data.push(entry)
-	})
-	$("#cityPie").insertFusionCharts({
-		type: 'pie2d',
-	    width: '100%',
-	    height: '195',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": {
-	    		"animation": "0",
-	    		"pieRadius": "70",
-	    		"showBorder":"0",
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var data = []
+    $.each(airportShares, function(key, airportShare) {
+        var entry = {
+            label : airportShare.airportName,
+            value : airportShare.share
+        }
+//        if (currentAirportId == airportShare.airportId) {
+//            entry["sliced"] = true
+//            entry["selected"] = true
+//        }
+        data.push(entry)
+    })
+    $("#cityPie").insertFusionCharts({
+        type: 'pie2d',
+        width: '100%',
+        height: '195',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": {
+                "animation": "0",
+                "pieRadius": "70",
+                "showBorder":"0",
                 "use3DLighting": "1",
                 "showPercentInTooltip": "1",
                 "decimals": "2",
@@ -320,10 +320,10 @@ function plotAirportShares(airportShares, currentAirportId, container) {
                 "bgAlpha":"0",
                 "showLabels":"0",
                 "showValues":"0"
-	    	},
-			"data" : data
-	    }
-	})
+            },
+            "data" : data
+        }
+    })
 }
 
 var monthlyWeeksPerMark = 4
@@ -337,25 +337,25 @@ var plotUnitEnum = {
 
 
 function plotLinkProfit(linkConsumptions, container, plotUnit) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var data = []
-	var category = []
-	 
-	var profitByMark = {}
-	var markOrder = []
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var data = []
+    var category = []
+     
+    var profitByMark = {}
+    var markOrder = []
 
-	if (plotUnit === undefined) {
+    if (plotUnit === undefined) {
         plotUnit = plotUnitEnum.MONTH
     }
 
     var maxMark = plotUnit.maxMark
-  	var xLabel
-  	var yLabel
-  	var weeksPerMark = plotUnit.weeksPerMark
-   	switch (plotUnit.value) {
+      var xLabel
+      var yLabel
+      var weeksPerMark = plotUnit.weeksPerMark
+       switch (plotUnit.value) {
         case plotUnitEnum.MONTH.value:
             xLabel = 'Month'
             yLabel = 'Monthly Profit'
@@ -366,25 +366,25 @@ function plotLinkProfit(linkConsumptions, container, plotUnit) {
             break;
     }
 
-	$.each(linkConsumptions, function(index, linkConsumption) {
-		//group in months first
-		var mark = Math.floor(linkConsumption.cycle / weeksPerMark)
-		if (profitByMark[mark] === undefined) {
-			profitByMark[mark] = linkConsumption.profit
-			markOrder.push(mark)
-		} else {
-			profitByMark[mark] += linkConsumption.profit
-		}
-	})
-	
+    $.each(linkConsumptions, function(index, linkConsumption) {
+        //group in months first
+        var mark = Math.floor(linkConsumption.cycle / weeksPerMark)
+        if (profitByMark[mark] === undefined) {
+            profitByMark[mark] = linkConsumption.profit
+            markOrder.push(mark)
+        } else {
+            profitByMark[mark] += linkConsumption.profit
+        }
+    })
+    
 
-	markOrder = markOrder.slice(0, maxMark)
-	$.each(markOrder.reverse(), function(key, mark) {
-		data.push({ value : profitByMark[mark] })
-		category.push({ label : mark.toString() })
-	})
+    markOrder = markOrder.slice(0, maxMark)
+    $.each(markOrder.reverse(), function(key, mark) {
+        data.push({ value : profitByMark[mark] })
+        category.push({ label : mark.toString() })
+    })
 
-	var chartConfig = {
+    var chartConfig = {
                         "xAxisname": xLabel,
                         "yAxisName": yLabel,
                         "numberPrefix": "$",
@@ -400,65 +400,65 @@ function plotLinkProfit(linkConsumptions, container, plotUnit) {
 
     checkDarkTheme(chartConfig)
 
-	var chart = container.insertFusionCharts({
-		type: 'mscombi2d',
-	    width: '100%',
-	    height: '100%',
-	    containerBackgroundOpacity :'0',
-	    dataFormat: 'json',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [ {"data" : data}, {"renderas" : "Line", "data" : data} ]
-	    	            
-	    }
-	})
+    var chart = container.insertFusionCharts({
+        type: 'mscombi2d',
+        width: '100%',
+        height: '100%',
+        containerBackgroundOpacity :'0',
+        dataFormat: 'json',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [ {"data" : data}, {"renderas" : "Line", "data" : data} ]
+                        
+        }
+    })
 }
 
 function plotLinkConsumption(linkConsumptions, ridershipContainer, revenueContainer, priceContainer, plotUnit) {
-	ridershipContainer.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	revenueContainer.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	priceContainer.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var emptySeatsData = []
-	var cancelledSeatsData = []
-	var soldSeatsData = {
-			economy : [],
-			business : [],
-	        first : []
-	}
-	var revenueByClass = {
-			economy : [],
-			business : [],
-	        first : []
-	}
-	
-	var priceByClass = {
-		economy : [],
-		business : [],
+    ridershipContainer.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    revenueContainer.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    priceContainer.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var emptySeatsData = []
+    var cancelledSeatsData = []
+    var soldSeatsData = {
+            economy : [],
+            business : [],
+            first : []
+    }
+    var revenueByClass = {
+            economy : [],
+            business : [],
+            first : []
+    }
+    
+    var priceByClass = {
+        economy : [],
+        business : [],
         first : []
-	}
+    }
 
 
-		
-	var category = []
+        
+    var category = []
 
     if (plotUnit === undefined) {
-	    plotUnit = plotUnitEnum.MONTH
-	}
+        plotUnit = plotUnitEnum.MONTH
+    }
 
-	var maxWeek = plotUnit.maxWeek
-	var weeksPerMark = plotUnit.weeksPerMark
-	var xLabel
-	switch (plotUnit.value) {
+    var maxWeek = plotUnit.maxWeek
+    var weeksPerMark = plotUnit.weeksPerMark
+    var xLabel
+    switch (plotUnit.value) {
       case plotUnitEnum.MONTH.value:
         xLabel = 'Month'
         break;
@@ -468,8 +468,8 @@ function plotLinkConsumption(linkConsumptions, ridershipContainer, revenueContai
     }
 
 
-	if (!jQuery.isEmptyObject(linkConsumptions)) {
-		linkConsumptions = $(linkConsumptions).toArray().slice(0, maxWeek)
+    if (!jQuery.isEmptyObject(linkConsumptions)) {
+        linkConsumptions = $(linkConsumptions).toArray().slice(0, maxWeek)
         var hasCapacity = {} //check if there's any capacity for this link class at all
         hasCapacity.economy = $.grep(linkConsumptions, function(entry, index) {
             return entry.capacity.economy > 0
@@ -481,47 +481,47 @@ function plotLinkConsumption(linkConsumptions, ridershipContainer, revenueContai
             return entry.capacity.first > 0
         }).length > 0
 
-		$.each(linkConsumptions.reverse(), function(key, linkConsumption) {
-			var capacity = linkConsumption.capacity.economy + linkConsumption.capacity.business + linkConsumption.capacity.first
-			var soldSeats = linkConsumption.soldSeats.economy + linkConsumption.soldSeats.business + linkConsumption.soldSeats.first
-			var cancelledSeats = linkConsumption.cancelledSeats.economy + linkConsumption.cancelledSeats.business + linkConsumption.cancelledSeats.first
-			emptySeatsData.push({ value : capacity - soldSeats - cancelledSeats  })
-			cancelledSeatsData.push({ value : cancelledSeats  })
-			
-			soldSeatsData.economy.push({ value : linkConsumption.soldSeats.economy })
-			soldSeatsData.business.push({ value : linkConsumption.soldSeats.business })
-			soldSeatsData.first.push({ value : linkConsumption.soldSeats.first })
-			
-			revenueByClass.economy.push({ value : linkConsumption.price.economy * linkConsumption.soldSeats.economy })
-			revenueByClass.business.push({ value : linkConsumption.price.business * linkConsumption.soldSeats.business })
-			revenueByClass.first.push({ value : linkConsumption.price.first * linkConsumption.soldSeats.first })
+        $.each(linkConsumptions.reverse(), function(key, linkConsumption) {
+            var capacity = linkConsumption.capacity.economy + linkConsumption.capacity.business + linkConsumption.capacity.first
+            var soldSeats = linkConsumption.soldSeats.economy + linkConsumption.soldSeats.business + linkConsumption.soldSeats.first
+            var cancelledSeats = linkConsumption.cancelledSeats.economy + linkConsumption.cancelledSeats.business + linkConsumption.cancelledSeats.first
+            emptySeatsData.push({ value : capacity - soldSeats - cancelledSeats  })
+            cancelledSeatsData.push({ value : cancelledSeats  })
+            
+            soldSeatsData.economy.push({ value : linkConsumption.soldSeats.economy })
+            soldSeatsData.business.push({ value : linkConsumption.soldSeats.business })
+            soldSeatsData.first.push({ value : linkConsumption.soldSeats.first })
+            
+            revenueByClass.economy.push({ value : linkConsumption.price.economy * linkConsumption.soldSeats.economy })
+            revenueByClass.business.push({ value : linkConsumption.price.business * linkConsumption.soldSeats.business })
+            revenueByClass.first.push({ value : linkConsumption.price.first * linkConsumption.soldSeats.first })
 
-			if (hasCapacity.economy) {
-			    priceByClass.economy.push({ value : linkConsumption.price.economy })
-			}
-			if (hasCapacity.business) {
-			    priceByClass.business.push({ value : linkConsumption.price.business })
+            if (hasCapacity.economy) {
+                priceByClass.economy.push({ value : linkConsumption.price.economy })
+            }
+            if (hasCapacity.business) {
+                priceByClass.business.push({ value : linkConsumption.price.business })
             }
             if (hasCapacity.first) {
-			    priceByClass.first.push({ value : linkConsumption.price.first })
-			}
+                priceByClass.first.push({ value : linkConsumption.price.first })
+            }
 
-			var mark = Math.floor(linkConsumption.cycle / weeksPerMark)
-			//var week = linkConsumption.cycle % 4 + 1
-			category.push({ label : mark.toString()})
-		})
-	}
+            var mark = Math.floor(linkConsumption.cycle / weeksPerMark)
+            //var week = linkConsumption.cycle % 4 + 1
+            category.push({ label : mark.toString()})
+        })
+    }
 
-	var chartConfig = {
-                      	    		"xAxisname": xLabel,
-                      	    		"YAxisName": "Seats Consumption",
-                      	    		//"sYAxisName": "Load Factor %",
-                      	    		"sNumberSuffix" : "%",
-                      	            "sYAxisMaxValue" : "100",
-                      	            "transposeAxis":"1",
-                      	    		"useroundedges": "1",
-                      	    		"animation": "0",
-                      	    		"showBorder":"0",
+    var chartConfig = {
+                                      "xAxisname": xLabel,
+                                      "YAxisName": "Seats Consumption",
+                                      //"sYAxisName": "Load Factor %",
+                                      "sNumberSuffix" : "%",
+                                      "sYAxisMaxValue" : "100",
+                                      "transposeAxis":"1",
+                                      "useroundedges": "1",
+                                      "animation": "0",
+                                      "showBorder":"0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "plotBorderAlpha": "10",
@@ -532,40 +532,40 @@ function plotLinkConsumption(linkConsumptions, ridershipContainer, revenueContai
                                       "canvasPadding":"0",
                                       "labelDisplay":"wrap",
                                       "labelStep": weeksPerMark
-                      	    	}
+                                  }
 
-	checkDarkTheme(chartConfig, true)
-	
-	var ridershipChart = ridershipContainer.insertFusionCharts( {
-		type: 'stackedarea2d',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [
-			              {"seriesName": "Sold Seats (Economy)", "data" : soldSeatsData.economy}
-						 ,{"seriesName": "Sold Seats (Business)","data" : soldSeatsData.business}
-						 ,{"seriesName": "Sold Seats (First)", "data" : soldSeatsData.first}
-						 ,{ "seriesName": "Cancelled Seats", "data" : cancelledSeatsData}
-						 ,{ "seriesName": "Empty Seats", "data" : emptySeatsData}			              
-			            //, {"seriesName": "Load Factor", "renderAs" : "line", "parentYAxis": "S", "data" : loadFactorData} 
-			            ]
-	    }
-	})
+    checkDarkTheme(chartConfig, true)
+    
+    var ridershipChart = ridershipContainer.insertFusionCharts( {
+        type: 'stackedarea2d',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [
+                          {"seriesName": "Sold Seats (Economy)", "data" : soldSeatsData.economy}
+                         ,{"seriesName": "Sold Seats (Business)","data" : soldSeatsData.business}
+                         ,{"seriesName": "Sold Seats (First)", "data" : soldSeatsData.first}
+                         ,{ "seriesName": "Cancelled Seats", "data" : cancelledSeatsData}
+                         ,{ "seriesName": "Empty Seats", "data" : emptySeatsData}                          
+                        //, {"seriesName": "Load Factor", "renderAs" : "line", "parentYAxis": "S", "data" : loadFactorData} 
+                        ]
+        }
+    })
 
-	chartConfig = {
-	"xAxisname": xLabel,
-    	    		"YAxisName": "Revenue",
-    	    		//"sYAxisName": "Load Factor %",
-    	    		"sYAxisMaxValue" : "100",
-    	    		"transposeAxis":"1",
-    	    		"useroundedges": "1",
-    	    		"numberPrefix": "$",
-    	    		"animation": "0",
-    	    		"showBorder":"0",
+    chartConfig = {
+    "xAxisname": xLabel,
+                    "YAxisName": "Revenue",
+                    //"sYAxisName": "Load Factor %",
+                    "sYAxisMaxValue" : "100",
+                    "transposeAxis":"1",
+                    "useroundedges": "1",
+                    "numberPrefix": "$",
+                    "animation": "0",
+                    "showBorder":"0",
                     "toolTipBorderRadius": "2",
                     "toolTipPadding": "5",
                     "plotBorderAlpha": "10",
@@ -575,37 +575,37 @@ function plotLinkConsumption(linkConsumptions, ridershipContainer, revenueContai
                     "showValues":"0",
                     "canvasPadding":"0",
                     "labelDisplay":"wrap",
-    	            "labelStep": weeksPerMark}
-	checkDarkTheme(chartConfig, true)
-	
-	var revenueChart = revenueContainer.insertFusionCharts( {
-    	type: 'stackedarea2d',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [
-			              {"seriesName": "Revenue (Economy)", "data" : revenueByClass.economy}
-						 ,{"seriesName": "Revenue (Business)","data" : revenueByClass.business}
-						 ,{"seriesName": "Revenue (First)", "data" : revenueByClass.first}
-			            ]
-	   }	
-	})
+                    "labelStep": weeksPerMark}
+    checkDarkTheme(chartConfig, true)
+    
+    var revenueChart = revenueContainer.insertFusionCharts( {
+        type: 'stackedarea2d',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [
+                          {"seriesName": "Revenue (Economy)", "data" : revenueByClass.economy}
+                         ,{"seriesName": "Revenue (Business)","data" : revenueByClass.business}
+                         ,{"seriesName": "Revenue (First)", "data" : revenueByClass.first}
+                        ]
+       }    
+    })
 
-	chartConfig =  {
-                  	    		"xAxisname": xLabel,
-                  	    		"YAxisName": "Ticket Price",
-                  	    		//"sYAxisName": "Load Factor %",
-                  	    		"numberPrefix": "$",
-                  	    		"sYAxisMaxValue" : "100",
-                  	    		"useroundedges": "1",
-                  	    		"transposeAxis":"1",
-                  	    		"animation": "0",
-                  	    		"showBorder":"0",
-                  	    		"drawAnchors": "0",
+    chartConfig =  {
+                                  "xAxisname": xLabel,
+                                  "YAxisName": "Ticket Price",
+                                  //"sYAxisName": "Load Factor %",
+                                  "numberPrefix": "$",
+                                  "sYAxisMaxValue" : "100",
+                                  "useroundedges": "1",
+                                  "transposeAxis":"1",
+                                  "animation": "0",
+                                  "showBorder":"0",
+                                  "drawAnchors": "0",
                                   "toolTipBorderRadius": "2",
                                   "toolTipPadding": "5",
                                   "paletteColors": "#007849,#0375b4,#ffce00",
@@ -614,55 +614,55 @@ function plotLinkConsumption(linkConsumptions, ridershipContainer, revenueContai
                                   "canvasPadding":"0",
                                   "formatNumberScale" : "0",
                                   "labelDisplay":"wrap",
-                  	            "labelStep": weeksPerMark
-                  	    	}
+                                  "labelStep": weeksPerMark
+                              }
     checkDarkTheme(chartConfig, true)
-	
-	var priceChart = priceContainer.insertFusionCharts( {
-    	type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [
-			              {"seriesName": "Price (Economy)", "data" : priceByClass.economy}
-						 ,{"seriesName": "Price (Business)","data" : priceByClass.business}
-						 ,{"seriesName": "Price (First)", "data" : priceByClass.first}
-			            ]
-	   }	
-	})
+    
+    var priceChart = priceContainer.insertFusionCharts( {
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [
+                          {"seriesName": "Price (Economy)", "data" : priceByClass.economy}
+                         ,{"seriesName": "Price (Business)","data" : priceByClass.business}
+                         ,{"seriesName": "Price (First)", "data" : priceByClass.first}
+                        ]
+       }    
+    })
 }
 
 function plotRivalHistory(rivalHistory, container, cycleHoverFunc, chartOutFunc) {
     container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	var dataByAirlineId = {}
-	var airlineNameByAirlineId = {}
-	var emptySeatsData = []
-	var cancelledSeatsData = []
-	var soldSeatsData = {
-			economy : [],
-			business : [],
-	        first : []
-	}
+          $(this)[0].dispose();
+    }))
+    var dataByAirlineId = {}
+    var airlineNameByAirlineId = {}
+    var emptySeatsData = []
+    var cancelledSeatsData = []
+    var soldSeatsData = {
+            economy : [],
+            business : [],
+            first : []
+    }
 
-	var category = []
+    var category = []
     var xLabel = 'Week'
-	var maxCapacity = 0
+    var maxCapacity = 0
 
-	if (!jQuery.isEmptyObject(rivalHistory)) {
-	    //collect airline ids involved
-		$.each(rivalHistory, function(cycle, linkConsumptionByAirline) {
-		    $.each(linkConsumptionByAirline, function(airlineId, entry) {
-		        airlineNameByAirlineId[airlineId] = entry.airlineName
-		    })
+    if (!jQuery.isEmptyObject(rivalHistory)) {
+        //collect airline ids involved
+        $.each(rivalHistory, function(cycle, linkConsumptionByAirline) {
+            $.each(linkConsumptionByAirline, function(airlineId, entry) {
+                airlineNameByAirlineId[airlineId] = entry.airlineName
+            })
             category.push({ label : cycle, cycle : cycle })
-		})
-		$.each(airlineNameByAirlineId, function(airlineId, airlineName) {
+        })
+        $.each(airlineNameByAirlineId, function(airlineId, airlineName) {
             dataByAirlineId[airlineId] = []
         })
 
@@ -672,7 +672,7 @@ function plotRivalHistory(rivalHistory, container, cycleHoverFunc, chartOutFunc)
                 dataByAirlineId[airlineId].push({ value : passenger, cycle : cycle})
             })
         })
-	}
+    }
 
     var dataset = []
     var paletteColors = []
@@ -718,28 +718,28 @@ function plotRivalHistory(rivalHistory, container, cycleHoverFunc, chartOutFunc)
                           "plotToolText": "$seriesName : $value"
                     }
 
-	checkDarkTheme(chartConfig, true)
+    checkDarkTheme(chartConfig, true)
 
-	//var ridershipChart = container.insertFusionCharts( {
-	var ridershipChart = new FusionCharts( {
-		type: 'stackedcolumn2d',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    renderAt: container[0].id,
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [
+    //var ridershipChart = container.insertFusionCharts( {
+    var ridershipChart = new FusionCharts( {
+        type: 'stackedcolumn2d',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        renderAt: container[0].id,
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [
             {
             "verticallinecolor": "666666",
             "verticallinethickness": "3",
             "alpha": "100",
             "category" : category}],
-			"dataset" : dataset,
+            "dataset" : dataset,
 
-	    },
-	    events : {
+        },
+        events : {
             "dataplotrollover": function (eventObj, dataObj) {
                 if (cycleHoverFunc != null) {
                     cycleHoverFunc(category[dataObj.index].cycle)
@@ -751,30 +751,30 @@ function plotRivalHistory(rivalHistory, container, cycleHoverFunc, chartOutFunc)
                     chartOutFunc()
                 }
             }
-	    }
-	}).render()
-	return ridershipChart
+        }
+    }).render()
+    return ridershipChart
 }
 
 function plotLinkEvent(linkConsumptions, linkEventContainer, cycleHoverFunc, chartOutFunc) {
-	linkEventContainer.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	var emptySeatsData = []
-	var cancelledSeatsData = []
-	var soldSeatsData = {
-			economy : [],
-			business : [],
-	        first : []
-	}
+    linkEventContainer.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    var emptySeatsData = []
+    var cancelledSeatsData = []
+    var soldSeatsData = {
+            economy : [],
+            business : [],
+            first : []
+    }
 
 
-	var category = []
+    var category = []
     var xLabel = 'Week'
-	var maxCapacity = 0
+    var maxCapacity = 0
 
-	if (!jQuery.isEmptyObject(linkConsumptions)) {
-		var hasCapacity = {} //check if there's any capacity for this link class at all
+    if (!jQuery.isEmptyObject(linkConsumptions)) {
+        var hasCapacity = {} //check if there's any capacity for this link class at all
         hasCapacity.economy = $.grep(linkConsumptions, function(entry, index) {
             return entry.capacity.economy > 0
         }).length > 0
@@ -786,39 +786,39 @@ function plotLinkEvent(linkConsumptions, linkEventContainer, cycleHoverFunc, cha
         }).length > 0
 
 
-		$.each(linkConsumptions.reverse(), function(key, linkConsumption) {
-			var capacity = linkConsumption.capacity.economy + linkConsumption.capacity.business + linkConsumption.capacity.first
-			var soldSeats = linkConsumption.soldSeats.economy + linkConsumption.soldSeats.business + linkConsumption.soldSeats.first
-			var cancelledSeats = linkConsumption.cancelledSeats.economy + linkConsumption.cancelledSeats.business + linkConsumption.cancelledSeats.first
-			emptySeatsData.push({ value : capacity - soldSeats - cancelledSeats, cycle : linkConsumption.cycle  })
-			cancelledSeatsData.push({ value : cancelledSeats, cycle : linkConsumption.cycle  })
+        $.each(linkConsumptions.reverse(), function(key, linkConsumption) {
+            var capacity = linkConsumption.capacity.economy + linkConsumption.capacity.business + linkConsumption.capacity.first
+            var soldSeats = linkConsumption.soldSeats.economy + linkConsumption.soldSeats.business + linkConsumption.soldSeats.first
+            var cancelledSeats = linkConsumption.cancelledSeats.economy + linkConsumption.cancelledSeats.business + linkConsumption.cancelledSeats.first
+            emptySeatsData.push({ value : capacity - soldSeats - cancelledSeats, cycle : linkConsumption.cycle  })
+            cancelledSeatsData.push({ value : cancelledSeats, cycle : linkConsumption.cycle  })
 
-			soldSeatsData.economy.push({ value : linkConsumption.soldSeats.economy, cycle : linkConsumption.cycle })
-			soldSeatsData.business.push({ value : linkConsumption.soldSeats.business, cycle : linkConsumption.cycle })
-			soldSeatsData.first.push({ value : linkConsumption.soldSeats.first, cycle : linkConsumption.cycle })
+            soldSeatsData.economy.push({ value : linkConsumption.soldSeats.economy, cycle : linkConsumption.cycle })
+            soldSeatsData.business.push({ value : linkConsumption.soldSeats.business, cycle : linkConsumption.cycle })
+            soldSeatsData.first.push({ value : linkConsumption.soldSeats.first, cycle : linkConsumption.cycle })
 
-			if (capacity > maxCapacity) {
-			    maxCapacity = capacity
-			}
+            if (capacity > maxCapacity) {
+                maxCapacity = capacity
+            }
 
-			//var mark = Math.floor(linkConsumption.cycle / weeksPerMark)
-			//var week = linkConsumption.cycle % 4 + 1
-			category.push({ label : linkConsumption.cycle.toString() , cycle : linkConsumption.cycle })
+            //var mark = Math.floor(linkConsumption.cycle / weeksPerMark)
+            //var week = linkConsumption.cycle % 4 + 1
+            category.push({ label : linkConsumption.cycle.toString() , cycle : linkConsumption.cycle })
 
 
 
-		})
-	}
+        })
+    }
 
-	var chartConfig = {
-                      	    		"xAxisname": xLabel,
-                      	    		"YAxisName": "Seats Consumption",
-                      	    		//"sYAxisName": "Load Factor %",
-                      	    		"YAxisMaxValue" : maxCapacity * 1.2,
-                      	            "transposeAxis":"1",
-                      	    		"useroundedges": "1",
-                      	    		"animation": "0",
-                      	    		"showBorder":"0",
+    var chartConfig = {
+                                      "xAxisname": xLabel,
+                                      "YAxisName": "Seats Consumption",
+                                      //"sYAxisName": "Load Factor %",
+                                      "YAxisMaxValue" : maxCapacity * 1.2,
+                                      "transposeAxis":"1",
+                                      "useroundedges": "1",
+                                      "animation": "0",
+                                      "showBorder":"0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "plotBorderAlpha": "10",
@@ -834,41 +834,41 @@ function plotLinkEvent(linkConsumptions, linkEventContainer, cycleHoverFunc, cha
                                       "showLegend": "0",
                                       "showPlotBorder": "0",
                                       "plotToolText": "$seriesName : $value"
-                      	    	}
+                                  }
 
-	checkDarkTheme(chartConfig, true)
+    checkDarkTheme(chartConfig, true)
 
-	var currentWeekHover = 0
+    var currentWeekHover = 0
 
 
-	//var ridershipChart = linkEventContainer.insertFusionCharts( {
-	var ridershipChart = new FusionCharts( {
-		type: 'stackedcolumn2d',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    renderAt: linkEventContainer[0].id,
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [
+    //var ridershipChart = linkEventContainer.insertFusionCharts( {
+    var ridershipChart = new FusionCharts( {
+        type: 'stackedcolumn2d',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        renderAt: linkEventContainer[0].id,
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [
             {
             "verticallinecolor": "666666",
             "verticallinethickness": "3",
             "alpha": "100",
             "category" : category}],
-			"dataset" : [
-			              {"seriesName": "Sold Seats (Economy)", "type": "economy", "data" : soldSeatsData.economy} //type is just our custom attribute, nothing to do with fusioncharts
-						 ,{"seriesName": "Sold Seats (Business)", "type": "business","data" : soldSeatsData.business}
-						 ,{"seriesName": "Sold Seats (First)", "type": "first", "data" : soldSeatsData.first}
-						 ,{ "seriesName": "Cancelled Seats", "type": "cancelled", "data" : cancelledSeatsData}
-						 ,{ "seriesName": "Empty Seats", "type": "empty", "data" : emptySeatsData, "alpha":"10"}
+            "dataset" : [
+                          {"seriesName": "Sold Seats (Economy)", "type": "economy", "data" : soldSeatsData.economy} //type is just our custom attribute, nothing to do with fusioncharts
+                         ,{"seriesName": "Sold Seats (Business)", "type": "business","data" : soldSeatsData.business}
+                         ,{"seriesName": "Sold Seats (First)", "type": "first", "data" : soldSeatsData.first}
+                         ,{ "seriesName": "Cancelled Seats", "type": "cancelled", "data" : cancelledSeatsData}
+                         ,{ "seriesName": "Empty Seats", "type": "empty", "data" : emptySeatsData, "alpha":"10"}
 
-			            //, {"seriesName": "Load Factor", "renderAs" : "line", "parentYAxis": "S", "data" : loadFactorData}
-			            ],
+                        //, {"seriesName": "Load Factor", "renderAs" : "line", "parentYAxis": "S", "data" : loadFactorData}
+                        ],
 
-	    },
-	    events : {
+        },
+        events : {
             "dataplotrollover": function (eventObj, dataObj) {
                 if (cycleHoverFunc != null) {
                     cycleHoverFunc(category[dataObj.index].cycle)
@@ -880,9 +880,9 @@ function plotLinkEvent(linkConsumptions, linkEventContainer, cycleHoverFunc, cha
                     chartOutFunc()
                 }
             }
-	    }
-	}).render()
-	return ridershipChart
+        }
+    }).render()
+    return ridershipChart
 }
 
 
@@ -966,16 +966,16 @@ var defaultPieColors = {
 
 
 function plotPie(dataSource, currentKey, container, keyName, valueName) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var data = []
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var data = []
 
-	$.each(dataSource, function(key, dataEntry) {
-	    var keyLabel, dataValue
+    $.each(dataSource, function(key, dataEntry) {
+        var keyLabel, dataValue
 
-	    if (keyName && valueName) {
+        if (keyName && valueName) {
             keyLabel = dataEntry[keyName],
             dataValue = dataEntry[valueName]
         } else {
@@ -985,40 +985,40 @@ function plotPie(dataSource, currentKey, container, keyName, valueName) {
 
         var entry = { label : keyLabel, value : dataValue }
 
-		if (dataEntry.color) {
-			entry.color = dataEntry.color
-		} else if (defaultPieColors[keyLabel]) {
-		    entry.color = defaultPieColors[keyLabel]
-		} else {
-		    entry.color = colorFromString(keyLabel)
-		}
-		
-		if (currentKey && keyLabel == currentKey) {
-			entry.issliced = "1"
-		}
-		
-//		if (currentAirportId == airportShare.airportId) {
-//			entry["sliced"] = true
-//			entry["selected"] = true
-//		}
-		data.push(entry)
-	})
+        if (dataEntry.color) {
+            entry.color = dataEntry.color
+        } else if (defaultPieColors[keyLabel]) {
+            entry.color = defaultPieColors[keyLabel]
+        } else {
+            entry.color = colorFromString(keyLabel)
+        }
+        
+        if (currentKey && keyLabel == currentKey) {
+            entry.issliced = "1"
+        }
+        
+//        if (currentAirportId == airportShare.airportId) {
+//            entry["sliced"] = true
+//            entry["selected"] = true
+//        }
+        data.push(entry)
+    })
 
     //sort by value for less chaotic arrangement
-	data.sort(function(a, b){ return a.value - b.value } );
+    data.sort(function(a, b){ return a.value - b.value } );
 
 
-	var ref = container.insertFusionCharts({
-		type: 'pie2d',
-	    width: '100%',
-	    height: '160px',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": {
-	    		"animation": "0",
-	    		"pieRadius": "65",
-	    		"showBorder":"0",
+    var ref = container.insertFusionCharts({
+        type: 'pie2d',
+        width: '100%',
+        height: '160px',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": {
+                "animation": "0",
+                "pieRadius": "65",
+                "showBorder":"0",
                 "use3DLighting": "1",
                 "showPercentInTooltip": "1",
                 "decimals": "2",
@@ -1031,42 +1031,42 @@ function plotPie(dataSource, currentKey, container, keyName, valueName) {
                 "showLabels":"0",
                 "showValues":"0",
                 "plottooltext": "$label - Passengers : $datavalue ($percentValue)"
-	    	},
-			"data" : data
-	    }
-	})
+            },
+            "data" : data
+        }
+    })
 }
 
 function plotIncomeChart(airlineIncomes, period, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var data = {}
-	data["total"] = []
-	data["links"] = []
-	data["transactions"] = []
-	data["others"] = []
-	var category = []
-	 
-	var profitByMonth = {}
-	var monthOrder = []
-	
-	$.each(airlineIncomes, function(key, airlineIncome) {
-		data["total"].push({ value : airlineIncome.totalProfit })
-		data["links"].push({ value : airlineIncome.linksProfit })
-		data["transactions"].push({ value : airlineIncome.transactionsProfit })
-		data["others"].push({ value : airlineIncome.othersProfit })
-		category.push({ "label" : airlineIncome.cycle.toString() })
-	})
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var data = {}
+    data["total"] = []
+    data["links"] = []
+    data["transactions"] = []
+    data["others"] = []
+    var category = []
+     
+    var profitByMonth = {}
+    var monthOrder = []
+    
+    $.each(airlineIncomes, function(key, airlineIncome) {
+        data["total"].push({ value : airlineIncome.totalProfit })
+        data["links"].push({ value : airlineIncome.linksProfit })
+        data["transactions"].push({ value : airlineIncome.transactionsProfit })
+        data["others"].push({ value : airlineIncome.othersProfit })
+        category.push({ "label" : airlineIncome.cycle.toString() })
+    })
 
-	var chartConfig = {
-                  	    		"xAxisname": "Week",
-                  	    		"yAxisName": "Profit",
-                  	    		"numberPrefix": "$",
-                  	    		"useroundedges": "1",
-                  	    		"animation": "1",
-                  	    		"showBorder":"0",
+    var chartConfig = {
+                                  "xAxisname": "Week",
+                                  "yAxisName": "Profit",
+                                  "numberPrefix": "$",
+                                  "useroundedges": "1",
+                                  "animation": "1",
+                                  "showBorder":"0",
                                   "toolTipBorderRadius": "2",
                                   "toolTipPadding": "5",
                                   "bgAlpha":"0",
@@ -1074,54 +1074,54 @@ function plotIncomeChart(airlineIncomes, period, container) {
                                   "showZeroPlane": "1",
                                   "zeroPlaneColor": "#222222",
                                   "zeroPlaneThickness": "2",
-                  	    	}
+                              }
 
 
     checkDarkTheme(chartConfig)
-	
-	var chart = container.insertFusionCharts({
-		type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    containerBackgroundOpacity :'0',
-	    dataFormat: 'json',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [ 
-				{ "seriesname": "Total Income", "data" : data["total"]},
-				{ "seriesname": "Flight Income", "data" : data["links"], "visible" : "0"},
-				{ "seriesname": "Transaction Income", "data" : data["transactions"], "visible" : "0"},
-				{ "seriesname": "Other Income", "data" : data["others"], "visible" : "0"}]
-	    	            
-	    }
-	})
+    
+    var chart = container.insertFusionCharts({
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        containerBackgroundOpacity :'0',
+        dataFormat: 'json',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [ 
+                { "seriesname": "Total Income", "data" : data["total"]},
+                { "seriesname": "Flight Income", "data" : data["links"], "visible" : "0"},
+                { "seriesname": "Transaction Income", "data" : data["transactions"], "visible" : "0"},
+                { "seriesname": "Other Income", "data" : data["others"], "visible" : "0"}]
+                        
+        }
+    })
 }
 
 function plotCashFlowChart(airlineCashFlows, period, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var data = {}
-	data["cashFlow"] = []
-	var category = []
-	 
-	var profitByMonth = {}
-	var monthOrder = []
-	
-	$.each(airlineCashFlows, function(key, airlineCashFlow) {
-		data["cashFlow"].push({ value : airlineCashFlow.totalCashFlow })
-		category.push({ "label" : airlineCashFlow.cycle.toString() })
-	})
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var data = {}
+    data["cashFlow"] = []
+    var category = []
+     
+    var profitByMonth = {}
+    var monthOrder = []
+    
+    $.each(airlineCashFlows, function(key, airlineCashFlow) {
+        data["cashFlow"].push({ value : airlineCashFlow.totalCashFlow })
+        category.push({ "label" : airlineCashFlow.cycle.toString() })
+    })
 
-	var chartConfig = {
-                      	    		"xAxisname": "Week",
-                      	    		"yAxisName": "Profit",
-                      	    		"numberPrefix": "$",
-                      	    		"useroundedges": "1",
-                      	    		"animation": "1",
-                      	    		"showBorder":"0",
+    var chartConfig = {
+                                      "xAxisname": "Week",
+                                      "yAxisName": "Profit",
+                                      "numberPrefix": "$",
+                                      "useroundedges": "1",
+                                      "animation": "1",
+                                      "showBorder":"0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "bgAlpha":"0",
@@ -1129,177 +1129,177 @@ function plotCashFlowChart(airlineCashFlows, period, container) {
                                       "showZeroPlane": "1",
                                       "zeroPlaneColor": "#222222",
                                       "zeroPlaneThickness": "2",
-                      	    	}
+                                  }
     checkDarkTheme(chartConfig)
-	
-	var chart = container.insertFusionCharts({
-		type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [ 
-				{ "seriesname": "Total CashFlow", "data" : data["cashFlow"] }
-			]
-	    }
-	})
+    
+    var chart = container.insertFusionCharts({
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [ 
+                { "seriesname": "Total CashFlow", "data" : data["cashFlow"] }
+            ]
+        }
+    })
 }
 
 function plotOilPriceChart(oilPrices, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
-	
-	var data = []
-	var category = []
-	var total = 0 
-	var count = 0
-	
-	$.each(oilPrices, function(key, oilPrice) {
-		data.push({ value : oilPrice.price })
-		category.push({ "label" : oilPrice.cycle.toString() })
-		total += oilPrice.price
-		count ++;
-	})
-	
-	var average
-	if (count > 0)  {
-		average = total / count
-	} else {
-		average = 0
-	}
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
+    
+    var data = []
+    var category = []
+    var total = 0 
+    var count = 0
+    
+    $.each(oilPrices, function(key, oilPrice) {
+        data.push({ value : oilPrice.price })
+        category.push({ "label" : oilPrice.cycle.toString() })
+        total += oilPrice.price
+        count ++;
+    })
+    
+    var average
+    if (count > 0)  {
+        average = total / count
+    } else {
+        average = 0
+    }
 
-	var chartConfig = {
-                      	    		"xAxisname": "Week",
-                      	    		"yAxisName": "Oil Price Per Barrel",
-                      	    		"numberPrefix": "$",
-                      	    		"useroundedges": "1",
-                      	    		"animation": "1",
-                      	    		"showBorder":"0",
-                      	    		"showValues": "0",
+    var chartConfig = {
+                                      "xAxisname": "Week",
+                                      "yAxisName": "Oil Price Per Barrel",
+                                      "numberPrefix": "$",
+                                      "useroundedges": "1",
+                                      "animation": "1",
+                                      "showBorder":"0",
+                                      "showValues": "0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "bgAlpha":"0",
                                       "drawAnchors": "0",
                                       "setAdaptiveYMin":"1",
                                       "labelStep": "4"
-                      	    	}
+                                  }
     checkDarkTheme(chartConfig)
-	
-	var chart = container.insertFusionCharts({
-		type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    containerBackgroundOpacity :'0',
-	    dataFormat: 'json',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [{ "seriesname": "Price", "data" : data}],
-			"trendlines": [{
-	            "line": [
-	                {
-	                    "startvalue": average,
-	                    "color": "#A1D490",
-	                    "displayvalue": "Average",
-	                    "valueOnRight": "1",
-	                    "thickness": "2"
-	                }
-	            ]
-	        }]
-	    }
-	})
+    
+    var chart = container.insertFusionCharts({
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        containerBackgroundOpacity :'0',
+        dataFormat: 'json',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [{ "seriesname": "Price", "data" : data}],
+            "trendlines": [{
+                "line": [
+                    {
+                        "startvalue": average,
+                        "color": "#A1D490",
+                        "displayvalue": "Average",
+                        "valueOnRight": "1",
+                        "thickness": "2"
+                    }
+                ]
+            }]
+        }
+    })
 }
 
 
 function plotLoanInterestRatesChart(rates, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
 
-	var data = []
-	var category = []
-	var total = 0
-	var count = 0
+    var data = []
+    var category = []
+    var total = 0
+    var count = 0
 
-	$.each(rates, function(key, rate) {
-	    var annualRate = rate.rate * 100 //to percentage based
-		data.push({ value : annualRate.toFixed(1) })
-		category.push({ "label" : rate.cycle.toString() })
-		total += annualRate
-		count ++;
-	})
+    $.each(rates, function(key, rate) {
+        var annualRate = rate.rate * 100 //to percentage based
+        data.push({ value : annualRate.toFixed(1) })
+        category.push({ "label" : rate.cycle.toString() })
+        total += annualRate
+        count ++;
+    })
 
-	var average
-	if (count > 0)  {
-		average = total / count
-	} else {
-		average = 0
-	}
+    var average
+    if (count > 0)  {
+        average = total / count
+    } else {
+        average = 0
+    }
 
-	var chartConfig = {
-                      	    		"xAxisname": "Week",
-                      	    		"yAxisName": "Base Annual Rate",
-                      	    		"numberSuffix": "%",
-                      	    		"useroundedges": "1",
-                      	    		"animation": "1",
-                      	    		"showBorder":"0",
-                      	    		"showValues": "0",
-                      	    		"drawAnchors": "0",
+    var chartConfig = {
+                                      "xAxisname": "Week",
+                                      "yAxisName": "Base Annual Rate",
+                                      "numberSuffix": "%",
+                                      "useroundedges": "1",
+                                      "animation": "1",
+                                      "showBorder":"0",
+                                      "showValues": "0",
+                                      "drawAnchors": "0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "bgAlpha":"0",
                                       "setAdaptiveYMin":"1",
                                       "labelStep": "4"
-                      	    	}
+                                  }
 
     checkDarkTheme(chartConfig)
-	var chart = container.insertFusionCharts({
-		type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : [{ "seriesname": "Rate", "data" : data}],
-			containerBackgroundOpacity :'0',
-			"trendlines": [{
-	            "line": [
-	                {
-	                    "startvalue": average.toFixed(1),
-	                    "color": "#A1D490",
-	                    "displayvalue": "Average",
-	                    "valueOnRight": "1",
-	                    "thickness": "2"
-	                }
-	            ]
-	        }]
-	    }
-	})
+    var chart = container.insertFusionCharts({
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : [{ "seriesname": "Rate", "data" : data}],
+            containerBackgroundOpacity :'0',
+            "trendlines": [{
+                "line": [
+                    {
+                        "startvalue": average.toFixed(1),
+                        "color": "#A1D490",
+                        "displayvalue": "Average",
+                        "valueOnRight": "1",
+                        "thickness": "2"
+                    }
+                ]
+            }]
+        }
+    })
 }
 
 function plotRivalHistoryChart(allRivalLinkConsumptions, priceContainer, linkClass, field, numberPrefix, currentAirlineId) {
-	priceContainer.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
+    priceContainer.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
 
-	var priceByAirline = {}
+    var priceByAirline = {}
 
-	var category = []
+    var category = []
 
-	var maxWeek = 24
-	var weekCount = 0 //the rival with the most week count, usually this is just maxWeek
+    var maxWeek = 24
+    var weekCount = 0 //the rival with the most week count, usually this is just maxWeek
 
     var dataSet = []
     var maxValue = -1
     var minValue = 99999
     if (!jQuery.isEmptyObject(allRivalLinkConsumptions)) { //link consumptions is array (by each rival link) of array (by cycle),
-	    $.each(allRivalLinkConsumptions, function(key, linkConsumptions) {
+        $.each(allRivalLinkConsumptions, function(key, linkConsumptions) {
             if (linkConsumptions.length == 0) {
                 return; //no consumptions yet
             }
@@ -1341,22 +1341,22 @@ function plotRivalHistoryChart(allRivalLinkConsumptions, priceContainer, linkCla
                 }
             }
        })
-	}
+    }
 
 
      var yAxisMax = Math.round(maxValue * 1.1)
      var yAxisMin = Math.round(minValue * 0.8)
 
     var chartConfig = {
-                      	    		"xAxisname": "Month",
-                      	    		//"sYAxisName": "Load Factor %",
-                      	    		"numberPrefix": numberPrefix,
-                      	    		"sYAxisMaxValue" : "100",
-                      	    		"useroundedges": "1",
-                      	    		"transposeAxis":"1",
-                      	    		"animation": "0",
-                      	    		"showBorder":"0",
-                      	    		"drawAnchors": "0",
+                                      "xAxisname": "Month",
+                                      //"sYAxisName": "Load Factor %",
+                                      "numberPrefix": numberPrefix,
+                                      "sYAxisMaxValue" : "100",
+                                      "useroundedges": "1",
+                                      "transposeAxis":"1",
+                                      "animation": "0",
+                                      "showBorder":"0",
+                                      "drawAnchors": "0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "bgAlpha":"0",
@@ -1364,46 +1364,46 @@ function plotRivalHistoryChart(allRivalLinkConsumptions, priceContainer, linkCla
                                       "showValues":"0",
                                       "canvasPadding":"0",
                                       "labelDisplay":"wrap",
-                      	            "labelStep": "4",
-                      	            "formatNumber" : "0",
-                      	            "formatNumberScale" : "0",
-                      	            "yAxisMaxValue": yAxisMax,
+                                      "labelStep": "4",
+                                      "formatNumber" : "0",
+                                      "formatNumberScale" : "0",
+                                      "yAxisMaxValue": yAxisMax,
                                       "yAxisMinValue": yAxisMin
-                      	    	}
-	checkDarkTheme(chartConfig)
-	var priceChart = priceContainer.insertFusionCharts( {
-    	type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : dataSet
-	   }
-	})
+                                  }
+    checkDarkTheme(chartConfig)
+    var priceChart = priceContainer.insertFusionCharts( {
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : dataSet
+       }
+    })
 }
 
 function plotLoyalistHistoryChart(loyalistHistory, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
 
     if (jQuery.isEmptyObject(loyalistHistory)) {
         return
     }
 
-	var category = []
+    var category = []
 
-	var dataSet = []
+    var dataSet = []
 //    var maxValue = -1
 //    var minValue = 99999
     var dataByAirlineId = {}
     var airlineNameByAirlineId = {}
     if (!jQuery.isEmptyObject(loyalistHistory)) { //link consumptions is array (by each rival link) of array (by cycle),
 
-	    $.each(loyalistHistory, function(index, keyValue) {
+        $.each(loyalistHistory, function(index, keyValue) {
             var cycle = keyValue[0]
             var cycleEntries = keyValue[1]
             category.push({ label : cycle.toString()})
@@ -1430,13 +1430,13 @@ function plotLoyalistHistoryChart(loyalistHistory, container) {
 //     var yAxisMax = Math.round(maxValue * 1.1)
 //     var yAxisMin = Math.round(minValue * 0.8)
     var chartConfig = {
-                      	    		"xAxisname": "Week",
-                      	    		"yAxisName": "Loyalist Amount",
-                      	    		"useroundedges": "1",
-                      	    		"transposeAxis":"1",
-                      	    		"animation": "0",
-                      	    		"showBorder":"0",
-                      	    		"drawAnchors": "0",
+                                      "xAxisname": "Week",
+                                      "yAxisName": "Loyalist Amount",
+                                      "useroundedges": "1",
+                                      "transposeAxis":"1",
+                                      "animation": "0",
+                                      "showBorder":"0",
+                                      "drawAnchors": "0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "bgAlpha":"0",
@@ -1446,55 +1446,55 @@ function plotLoyalistHistoryChart(loyalistHistory, container) {
                                       "showValues":"0",
                                       "canvasPadding":"0",
                                       "labelDisplay":"wrap",
-                      	            "labelStep": "4",
-                      	            "formatNumber" : "0",
-                      	            "formatNumberScale" : "0"
-                      //	            "yAxisMaxValue": yAxisMax,
+                                      "labelStep": "4",
+                                      "formatNumber" : "0",
+                                      "formatNumberScale" : "0"
+                      //                "yAxisMaxValue": yAxisMax,
                       //                "yAxisMinValue": yAxisMin
-                      	    	}
+                                  }
     checkDarkTheme(chartConfig)
-	var loyalistHistoryChart = container.insertFusionCharts( {
-    	type: 'logmsline',
-	    width: '100%',
-	    height: '100%',
-	    dataFormat: 'json',
-	    containerBackgroundOpacity :'0',
-		dataSource: {
-	    	"chart": chartConfig,
-	    	"categories" : [{ "category" : category}],
-			"dataset" : dataSet
-	   }
-	})
+    var loyalistHistoryChart = container.insertFusionCharts( {
+        type: 'logmsline',
+        width: '100%',
+        height: '100%',
+        dataFormat: 'json',
+        containerBackgroundOpacity :'0',
+        dataSource: {
+            "chart": chartConfig,
+            "categories" : [{ "category" : category}],
+            "dataset" : dataSet
+       }
+    })
 }
 
 function plotMissionStatsGraph(stats, threshold, container) {
-	container.children(':FusionCharts').each((function(i) {
-		  $(this)[0].dispose();
-	}))
+    container.children(':FusionCharts').each((function(i) {
+          $(this)[0].dispose();
+    }))
 
-	var data = []
-	var category = []
+    var data = []
+    var category = []
 
-	$.each(stats, function(i, entry) {
-		data.push({ value : entry })
-		category.push({ label : "week " + i})
-	})
+    $.each(stats, function(i, entry) {
+        data.push({ value : entry })
+        category.push({ label : "week " + i})
+    })
 
 
-	var chartConfig = {
-                      	    		"xAxisname": "Week",
-                      	    		"yAxisName": "Achieved Value",
-                      	    		"useroundedges": "1",
-                      	    		"animation": "1",
-                      	    		"showBorder":"0",
-                      	    		"showValues": "0",
+    var chartConfig = {
+                                      "xAxisname": "Week",
+                                      "yAxisName": "Achieved Value",
+                                      "useroundedges": "1",
+                                      "animation": "1",
+                                      "showBorder":"0",
+                                      "showValues": "0",
                                       "toolTipBorderRadius": "2",
                                       "toolTipPadding": "5",
                                       "bgAlpha":"0",
                                       "drawAnchors": "0",
                                       "setAdaptiveYMin":"1",
                                       "labelStep": "10"
-                      	    	}
+                                  }
     checkDarkTheme(chartConfig)
 
     var dataSource = {
@@ -1504,26 +1504,26 @@ function plotMissionStatsGraph(stats, threshold, container) {
                     }
     if (threshold) {
         dataSource["trendlines"] = [{
-                             	            "line": [
-                             	                {
-                             	                    "startvalue": threshold,
-                             	                    "color": "#A1D490",
-                             	                    "displayvalue": "Threshold",
-                             	                    "valueOnRight": "1",
-                             	                    "thickness": "2"
-                             	                }
-                             	            ]
-                             	        }]
+                                             "line": [
+                                                 {
+                                                     "startvalue": threshold,
+                                                     "color": "#A1D490",
+                                                     "displayvalue": "Threshold",
+                                                     "valueOnRight": "1",
+                                                     "thickness": "2"
+                                                 }
+                                             ]
+                                         }]
     }
 
-	var chart = container.insertFusionCharts({
-		type: 'msline',
-	    width: '100%',
-	    height: '100%',
-	    containerBackgroundOpacity :'0',
-	    dataFormat: 'json',
-		dataSource: dataSource
-	})
+    var chart = container.insertFusionCharts({
+        type: 'msline',
+        width: '100%',
+        height: '100%',
+        containerBackgroundOpacity :'0',
+        dataFormat: 'json',
+        dataSource: dataSource
+    })
 }
 
 

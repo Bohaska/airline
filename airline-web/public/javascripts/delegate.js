@@ -104,46 +104,46 @@ function updateAirlineDelegateStatus($delegateStatusDiv, successFunction) {
     $delegateStatusDiv.empty()
     var airlineId = activeAirline.id
 
-	$.ajax({
-		type: 'GET',
-		url: "delegates/airline/" + activeAirline.id,
-		contentType: 'application/json; charset=utf-8',
-		dataType: 'json',
-	    success: function(delegateInfo) {
-	        refreshAirlineDelegateStatus($delegateStatusDiv, delegateInfo)
+    $.ajax({
+        type: 'GET',
+        url: "delegates/airline/" + activeAirline.id,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(delegateInfo) {
+            refreshAirlineDelegateStatus($delegateStatusDiv, delegateInfo)
 
             if (successFunction) {
                 successFunction(delegateInfo)
             }
-	    },
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function updateTopBarDelegates(airlineId) {
     $.ajax({
-    		type: 'GET',
-    		url: "airlines/" + airlineId,
-    	    contentType: 'application/json; charset=utf-8',
-    	    dataType: 'json',
-    	    success: function(airline) {
-    	    	refreshTopBarDelegates(airline)
-    	    },
-    	    error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
-    	});
+            type: 'GET',
+            url: "airlines/" + airlineId,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(airline) {
+                refreshTopBarDelegates(airline)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+        });
 }
 
 function refreshTopBarDelegates(airline) {
     $('#topBar .delegatesShortcut').empty()
-	var availableDelegates = airline.delegatesInfo.availableCount
-	var busyDelegates = airline.delegatesInfo.busyDelegates.length
-	var $delegateIconDiv = $('<div style="position: relative; display: inline-block;"></div>').appendTo($('#topBar .delegatesShortcut'))
+    var availableDelegates = airline.delegatesInfo.availableCount
+    var busyDelegates = airline.delegatesInfo.busyDelegates.length
+    var $delegateIconDiv = $('<div style="position: relative; display: inline-block;"></div>').appendTo($('#topBar .delegatesShortcut'))
     var $delegateIcon = $('<img>').appendTo($delegateIconDiv)
 
     if (availableDelegates <= 0) {

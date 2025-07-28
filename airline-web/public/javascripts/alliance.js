@@ -3,7 +3,7 @@ var loadedAlliancesById = {}
 var selectedAlliance
 
 $( document ).ready(function() {
-	loadAllAlliances()
+    loadAllAlliances()
 })
 
 function showAllianceCanvas(selectedAllianceId) {
@@ -11,79 +11,79 @@ function showAllianceCanvas(selectedAllianceId) {
     checkPendingActions()
 
     setActiveDiv($("#allianceCanvas"))
-	highlightTab($('.allianceCanvasTab'))
-	if (!selectedAllianceId) {
+    highlightTab($('.allianceCanvasTab'))
+    if (!selectedAllianceId) {
         if (activeAirline) {
             selectedAllianceId = activeAirline.allianceId
         }
     }
 
-	if (!activeAirline) {
-	    loadAllAlliances(selectedAllianceId)
-		$('#currentAirlineMemberDetails').hide()
-	} else {
-		loadAllAlliances(selectedAllianceId, true)
-		$('#currentAirlineMemberDetails').show()
-	}
+    if (!activeAirline) {
+        loadAllAlliances(selectedAllianceId)
+        $('#currentAirlineMemberDetails').hide()
+    } else {
+        loadAllAlliances(selectedAllianceId, true)
+        $('#currentAirlineMemberDetails').show()
+    }
 }
 
 function loadCurrentAirlineAlliance(callback) {
-	var getUrl = "airlines/" + activeAirline.id + "/alliance-details"
-	$.ajax({
-		type: 'GET',
-		url: getUrl,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: false,
-	    success: function(allianceDetails) {
-	    	callback(allianceDetails)
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+    var getUrl = "airlines/" + activeAirline.id + "/alliance-details"
+    $.ajax({
+        type: 'GET',
+        url: getUrl,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(allianceDetails) {
+            callback(allianceDetails)
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function loadCurrentAirlineMemberDetails(loadedAlliancesById) {
-	$('#currentAirlineMemberDetails .allianceName').show()
-	$('#toggleFormAllianceButton').hide()
-	$('#formAllianceSpan').hide()
-	
-	
-	$('#currentAirlineAllianceHistory').empty()
-	loadCurrentAirlineAlliance(function(allianceDetails) {
-		if (allianceDetails.allianceId) {
-    		var alliance = loadedAlliancesById[allianceDetails.allianceId]
-    		$('#currentAirlineMemberDetails .allianceName').text(alliance.name)
-    		$('#currentAirlineMemberDetails .allianceRole').text(allianceDetails.allianceRole)
-    		if (alliance.ranking) {
-	    		var rankingImg = getRankingImg(alliance.ranking)
-	    		$('#currentAirlineMemberDetails .allianceRanking').html(rankingImg)
-    		} else {
-    			$('#currentAirlineMemberDetails .allianceRanking').text('-')
-    		}
-    		
-    		if (alliance.status == 'Forming') {
-				$("#currentAirlineMemberDetails .allianceStatus").text(alliance.status + " - need 3 approved members")
-			} else {
-				$("#currentAirlineMemberDetails .allianceStatus").text(alliance.status)
-			}
-    		$('#toggleFormAllianceButton').hide()
-    	} else {
-    		$('#currentAirlineMemberDetails .allianceName').text('-')
-    		$('#currentAirlineMemberDetails .allianceRole').text('-')
-    		$('#currentAirlineMemberDetails .allianceRanking').text('-')
-    		$('#currentAirlineMemberDetails .allianceStatus').text('-')
-    		if (activeAirline.headquarterAirport) {
-    			$('#toggleFormAllianceButton').show()
-    		} else {
-    			$('#toggleFormAllianceButton').hide()
-    		}
-    	}
+    $('#currentAirlineMemberDetails .allianceName').show()
+    $('#toggleFormAllianceButton').hide()
+    $('#formAllianceSpan').hide()
+    
+    
+    $('#currentAirlineAllianceHistory').empty()
+    loadCurrentAirlineAlliance(function(allianceDetails) {
+        if (allianceDetails.allianceId) {
+            var alliance = loadedAlliancesById[allianceDetails.allianceId]
+            $('#currentAirlineMemberDetails .allianceName').text(alliance.name)
+            $('#currentAirlineMemberDetails .allianceRole').text(allianceDetails.allianceRole)
+            if (alliance.ranking) {
+                var rankingImg = getRankingImg(alliance.ranking)
+                $('#currentAirlineMemberDetails .allianceRanking').html(rankingImg)
+            } else {
+                $('#currentAirlineMemberDetails .allianceRanking').text('-')
+            }
+            
+            if (alliance.status == 'Forming') {
+                $("#currentAirlineMemberDetails .allianceStatus").text(alliance.status + " - need 3 approved members")
+            } else {
+                $("#currentAirlineMemberDetails .allianceStatus").text(alliance.status)
+            }
+            $('#toggleFormAllianceButton').hide()
+        } else {
+            $('#currentAirlineMemberDetails .allianceName').text('-')
+            $('#currentAirlineMemberDetails .allianceRole').text('-')
+            $('#currentAirlineMemberDetails .allianceRanking').text('-')
+            $('#currentAirlineMemberDetails .allianceStatus').text('-')
+            if (activeAirline.headquarterAirport) {
+                $('#toggleFormAllianceButton').show()
+            } else {
+                $('#toggleFormAllianceButton').hide()
+            }
+        }
 
-    	if (allianceDetails.stats) {
-        	$('#currentAirlineMemberDetails .stats .totalPax').text(toLinkClassValueString(allianceDetails.stats.pax))
+        if (allianceDetails.stats) {
+            $('#currentAirlineMemberDetails .stats .totalPax').text(toLinkClassValueString(allianceDetails.stats.pax))
             $('#currentAirlineMemberDetails .stats .totalLoyalist').text(commaSeparateNumber(allianceDetails.stats.loyalist))
             $('#currentAirlineMemberDetails .stats .totalRevenue').text("$" + commaSeparateNumber(allianceDetails.stats.revenue))
             $('#currentAirlineMemberDetails .stats .totalLoungeVisit').text(commaSeparateNumber(allianceDetails.stats.loungeVisit))
@@ -116,24 +116,24 @@ function loadCurrentAirlineMemberDetails(loadedAlliancesById) {
                 $currentRow.append('<div class="cell">' +  entry.count + '</div>')
             })
 
-    	} else {
-    	    $('#currentAirlineMemberDetails .stats .value').text('-')
-    	}
+        } else {
+            $('#currentAirlineMemberDetails .stats .value').text('-')
+        }
 
         updateAllianceMission(allianceDetails.current, allianceDetails.previous, allianceDetails.isAdmin)
 
-    	
-    	$('#currentAirlineAllianceHistory').children("div.table-row").remove()
-    	if (allianceDetails.history) {
-    		$.each(allianceDetails.history, function(index, entry) {
-    			var row = $("<div class='table-row'><div class='cell value' style='width: 30%;'>Week " + entry.cycle + "</div><div class='cell value' style='width: 70%;'>" + entry.description + "</div></div>")
-    			$('#currentAirlineAllianceHistory').append(row)
-    		})
-    	} else {
-    		var row = $("<div class='table-row'><div class='cell value' style='width: 30%;'>-</div><div class='cell value' style='width: 70%;'>-</div></div>")
-    		$('#currentAirlineAllianceHistory').append(row)
-    	}
-	})
+        
+        $('#currentAirlineAllianceHistory').children("div.table-row").remove()
+        if (allianceDetails.history) {
+            $.each(allianceDetails.history, function(index, entry) {
+                var row = $("<div class='table-row'><div class='cell value' style='width: 30%;'>Week " + entry.cycle + "</div><div class='cell value' style='width: 70%;'>" + entry.description + "</div></div>")
+                $('#currentAirlineAllianceHistory').append(row)
+            })
+        } else {
+            var row = $("<div class='table-row'><div class='cell value' style='width: 30%;'>-</div><div class='cell value' style='width: 70%;'>-</div></div>")
+            $('#currentAirlineAllianceHistory').append(row)
+        }
+    })
 }
 
 function updateAllianceMission(current, previous, isAdmin) {
@@ -167,129 +167,129 @@ function updateAllianceMission(current, previous, isAdmin) {
 }
 
 function loadAllAlliances(selectedAllianceId, loadCurrentAirlineDetails) {
-	var getUrl = "alliances"
-	if (activeAirline) {
-	    getUrl += "?airlineId=" + activeAirline.id
-	}
-	
-	loadedAlliances = []
-	loadedAlliancesById = {}
-	$.ajax({
-		type: 'GET',
-		url: getUrl,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: true,
-	    success: function(alliances) {
-	    	loadedAlliances = alliances
-	    	$.each(alliances, function(index, alliance) {
-	    		loadedAlliancesById[alliance.id] = alliance
-	    		alliance.memberCount = 0
-	    		$.each(alliance.members, function(index, member) {
-	    		    if (member.allianceRole != 'Applicant') {
-	    		        alliance.memberCount ++
-	    		    }
-	    		})
-			if (alliance.leader) {
-	    			alliance.leaderAirlineName = alliance.leader.name
-			} else {
-				alliance.leaderAirlineName = '-'
-			}
-	    		if (alliance.championPoints) {
-	    			alliance.championPointsValue = alliance.championPoints
-	    		} else {
-	    			alliance.championPointsValue = 0
-	    		}
-	    	})
-	    	
-	    	var selectedSortHeader = $('#allianceTableSortHeader .table-header .cell.selected')
-	    	updateAllianceTable(selectedSortHeader.data('sort-property'), selectedSortHeader.data('sort-order'))
-	    	
-	    	if (selectedAlliance) {
-	    		if (!loadedAlliancesById[selectedAlliance.id]) { //alliance was just deleted
-	    			selectedAlliance = undefined
-	    			$('#allianceDetails').hide()
-	    		}
-			} else {
-				$('#allianceDetails').hide()
-			}
+    var getUrl = "alliances"
+    if (activeAirline) {
+        getUrl += "?airlineId=" + activeAirline.id
+    }
+    
+    loadedAlliances = []
+    loadedAlliancesById = {}
+    $.ajax({
+        type: 'GET',
+        url: getUrl,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: true,
+        success: function(alliances) {
+            loadedAlliances = alliances
+            $.each(alliances, function(index, alliance) {
+                loadedAlliancesById[alliance.id] = alliance
+                alliance.memberCount = 0
+                $.each(alliance.members, function(index, member) {
+                    if (member.allianceRole != 'Applicant') {
+                        alliance.memberCount ++
+                    }
+                })
+            if (alliance.leader) {
+                    alliance.leaderAirlineName = alliance.leader.name
+            } else {
+                alliance.leaderAirlineName = '-'
+            }
+                if (alliance.championPoints) {
+                    alliance.championPointsValue = alliance.championPoints
+                } else {
+                    alliance.championPointsValue = 0
+                }
+            })
+            
+            var selectedSortHeader = $('#allianceTableSortHeader .table-header .cell.selected')
+            updateAllianceTable(selectedSortHeader.data('sort-property'), selectedSortHeader.data('sort-order'))
+            
+            if (selectedAlliance) {
+                if (!loadedAlliancesById[selectedAlliance.id]) { //alliance was just deleted
+                    selectedAlliance = undefined
+                    $('#allianceDetails').hide()
+                }
+            } else {
+                $('#allianceDetails').hide()
+            }
 
-			if (loadCurrentAirlineDetails) {
-			    loadCurrentAirlineMemberDetails(loadedAlliancesById)
-			}
+            if (loadCurrentAirlineDetails) {
+                loadCurrentAirlineMemberDetails(loadedAlliancesById)
+            }
 
 
-			if (selectedAllianceId) {
+            if (selectedAllianceId) {
                 selectAlliance(selectedAllianceId, true)
-			}
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
         beforeSend: function() {
             $('body .loadingSpinner').show()
         },
         complete: function(){
             $('body .loadingSpinner').hide()
         }
-	});
+    });
 }
 
 function updateAllianceTable(sortProperty, sortOrder) {
-	var allianceTable = $("#allianceCanvas #allianceTable")
-	
-	allianceTable.children("div.table-row").remove()
-	
-	//sort the list
-	loadedAlliances.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
-	
-	$.each(loadedAlliances, function(index, alliance) {
-		var row = $("<div class='table-row clickable' data-alliance-id='" + alliance.id + "' onclick=\"selectAlliance('" + alliance.id + "')\"></div>")
-//		var countryFlagImg = ""
-//		if (airline.countryCode) {
-//			countryFlagImg = getCountryFlagImg(airline.countryCode)
-//		}
-		row.append("<div class='cell'>" + alliance.name + "</div>")
-		if (alliance.leader) {
-			row.append("<div class='cell'>" + getAirlineSpan(alliance.leader.id, alliance.leader.name) + "</div>")
-		} else {
-			row.append("<div class='cell'>-</div>")
-		}
-		row.append("<div class='cell' align='right'>" + alliance.memberCount + "</div>")
-		if (alliance.championPoints) {
-			row.append("<div class='cell' align='right'>" + alliance.championPoints + "</div>")
-		} else {
-			row.append("<div class='cell' align='right'>-</div>")
-		}
-		
-		if (selectedAlliance && selectedAlliance.id == alliance.id) {
-			row.addClass("selected")
-		}
-		
-		allianceTable.append(row)
-	});
+    var allianceTable = $("#allianceCanvas #allianceTable")
+    
+    allianceTable.children("div.table-row").remove()
+    
+    //sort the list
+    loadedAlliances.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
+    
+    $.each(loadedAlliances, function(index, alliance) {
+        var row = $("<div class='table-row clickable' data-alliance-id='" + alliance.id + "' onclick=\"selectAlliance('" + alliance.id + "')\"></div>")
+//        var countryFlagImg = ""
+//        if (airline.countryCode) {
+//            countryFlagImg = getCountryFlagImg(airline.countryCode)
+//        }
+        row.append("<div class='cell'>" + alliance.name + "</div>")
+        if (alliance.leader) {
+            row.append("<div class='cell'>" + getAirlineSpan(alliance.leader.id, alliance.leader.name) + "</div>")
+        } else {
+            row.append("<div class='cell'>-</div>")
+        }
+        row.append("<div class='cell' align='right'>" + alliance.memberCount + "</div>")
+        if (alliance.championPoints) {
+            row.append("<div class='cell' align='right'>" + alliance.championPoints + "</div>")
+        } else {
+            row.append("<div class='cell' align='right'>-</div>")
+        }
+        
+        if (selectedAlliance && selectedAlliance.id == alliance.id) {
+            row.addClass("selected")
+        }
+        
+        allianceTable.append(row)
+    });
 }
 
 function toggleAllianceTableSortOrder(sortHeader) {
-	if (sortHeader.data("sort-order") == "ascending") {
-		sortHeader.data("sort-order", "descending")
-	} else {
-		sortHeader.data("sort-order", "ascending")
-	}
-	
-	sortHeader.siblings().removeClass("selected")
-	sortHeader.addClass("selected")
-	
-	updateAllianceTable(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
+    if (sortHeader.data("sort-order") == "ascending") {
+        sortHeader.data("sort-order", "descending")
+    } else {
+        sortHeader.data("sort-order", "ascending")
+    }
+    
+    sortHeader.siblings().removeClass("selected")
+    sortHeader.addClass("selected")
+    
+    updateAllianceTable(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
 }
 
 function selectAlliance(allianceId, isScrollToRow) {
-	//update table
-	var $row = $("#allianceCanvas #allianceTable .table-row[data-alliance-id='" + allianceId + "']")
-	$row.siblings().removeClass("selected")
-	$row.addClass("selected")
-	loadAllianceDetails(allianceId)
+    //update table
+    var $row = $("#allianceCanvas #allianceTable .table-row[data-alliance-id='" + allianceId + "']")
+    $row.siblings().removeClass("selected")
+    $row.addClass("selected")
+    loadAllianceDetails(allianceId)
 
     if (isScrollToRow) {
         scrollToRow($row, $("#allianceCanvas #allianceTableContainer"))
@@ -297,41 +297,41 @@ function selectAlliance(allianceId, isScrollToRow) {
 }
 
 function loadAllianceDetails(allianceId) {
-	updateAllianceBasicsDetails(allianceId)
-	updateAllianceBonus(allianceId)
-	updateAllianceChampions(allianceId)
-	updateAllianceHistory(allianceId)
-	updateAllianceTagColor(allianceId)
-	$('#allianceDetails').fadeIn(200)
+    updateAllianceBasicsDetails(allianceId)
+    updateAllianceBonus(allianceId)
+    updateAllianceChampions(allianceId)
+    updateAllianceHistory(allianceId)
+    updateAllianceTagColor(allianceId)
+    $('#allianceDetails').fadeIn(200)
 }
 
 
 function updateAllianceBasicsDetails(allianceId) {
-	var alliance = loadedAlliancesById[allianceId]
-	selectedAlliance = alliance
+    var alliance = loadedAlliancesById[allianceId]
+    selectedAlliance = alliance
 
-	$("#allianceDetails .allianceName").text(alliance.name)
-	if (alliance.status == 'Forming') {
-		$("#allianceDetails .allianceStatus").text(alliance.status + " - need 3 approved members")
-	} else {
-		$("#allianceDetails .allianceStatus").text(alliance.status)
-	}
+    $("#allianceDetails .allianceName").text(alliance.name)
+    if (alliance.status == 'Forming') {
+        $("#allianceDetails .allianceStatus").text(alliance.status + " - need 3 approved members")
+    } else {
+        $("#allianceDetails .allianceStatus").text(alliance.status)
+    }
 
 
-	if (alliance.ranking) {
-		var rankingImg = getRankingImg(alliance.ranking)
-		$('#allianceDetails .allianceRanking').html(rankingImg)
-	} else {
-		$('#allianceDetails .allianceRanking').text('-')
-	}
-	$("#allianceMemberList").children("div.table-row").remove()
+    if (alliance.ranking) {
+        var rankingImg = getRankingImg(alliance.ranking)
+        $('#allianceDetails .allianceRanking').html(rankingImg)
+    } else {
+        $('#allianceDetails .allianceRanking').text('-')
+    }
+    $("#allianceMemberList").children("div.table-row").remove()
 
-	var isAdmin = false
-	$.each(alliance.members, function(index, member) {
+    var isAdmin = false
+    $.each(alliance.members, function(index, member) {
         if (activeAirline && member.airlineId == activeAirline.id) {
             isAdmin = member.isAdmin
         }
-	})
+    })
 
 
     $.ajax({
@@ -442,26 +442,26 @@ function updateAllianceBasicsDetails(allianceId) {
 }
 
 function updateAllianceBonus(allianceId) {
-	var alliance = loadedAlliancesById[allianceId]
-	
-	if (alliance.status == "Forming") {
-		$('#allianceCodeShareBonus').hide();
-		$('#allianceMaxFrequencyBonus').hide();
-		$('#allianceReputationBonus').hide();
-		$('#allianceNoneBonus').show();
-		
-	} else {
-		$('#allianceCodeShareBonus').show();
-		$('#allianceNoneBonus').hide();
+    var alliance = loadedAlliancesById[allianceId]
+    
+    if (alliance.status == "Forming") {
+        $('#allianceCodeShareBonus').hide();
+        $('#allianceMaxFrequencyBonus').hide();
+        $('#allianceReputationBonus').hide();
+        $('#allianceNoneBonus').show();
+        
+    } else {
+        $('#allianceCodeShareBonus').show();
+        $('#allianceNoneBonus').hide();
 
-		
-		if (alliance.reputationBonus) {
-			$('#allianceReputationBonusValue').text(alliance.reputationBonus)
-			$('#allianceReputationBonus').show();
-		} else {
-			$('#allianceReputationBonus').hide();
-		}
-	}
+        
+        if (alliance.reputationBonus) {
+            $('#allianceReputationBonusValue').text(alliance.reputationBonus)
+            $('#allianceReputationBonus').show();
+        } else {
+            $('#allianceReputationBonus').hide();
+        }
+    }
 }
 
 function updateAllianceChampions(allianceId) {
@@ -469,68 +469,68 @@ function updateAllianceChampions(allianceId) {
     updateAllianceCountryChampions(allianceId)
 }
 function updateAllianceAirportChampions(allianceId) {
-	$('#allianceChampionAirportList').children('div.table-row').remove()
-	
-	$.ajax({
-		type: 'GET',
-		url: "alliances/" + allianceId + "/championed-airports",
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	var approvedMembersChampions = result.members
-	    	var applicantChampions = result.applicants
-	    	$(approvedMembersChampions).each(function(index, championDetails) {
+    $('#allianceChampionAirportList').children('div.table-row').remove()
+    
+    $.ajax({
+        type: 'GET',
+        url: "alliances/" + allianceId + "/championed-airports",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            var approvedMembersChampions = result.members
+            var applicantChampions = result.applicants
+            $(approvedMembersChampions).each(function(index, championDetails) {
 
-	    		var row = $("<div class='table-row clickable' data-link='airport' onclick=\"showAirportDetails('" + championDetails.airportId + "');\"></div>")
-	    		row.append("<div class='cell'>" + getRankingImg(championDetails.ranking) + "</div>")
-	    		row.append("<div class='cell'>" + getCountryFlagImg(championDetails.countryCode) + championDetails.airportText + "</div>")
-	    		row.append("<div class='cell'>" + getAirlineLogoImg(championDetails.airlineId) + championDetails.airlineName + "</div>")
-	    		row.append("<div class='cell' align='right'>" + commaSeparateNumber(championDetails.loyalistCount) + "</div>")
-	    		row.append("<div class='cell' align='right'>" + championDetails.reputationBoost + "</div>") 
-	    		$('#allianceChampionAirportList').append(row)
-	    	})
-	    	
-	    	$(applicantChampions).each(function(index, championDetails) {
-	    		var row = $("<div class='table-row clickable' data-link='airport' onclick=\"showAirportDetails('" + championDetails.airportId + "');\"></div>")
-	    		row.append("<div class='cell'>" + getRankingImg(championDetails.ranking) + "</div>")
+                var row = $("<div class='table-row clickable' data-link='airport' onclick=\"showAirportDetails('" + championDetails.airportId + "');\"></div>")
+                row.append("<div class='cell'>" + getRankingImg(championDetails.ranking) + "</div>")
+                row.append("<div class='cell'>" + getCountryFlagImg(championDetails.countryCode) + championDetails.airportText + "</div>")
+                row.append("<div class='cell'>" + getAirlineLogoImg(championDetails.airlineId) + championDetails.airlineName + "</div>")
+                row.append("<div class='cell' align='right'>" + commaSeparateNumber(championDetails.loyalistCount) + "</div>")
+                row.append("<div class='cell' align='right'>" + championDetails.reputationBoost + "</div>") 
+                $('#allianceChampionAirportList').append(row)
+            })
+            
+            $(applicantChampions).each(function(index, championDetails) {
+                var row = $("<div class='table-row clickable' data-link='airport' onclick=\"showAirportDetails('" + championDetails.airportId + "');\"></div>")
+                row.append("<div class='cell'>" + getRankingImg(championDetails.ranking) + "</div>")
                 row.append("<div class='cell'>" + getCountryFlagImg(championDetails.countryCode) + championDetails.airportText + "</div>")
                 row.append("<div class='cell'>" + getAirlineLogoImg(championDetails.airlineId) + championDetails.airlineName + "</div>")
                 row.append("<div class='cell' align='right'>" + commaSeparateNumber(championDetails.loyalistCount) + "</div>")
                 row.append("<div class='cell warning' align='right'><img src='assets/images/icons/information.png' title='Points not counted as this airline is not an approved member yet'>" + championDetails.reputationBoost + "</div>")
-	    		$('#allianceChampionAirportList').append(row)
-	    	})
+                $('#allianceChampionAirportList').append(row)
+            })
 
-	    	populateNavigation($('#allianceChampionAirportList'))
-	    	
-	    	if ($(approvedMembersChampions).length == 0 && $(applicantChampions).length == 0) {
-	    		var row = $("<div class='table-row'></div>")
-	    		row.append("<div class='cell'>-</div>")
-	    		row.append("<div class='cell'>-</div>")
-	    		row.append("<div class='cell'>-</div>")
-	    		row.append("<div class='cell' align='right'>-</div>")
-	    		row.append("<div class='cell' align='right'>-</div>")
-	    		$('#allianceChampionAirportList').append(row)
-	    	}
-	    	$('#allianceCanvas .totalReputation').text(result.totalReputation)
-	    	$('#allianceCanvas .reputationTruncatedEntries').text(result.truncatedEntries)
-	    },
+            populateNavigation($('#allianceChampionAirportList'))
+            
+            if ($(approvedMembersChampions).length == 0 && $(applicantChampions).length == 0) {
+                var row = $("<div class='table-row'></div>")
+                row.append("<div class='cell'>-</div>")
+                row.append("<div class='cell'>-</div>")
+                row.append("<div class='cell'>-</div>")
+                row.append("<div class='cell' align='right'>-</div>")
+                row.append("<div class='cell' align='right'>-</div>")
+                $('#allianceChampionAirportList').append(row)
+            }
+            $('#allianceCanvas .totalReputation').text(result.totalReputation)
+            $('#allianceCanvas .reputationTruncatedEntries').text(result.truncatedEntries)
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function updateAllianceCountryChampions(allianceId) {
-	$('#allianceChampionCountryList').children('div.table-row').remove()
+    $('#allianceChampionCountryList').children('div.table-row').remove()
 
-	$.ajax({
-		type: 'GET',
-		url: "alliances/" + allianceId + "/championed-countries",
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(championedCountries) {
-	    	$(championedCountries).each(function(index, championDetails) {
+    $.ajax({
+        type: 'GET',
+        url: "alliances/" + allianceId + "/championed-countries",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(championedCountries) {
+            $(championedCountries).each(function(index, championDetails) {
                 var country = championDetails.country
                 var row = $("<div class='table-row clickable' data-link='country' onclick=\"showCountryView('" + country.countryCode + "');\"></div>")
                 row.append("<div class='cell'>" + getRankingImg(championDetails.ranking) + "</div>")
@@ -542,27 +542,27 @@ function updateAllianceCountryChampions(allianceId) {
             populateNavigation($('#allianceChampionCountryList'))
 
             if ($(championedCountries).length == 0) {
-	    		var row = $("<div class='table-row'></div>")
-	    		row.append("<div class='cell'>-</div>")
-	    		row.append("<div class='cell'>-</div>")
-	    		row.append("<div class='cell'>-</div>")
-	    		$('#allianceChampionCountryList').append(row)
-	    	}
-	    },
+                var row = $("<div class='table-row'></div>")
+                row.append("<div class='cell'>-</div>")
+                row.append("<div class='cell'>-</div>")
+                row.append("<div class='cell'>-</div>")
+                $('#allianceChampionCountryList').append(row)
+            }
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function updateAllianceHistory(allianceId) {
-	var alliance = loadedAlliancesById[allianceId]
-	$('#allianceHistory').children("div.table-row").remove()
-	$.each(alliance.history, function(index, entry) {
-		var row = $("<div class='table-row'><div class='cell value' style='width: 30%;'>Week " + entry.cycle + "</div><div class='cell value' style='width: 70%;'>" + entry.description + "</div></div>")
-		$('#allianceHistory').append(row)
-	})
+    var alliance = loadedAlliancesById[allianceId]
+    $('#allianceHistory').children("div.table-row").remove()
+    $.each(alliance.history, function(index, entry) {
+        var row = $("<div class='table-row'><div class='cell value' style='width: 30%;'>Week " + entry.cycle + "</div><div class='cell value' style='width: 70%;'>" + entry.description + "</div></div>")
+        $('#allianceHistory').append(row)
+    })
 }
 
 function updateAllianceTagColor(allianceId) {
@@ -609,155 +609,155 @@ function updateAllianceTagColor(allianceId) {
 
 
 function toggleFormAlliance() {
-	$('#currentAirlineMemberDetails .allianceName').hide()
-	$('#toggleFormAllianceButton').hide()
-	$('#formAllianceWarning').hide()
-	$('#formAllianceSpan').show()
+    $('#currentAirlineMemberDetails .allianceName').hide()
+    $('#toggleFormAllianceButton').hide()
+    $('#formAllianceWarning').hide()
+    $('#formAllianceSpan').show()
 }
 
 function formAlliance(allianceName) {
-	var url = "airlines/" + activeAirline.id + "/form-alliance"
-	$.ajax({
-		type: 'POST',
-		url: url,
-		data: { 'allianceName' : allianceName } ,
-	    dataType: 'json',
-	    success: function(newAlliance) {
-	    	if (!newAlliance.rejection) {
-	    		showAllianceCanvas()
-	    	} else {
-	    		$('#formAllianceWarning').text(newAlliance.rejection)
-	    		$('#formAllianceWarning').show()
-	    		activeAirline.allianceId = newAlliance.id
-	    		activeAirline.allianceName = newAlliance.name
-	    		updateChatTabs()
-	    	}
-	    	
-	    },
+    var url = "airlines/" + activeAirline.id + "/form-alliance"
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: { 'allianceName' : allianceName } ,
+        dataType: 'json',
+        success: function(newAlliance) {
+            if (!newAlliance.rejection) {
+                showAllianceCanvas()
+            } else {
+                $('#formAllianceWarning').text(newAlliance.rejection)
+                $('#formAllianceWarning').show()
+                activeAirline.allianceId = newAlliance.id
+                activeAirline.allianceName = newAlliance.name
+                updateChatTabs()
+            }
+            
+        },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(JSON.stringify(jqXHR));
             console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        }
+    });
 }
 
 function removeAllianceMember(removeAirlineId) {
-	var url = "airlines/" + activeAirline.id + "/remove-alliance-member/" + removeAirlineId
-	$.ajax({
-		type: 'GET',
-		url: url,
-		contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	showAllianceCanvas()
-	    	if (activeAirline.id == removeAirlineId) { //leaving alliance
-	    	    activeAirline.allianceId = undefined
-	    	    activeAirline.allianceName = undefined
-	    	    updateChatTabs()
-	    	}
-	    },
+    var url = "airlines/" + activeAirline.id + "/remove-alliance-member/" + removeAirlineId
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            showAllianceCanvas()
+            if (activeAirline.id == removeAirlineId) { //leaving alliance
+                activeAirline.allianceId = undefined
+                activeAirline.allianceName = undefined
+                updateChatTabs()
+            }
+        },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(JSON.stringify(jqXHR));
             console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        }
+    });
 }
 
 function acceptAllianceMember(acceptAirlineId) {
-	var url = "airlines/" + activeAirline.id + "/accept-alliance-member/" + acceptAirlineId
-	$.ajax({
-		type: 'GET',
-		url: url,
-		contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	showAllianceCanvas()
-	    },
+    var url = "airlines/" + activeAirline.id + "/accept-alliance-member/" + acceptAirlineId
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            showAllianceCanvas()
+        },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(JSON.stringify(jqXHR));
             console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        }
+    });
 }
 
 function promoteAllianceMember(promoteAirlineId) {
-	var url = "airlines/" + activeAirline.id + "/promote-alliance-member/" + promoteAirlineId
-	$.ajax({
-		type: 'GET',
-		url: url,
-		contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	showAllianceCanvas()
-	    },
+    var url = "airlines/" + activeAirline.id + "/promote-alliance-member/" + promoteAirlineId
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            showAllianceCanvas()
+        },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(JSON.stringify(jqXHR));
             console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        }
+    });
 }
 
 function demoteAllianceMember(promoteAirlineId) {
-	var url = "airlines/" + activeAirline.id + "/demote-alliance-member/" + promoteAirlineId
-	$.ajax({
-		type: 'GET',
-		url: url,
-		contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	showAllianceCanvas()
-	    },
+    var url = "airlines/" + activeAirline.id + "/demote-alliance-member/" + promoteAirlineId
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            showAllianceCanvas()
+        },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(JSON.stringify(jqXHR));
             console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        }
+    });
 }
 
 function applyForAlliance() {
-	$.ajax({
-		type: 'GET',
-		url: "airlines/" + activeAirline.id + "/apply-for-alliance/" + selectedAlliance.id,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	        activeAirline.allianceId = result.allianceId
-	    	showAllianceCanvas()
-	    	//activeAirline.allianceName = result.allianceName //not yet a member
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+    $.ajax({
+        type: 'GET',
+        url: "airlines/" + activeAirline.id + "/apply-for-alliance/" + selectedAlliance.id,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            activeAirline.allianceId = result.allianceId
+            showAllianceCanvas()
+            //activeAirline.allianceName = result.allianceName //not yet a member
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 
 function showAllianceMap() {
-	clearAllPaths()
-	deselectLink()
+    clearAllPaths()
+    deselectLink()
 
-	var alliancePaths = []
+    var alliancePaths = []
 
-	$.ajax({
-		type: 'GET',
-		url: "alliances/" + selectedAlliance.id + "/details",
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-				$.each(result.links, function(index, link) {
-					alliancePaths.push(drawAllianceLink(link))
-				})
-				var allianceBases = []
-				 $.each(result.members, function(index, airline) {
-				    if (airline.role != "APPLICANT") {
-				        $.merge(allianceBases, airline.bases)
+    $.ajax({
+        type: 'GET',
+        url: "alliances/" + selectedAlliance.id + "/details",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+                $.each(result.links, function(index, link) {
+                    alliancePaths.push(drawAllianceLink(link))
+                })
+                var allianceBases = []
+                 $.each(result.members, function(index, airline) {
+                    if (airline.role != "APPLICANT") {
+                        $.merge(allianceBases, airline.bases)
                     }
                 })
 
-				var airportMarkers = updateAirportBaseMarkers(allianceBases, alliancePaths)
-				//now add extra listener for alliance airports
-				$.each(airportMarkers, function(key, marker) {
+                var airportMarkers = updateAirportBaseMarkers(allianceBases, alliancePaths)
+                //now add extra listener for alliance airports
+                $.each(airportMarkers, function(key, marker) {
                         marker.addListener('mouseover', function(event) {
                             closeAlliancePopups()
                             var baseInfo = marker.baseInfo
@@ -781,28 +781,28 @@ function showAllianceMap() {
                     })
 
 
-				switchMap();
-				$("#worldMapCanvas").data("initCallback", function() { //if go back to world map, re-init the map
-				        map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
-				        clearAllPaths()
+                switchMap();
+                $("#worldMapCanvas").data("initCallback", function() { //if go back to world map, re-init the map
+                        map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+                        clearAllPaths()
                         updateAirportMarkers(activeAirline)
                         updateLinksInfo() //redraw all flight paths
                         closeAlliancePopups()
                 })
 
-				window.setTimeout(addExitButton , 1000); //delay otherwise it doesn't push to center
-	    },
+                window.setTimeout(addExitButton , 1000); //delay otherwise it doesn't push to center
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
-	    beforeSend: function() {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
+        beforeSend: function() {
             $('body .loadingSpinner').show()
         },
         complete: function(){
             $('body .loadingSpinner').hide()
         }
-	});
+    });
 }
 
 function addExitButton() {
@@ -813,60 +813,60 @@ function addExitButton() {
 }
 
 function drawAllianceLink(link) {
-	var from = new google.maps.LatLng({lat: link.fromLatitude, lng: link.fromLongitude})
-	var to = new google.maps.LatLng({lat: link.toLatitude, lng: link.toLongitude})
-	//var pathKey = link.id
-	
-	var strokeColor = airlineColors[link.airlineId]
-	if (!strokeColor) {
-		strokeColor = "#DC83FC"
-	}
+    var from = new google.maps.LatLng({lat: link.fromLatitude, lng: link.fromLongitude})
+    var to = new google.maps.LatLng({lat: link.toLatitude, lng: link.toLongitude})
+    //var pathKey = link.id
+    
+    var strokeColor = airlineColors[link.airlineId]
+    if (!strokeColor) {
+        strokeColor = "#DC83FC"
+    }
 
     var maxOpacity = 0.7
     var minOpacity = 0.1
     var standardCapacity = 10000
     var strokeOpacity
-	if (link.capacity.total < standardCapacity) {
+    if (link.capacity.total < standardCapacity) {
         strokeOpacity = minOpacity + link.capacity.total / standardCapacity * (maxOpacity - minOpacity)
     } else {
         strokeOpacity = maxOpacity
     }
-		
-	var linkPath = new google.maps.Polyline({
-			 geodesic: true,
-		     strokeColor: strokeColor,
-		     strokeOpacity: strokeOpacity,
-		     strokeWeight: 2,
-		     path: [from, to],
-		     zIndex : 90,
-		     link : link
-		});
-		
-	var fromAirport = getAirportText(link.fromAirportCity, link.fromAirportCode)
-	var toAirport = getAirportText(link.toAirportCity, link.toAirportCode)
-	
-	
-	shadowPath = new google.maps.Polyline({
-		 geodesic: true,
-	     strokeColor: strokeColor,
-	     strokeOpacity: 0.0001,
-	     strokeWeight: 25,
-	     path: [from, to],
-	     zIndex : 100,
-	     fromAirport : fromAirport,
-	     fromCountry : link.fromCountryCode, 
-	     toAirport : toAirport,
-	     toCountry : link.toCountryCode,
-	     capacity : link.capacity.total,
-	     airlineName : link.airlineName,
-	     airlineId : link.airlineId
-	});
-	
-	linkPath.shadowPath = shadowPath
-	
+        
+    var linkPath = new google.maps.Polyline({
+             geodesic: true,
+             strokeColor: strokeColor,
+             strokeOpacity: strokeOpacity,
+             strokeWeight: 2,
+             path: [from, to],
+             zIndex : 90,
+             link : link
+        });
+        
+    var fromAirport = getAirportText(link.fromAirportCity, link.fromAirportCode)
+    var toAirport = getAirportText(link.toAirportCity, link.toAirportCode)
+    
+    
+    shadowPath = new google.maps.Polyline({
+         geodesic: true,
+         strokeColor: strokeColor,
+         strokeOpacity: 0.0001,
+         strokeWeight: 25,
+         path: [from, to],
+         zIndex : 100,
+         fromAirport : fromAirport,
+         fromCountry : link.fromCountryCode, 
+         toAirport : toAirport,
+         toCountry : link.toCountryCode,
+         capacity : link.capacity.total,
+         airlineName : link.airlineName,
+         airlineId : link.airlineId
+    });
+    
+    linkPath.shadowPath = shadowPath
+    
 
-	shadowPath.addListener('mouseover', function(event) {
-	    if (!map.allianceBasePopup) { //only do this if it is not hovered over base icon. This is a workaround as zIndex does not work - hovering over base icon triggers onmouseover event on the link below the icon
+    shadowPath.addListener('mouseover', function(event) {
+        if (!map.allianceBasePopup) { //only do this if it is not hovered over base icon. This is a workaround as zIndex does not work - hovering over base icon triggers onmouseover event on the link below the icon
             $("#linkPopupFrom").html(getCountryFlagImg(this.fromCountry) + "&nbsp;" + this.fromAirport)
             $("#linkPopupTo").html(getCountryFlagImg(this.toCountry) + "&nbsp;" + this.toAirport)
             $("#linkPopupCapacity").html(this.capacity)
@@ -884,15 +884,15 @@ function drawAllianceLink(link) {
             infowindow.open(map);
             map.allianceLinkPopup = infowindow
         }
-	})		
-	shadowPath.addListener('mouseout', function(event) {
+    })        
+    shadowPath.addListener('mouseout', function(event) {
         closeAllianceLinkPopup()
-	})
-	
-	linkPath.setMap(map)
-	linkPath.shadowPath.setMap(map)
-	polylines.push(linkPath)
-	polylines.push(linkPath.shadowPath)
+    })
+    
+    linkPath.setMap(map)
+    linkPath.shadowPath.setMap(map)
+    polylines.push(linkPath)
+    polylines.push(linkPath.shadowPath)
 
     var resultPath = { path : linkPath, shadow : shadowPath } //kinda need this so it has consistent data structure as the normal flight paths
     return resultPath
@@ -999,20 +999,20 @@ function showAllianceMissionModal(candidates, selectedMission, isAdmin) {
         })
         if (phase >= 2) { //only show stats graph if in progress
             var url = "airlines/" + activeAirline.id + "/mission-stats/" + selectedMission.id
-            	$.ajax({
-            		type: 'GET',
-            		url: url,
-            		contentType: 'application/json; charset=utf-8',
-            	    dataType: 'json',
-            	    success: function(result) {
-            	        plotMissionStatsGraph(result.stats, result.threshold, $('#allianceMissionModal .missionStatsGraph'))
-            	    	$('#allianceMissionModal .missionStatsGraph').show()
-            	    },
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function(result) {
+                        plotMissionStatsGraph(result.stats, result.threshold, $('#allianceMissionModal .missionStatsGraph'))
+                        $('#allianceMissionModal .missionStatsGraph').show()
+                    },
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.log(JSON.stringify(jqXHR));
                         console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-            	    }
-            	});
+                    }
+                });
         }
 
         showAllianceMissionRewards(selectedMission.id, selectedMission.potentialRewards, selectedMission.progress >= 100, phase)
@@ -1087,19 +1087,19 @@ function showAllianceMissionRewards(missionId, rewards, isSuccessful, phase) {
 
 function selectAllianceMission(mission, callback) {
     var url = "airlines/" + activeAirline.id + "/select-alliance-mission/" + mission.id
-	$.ajax({
-		type: 'GET',
-		url: url,
-		contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	callback(result)
-	    },
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            callback(result)
+        },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(JSON.stringify(jqXHR));
             console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        }
+    });
 
 }
 

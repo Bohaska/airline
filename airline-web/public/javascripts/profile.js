@@ -9,11 +9,11 @@ function updateProfiles(profiles) {
 }
 
 function createProfileDiv(profile, profileId) {
-	var $profileDiv = $('<div style="float:left;" class="profile-section verticalGroup" onclick="selectProfile(' + profileId + ', this)"><h1>' + profile.name +'</h1><br/><span>' + profile.description + '</span></div>')
-//	$.each(profile.outlines, function(index, outline) {
-//		html += '<li>' + outline + '</li>'
-//	})
-//	html += '</ul></div>'
+    var $profileDiv = $('<div style="float:left;" class="profile-section verticalGroup" onclick="selectProfile(' + profileId + ', this)"><h1>' + profile.name +'</h1><br/><span>' + profile.description + '</span></div>')
+//    $.each(profile.outlines, function(index, outline) {
+//        html += '<li>' + outline + '</li>'
+//    })
+//    html += '</ul></div>'
     var $list = $('<ul></ul>').appendTo($profileDiv)
     $list.append('<li class="dot">$' + commaSeparateNumber(profile.cash) + '&nbsp;cash</li>')
     if (profile.airplanes.length > 0) {
@@ -41,17 +41,17 @@ function createProfileDiv(profile, profileId) {
     }
     $profileDiv.append($list)
 
-	if ($('#profileId').val() == profileId) {
-		selectProfile(profileId, $profileDiv)
-	}
+    if ($('#profileId').val() == profileId) {
+        selectProfile(profileId, $profileDiv)
+    }
 
-	return $profileDiv
+    return $profileDiv
 }
 
 function selectProfile(profileId, profileDiv) {
-	$('#profileId').val(profileId)
-	$(profileDiv).siblings("div").removeClass("selected")
-	$(profileDiv).addClass("selected")
+    $('#profileId').val(profileId)
+    $(profileDiv).siblings("div").removeClass("selected")
+    $(profileDiv).addClass("selected")
 }
 
 function showAirplaneQuickSummary($trigger, airplane) {
@@ -85,7 +85,7 @@ function buildHqWithProfile() {
             type: 'PUT',
             url: "airlines/" + activeAirline.id + "/profiles/" + $('#profileId').val() + "?airportId=" + activeAirportId,
             data: { } ,
-    		contentType: 'application/json; charset=utf-8',
+            contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function(result) {
                 closeModal($('#profilesModal'))

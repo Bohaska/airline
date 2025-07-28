@@ -112,12 +112,12 @@ html[data-theme='dark'] {
 
 
 body {
-	font-size: 13px;
-	font-family: "Open Sans", Verdana, Arial, sans-serif;
-	color: var(--text-color);
+    font-size: 13px;
+    font-family: "Open Sans", Verdana, Arial, sans-serif;
+    color: var(--text-color);
 
-	background: var(--fallback-background);  /* fallback for old browsers */
-	background-repeat: no-repeat;
+    background: var(--fallback-background);  /* fallback for old browsers */
+    background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
 }
@@ -266,9 +266,9 @@ a {
 }
 
 body.christmas {
-	background: linear-gradient(to bottom, rgba(117, 114, 113, 0.8) 10%, rgba(40, 49, 77, 0.8) 30%, rgba(29, 35, 71, 0.8) 50%, rgba(19, 25, 28, 0.8) 80%, rgba(15, 14, 14, .8) 100%), url(../images/background/snow.gif) !important;
- 	background-size: cover !important;
-	
+    background: linear-gradient(to bottom, rgba(117, 114, 113, 0.8) 10%, rgba(40, 49, 77, 0.8) 30%, rgba(29, 35, 71, 0.8) 50%, rgba(19, 25, 28, 0.8) 80%, rgba(15, 14, 14, .8) 100%), url(../images/background/snow.gif) !important;
+     background-size: cover !important;
+    
 }
 
 
@@ -280,25 +280,25 @@ body.christmas {
 }
 
 #main {
-	height: 100%;
+    height: 100%;
 }
 
 #map {
-	background-color: #FFF;
+    background-color: #FFF;
 }
 
 .menubar {
-	top: 0px;
-	min-height: 40px;
-	width: 100%;
-	z-index: 999;
-	background-image: var(--menubar-background-image);
-	display: flex;
+    top: 0px;
+    min-height: 40px;
+    width: 100%;
+    z-index: 999;
+    background-image: var(--menubar-background-image);
+    display: flex;
     align-items: center;
     justify-content: space-between;
     backdrop-filter: var(--backdrop-filter);
     box-shadow: var(--menubar-shadow);
-    /* 	margin-top: -80px; */
+    /*     margin-top: -80px; */
 }
 
 #patreonDiv {
@@ -306,22 +306,22 @@ body.christmas {
 }
 
 .table {
-	display: table;
-	//display: block;
+    display: table;
+    //display: block;
 }
 
 .table .label {
-	display: table-cell;
-	width: 40%;
+    display: table-cell;
+    width: 40%;
 }
 
 .table .value {
-	display: table-cell;
-	width: 60%;
+    display: table-cell;
+    width: 60%;
 }
 
 .table .cell {
-	display: table-cell;
+    display: table-cell;
 }
 
 .table.frequencyDetail .cell, .table.frequencyDetailTotal .cell{
@@ -329,14 +329,14 @@ body.christmas {
 }
 
 .table .table-row {
-	display: table-row;
-	width: 100%;
+    display: table-row;
+    width: 100%;
 }
 
 
 .table .table-header {
-	display: table-header-group;
-	width: 100%;
+    display: table-header-group;
+    width: 100%;
 }
 
 .table .table-header .cell:not(:empty) {
@@ -373,7 +373,7 @@ body.christmas {
 }
 
 .table.data div.table-row:nth-child(even) {
-	background-color: var(--table-even-row-background-color);
+    background-color: var(--table-even-row-background-color);
 }
 
 .table.data div.table-row.selected:nth-child(even), .table.data div.table-row.selected:nth-child(odd), .table.data div.table-row.clickable:hover:nth-child(even), .table.data div.table-row.clickable:hover:nth-child(odd) {
@@ -393,7 +393,7 @@ div.section.clickable:hover, div.section.clickable.selected, .allianceMissionCan
 }
 
 .table.data div.table-row:nth-child(odd), .table.colored  div.table-row:nth-child(odd){
-	background: var(--table-odd-row-background-color);
+    background: var(--table-odd-row-background-color);
 }
 
 .progressionItem {
@@ -415,34 +415,34 @@ div.section.clickable:hover, div.section.clickable.selected, .allianceMissionCan
 
  
 .label, div.header, span.header {
-	font-family: "Open Sans", Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: var(--text-color);
-	text-decoration: none;
-	font-size: 12px;
+    font-family: "Open Sans", Verdana, Arial, sans-serif;
+    line-height: 1.6em;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 12px;
 }
 
 div.header, span.header {
-	font-size: 18px;
+    font-size: 18px;
 }
 
 div.button, .ajax-file-upload, .button.disabled:after {
-   	border-radius: 7px;
+       border-radius: 7px;
 }
 
 div.button, .ajax-file-upload {
-	font-family: "Open Sans", Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	/*color: #454544;*/
+    font-family: "Open Sans", Verdana, Arial, sans-serif;
+    line-height: 1.6em;
+    /*color: #454544;*/
     background-color: var(--button-background);
-	text-decoration: none;
-	font-size: 12px;
-	display: inline-block;
-	cursor: pointer;
-	padding: 5px 15px;
-	margin: 5px 5px;
-	box-shadow: var(--button-shadow);
-	/*backdrop-filter: var(--button-backdrop-filter);*/ /*otherwise touch title will be blurred*/
+    text-decoration: none;
+    font-size: 12px;
+    display: inline-block;
+    cursor: pointer;
+    padding: 5px 15px;
+    margin: 5px 5px;
+    box-shadow: var(--button-shadow);
+    /*backdrop-filter: var(--button-backdrop-filter);*/ /*otherwise touch title will be blurred*/
 }
 
 div.button:hover {
@@ -475,61 +475,61 @@ div.button.selected, div.selectedSection {
 }
 
 div.selectedSection {
-	background-image: none;
+    background-image: none;
 }
 
 .button, .ajax-file-upload {
-	cursor: pointer
+    cursor: pointer
 }
 
 
 
 .gm-style-iw {
-	overflow: hidden !important;
-	line-height: 1.35;
-	white-space: nowrap;
+    overflow: hidden !important;
+    line-height: 1.35;
+    white-space: nowrap;
 }
 
 dd.info {
-	font-family: "Open Sans", Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: var(--text-color);
-	text-decoration: none;
-	font-size: 10px;
+    font-family: "Open Sans", Verdana, Arial, sans-serif;
+    line-height: 1.6em;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 10px;
 }
 
 dd.error {
-	font-family: "Open Sans", Verdana, Arial, sans-serif;
-	line-height: 1.6em;
-	color: #ff8080;
-	text-decoration: none;
-	font-size: 10px;
+    font-family: "Open Sans", Verdana, Arial, sans-serif;
+    line-height: 1.6em;
+    color: #ff8080;
+    text-decoration: none;
+    font-size: 10px;
 }
 
 #floatMessageBox {
-	position: absolute;
-	top: 0;
-	right: 0;
-	border-radius: 0px 0px 15px 15px;
-	z-index: 1000;
-	/* 	background:#ffc; */
-	background: var(--float-message-box-background);
-	padding: 5px;
-	text-align: center;
-	box-shadow: var(--float-message-box-shadow)
-	font-family: "Open Sans", Verdana, Arial, sans-serif;
-	color: var(--float-message-box-color)
-	text-shadow: var(float-message-text-shadow)
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0px 0px 15px 15px;
+    z-index: 1000;
+    /*     background:#ffc; */
+    background: var(--float-message-box-background);
+    padding: 5px;
+    text-align: center;
+    box-shadow: var(--float-message-box-shadow)
+    font-family: "Open Sans", Verdana, Arial, sans-serif;
+    color: var(--float-message-box-color)
+    text-shadow: var(float-message-text-shadow)
 }
 
 .mapControlPanel {
-	position: absolute !important;
-	bottom: 100px !important;
-	left: 50% !important;
-	z-index: 1 !important;
-	transform:translateX(-50%) !important;
-	background-image: var(--control-panel-background-image) !important;
-	backdrop-filter: var(--backdrop-filter);
+    position: absolute !important;
+    bottom: 100px !important;
+    left: 50% !important;
+    z-index: 1 !important;
+    transform:translateX(-50%) !important;
+    background-image: var(--control-panel-background-image) !important;
+    backdrop-filter: var(--backdrop-filter);
 }
 
 #hideAirportLinksButton {
@@ -542,44 +542,44 @@ dd.error {
 }
 
 #floatBackButton {
-	position: absolute;
-	top: 100px;
-	left: 0px;
-	z-index: 1000;
-	/* 	background:#ffc; */
-	padding: 5px;
-	text-align: center;
-	box-shadow: inset 0 0 2px white, 0 0 30px rgba(0, 0, 0, 0.5), 0 0 10px
-		rgba(255, 255, 255, 0.7);
-	/* 	box-shadow:inset 0 0 2px white,0 0 3px rgba(0, 0, 0, 0.5); */
-	/* 	font-family: "Open Sans", Verdana, Arial, sans-serif; */
+    position: absolute;
+    top: 100px;
+    left: 0px;
+    z-index: 1000;
+    /*     background:#ffc; */
+    padding: 5px;
+    text-align: center;
+    box-shadow: inset 0 0 2px white, 0 0 30px rgba(0, 0, 0, 0.5), 0 0 10px
+        rgba(255, 255, 255, 0.7);
+    /*     box-shadow:inset 0 0 2px white,0 0 3px rgba(0, 0, 0, 0.5); */
+    /*     font-family: "Open Sans", Verdana, Arial, sans-serif; */
 }
 
 #console  {
-	background: #000;
-	color: #ccc;
-	display: block;
-	padding: 5px 0px;
-	-moz-box-shadow:    inset 0 0 5px #fff;
-  	-webkit-box-shadow: inset 0 0 5px #fff;
-	box-shadow:         inset 0 0 5px #fff;
-	font-family: Consolas;
-	height: 20px;
+    background: #000;
+    color: #ccc;
+    display: block;
+    padding: 5px 0px;
+    -moz-box-shadow:    inset 0 0 5px #fff;
+      -webkit-box-shadow: inset 0 0 5px #fff;
+    box-shadow:         inset 0 0 5px #fff;
+    font-family: Consolas;
+    height: 20px;
 }
 
 #console .actionMessage, #console .errorMessage {
-	//animation-name: fadeIn;
-  	//animation-duration: 1s;
+    //animation-name: fadeIn;
+      //animation-duration: 1s;
 }
 
 
 #console .errorMessage {
-	color: #AF383F;
+    color: #AF383F;
 }
 
 div.section, div.selectedSection, .modal-content {
-	border-radius: 5px 5px 5px 5px;
-	box-shadow: inset 0 0 2px white, 0 0 3px rgba(0, 0, 0, 0.5);
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: inset 0 0 2px white, 0 0 3px rgba(0, 0, 0, 0.5);
     border-radius: 0.5em 0.5em 0.5em 0.5em;
     margin: 10px;
     padding: 10px 10px 20px 10px;
@@ -591,59 +591,59 @@ div.section {
 }
 
 .modal-content {
-	/*background-image: linear-gradient(to bottom, #FFFFFF, #FFFFFF 90%, #e8e8d8);*/
-	background-image: var(--modal-content-background-image);
-	/*backdrop-filter: var(--backdrop-filter);   backdrop filter is buggy, it might place items on top always. FF does not support backdrop-filter neither */
+    /*background-image: linear-gradient(to bottom, #FFFFFF, #FFFFFF 90%, #e8e8d8);*/
+    background-image: var(--modal-content-background-image);
+    /*backdrop-filter: var(--backdrop-filter);   backdrop filter is buggy, it might place items on top always. FF does not support backdrop-filter neither */
 }
-	
-	
+    
+    
 .googleMapButton {
-	box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
-	border-radius: 2px;
-	cursor: pointer;
-	background-color: rgb(255, 255, 255);
-	height: 28px;
-	margin-right: 10px;
-	font-size: 11px;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    border-radius: 2px;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    height: 28px;
+    margin-right: 10px;
+    font-size: 11px;
 }
 
 .googleMapIcon {
-	box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
-	border-radius: 2px;
-	cursor: pointer;
-	background-color: rgb(255, 255, 255);
-	height: 40px;
-	width: 40px;
-	margin-right: 10px;
-	margin-left: 10px;
-	font-size: 11px;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    border-radius: 2px;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    height: 40px;
+    width: 40px;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 11px;
 }
 
 div.googleMapPanel {
-	box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-	border-radius: 3px;
-	background-color: rgb(255, 255, 255);
-	margin-bottom: 22px;
-	text-align: center;
-	padding: 8 px;
-	margin: 10px;
-	font: 11px;
-	border: 2px solid #fff;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    border-radius: 3px;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 22px;
+    text-align: center;
+    padding: 8 px;
+    margin: 10px;
+    font: 11px;
+    border: 2px solid #fff;
 }
 
 .alignHelper {
-	display: inline-block;
-	height: 100%;
-	vertical-align: middle;
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
 }
 
 div.divider {
-	width: 100%;
-	text-align: center;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	border: 0;
-	height: 1px;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 0;
+    height: 1px;
     background-image: linear-gradient(to right, rgba(69, 69, 68, 0), rgba(69, 69, 68, 0.75), rgba(69, 69, 68, 0.75), rgba(69, 69, 68, 0.75), rgba(69, 69, 68, 0));
 }
 
@@ -656,15 +656,15 @@ div.divider {
 
 
 a.selected, :not(.button):not(.no-highlight) > a:hover, span.selected, .clickable:hover:not(.cell), .clickable.selected:not(.cell) {
-	border-radius: 3px 3px 3px 3px;
-	background: #72ad5f;  /* fallback for old browsers */
+    border-radius: 3px 3px 3px 3px;
+    background: #72ad5f;  /* fallback for old browsers */
     background: -webkit-linear-gradient(#72ad5f, #90be81);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(#72ad5f, #90be81); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
 
 a:hover, .clickable:hover, .clickable-no-highlight:hover {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .table .table-header .cell.clickable:hover {
@@ -674,29 +674,29 @@ a:hover, .clickable:hover, .clickable-no-highlight:hover {
 
 
 #airportIcons .feature {
-	margin-left: 2px;
-	margin-right: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 
 .tabs {
-	list-style: none;
-	position: relative;
+    list-style: none;
+    position: relative;
 } 
 
 .tabs li:hover {
-	color: #6093e7;
+    color: #6093e7;
 }
 .tabs li.active {
-	font-weight: 700;
-	background-color: #6093e7;
-	color: #FFF;
+    font-weight: 700;
+    background-color: #6093e7;
+    color: #FFF;
 }
 
 li.row, div.table-row {
-	padding: 3px;
-	font-size: 11px;
-	color: var(--text-color);
+    padding: 3px;
+    font-size: 11px;
+    color: var(--text-color);
 }
 
 .table.data {
@@ -704,14 +704,14 @@ li.row, div.table-row {
 }
 
 .table.data .table-row div {
-	padding: 3px;
+    padding: 3px;
 }
 
 .warning, .fatal, .negative {
-	color: #D46A6A;
+    color: #D46A6A;
 }
 .fatal {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 div.future {
@@ -760,7 +760,7 @@ div.future {
 
 
 div#canvas {
-	width: 100%;
+    width: 100%;
     height: 100%;
 }
 

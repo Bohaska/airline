@@ -250,7 +250,7 @@ function closeTutorial($tutorialModal) {
         type: 'POST',
         url: "airlines/" + activeAirline.id + "/completed-tutorial/" + $tutorialModal.attr('id') + "?category=" + $tutorialModal.data('category'),
         data: { } ,
-		contentType: 'application/json; charset=utf-8',
+        contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         success: function(result) {
 

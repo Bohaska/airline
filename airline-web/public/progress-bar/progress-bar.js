@@ -13,7 +13,7 @@ function animateProgressBar(container, targetPercentage, animationDuration, call
 
     var updateColorInterval = setInterval(function() { updateColor(container, gradientTopStartColor, gradientBottomStartColor, gradientTopEndColor, gradientBottomEndColor, shadowStartColor, shadowEndColor) } , 100)
 
-//    var	currentPercentage = container.data('percentage')
+//    var    currentPercentage = container.data('percentage')
 //    if (!currentPercentage) {
 //        currentPercentage = 0
 //    }

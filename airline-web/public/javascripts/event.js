@@ -3,64 +3,64 @@ var loadedAlerts = []
 
 
 function showEventCanvas() {
-	setActiveDiv($("#eventCanvas"))
-	highlightTab($('.eventCanvasTab'))
-	loadAllOlympics()
+    setActiveDiv($("#eventCanvas"))
+    highlightTab($('.eventCanvasTab'))
+    loadAllOlympics()
 }
 
 function loadAllOlympics() {
-	var url = "event/olympics"
-	
-	loadedOlympicsEvents = []
+    var url = "event/olympics"
+    
+    loadedOlympicsEvents = []
 
-	$.ajax({
-		type: 'GET',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(olympicsEvents) {
-	    	loadedOlympicsEvents = olympicsEvents
-	    	var selectedSortHeader = $('#olympicsTableSortHeader .table-header .cell.selected')
-	    	updateOlympicTable(selectedSortHeader.data('sort-property'), selectedSortHeader.data('sort-order'))
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(olympicsEvents) {
+            loadedOlympicsEvents = olympicsEvents
+            var selectedSortHeader = $('#olympicsTableSortHeader .table-header .cell.selected')
+            updateOlympicTable(selectedSortHeader.data('sort-property'), selectedSortHeader.data('sort-order'))
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 
 function updateOlympicTable(sortProperty, sortOrder) {
-	var olympicsTable = $("#eventCanvas #olympicsTable")
-	
-	olympicsTable.children("div.table-row").remove()
-	
-	//sort the list
-	loadedOlympicsEvents.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
-	
-	$.each(loadedOlympicsEvents, function(index, event) {
-		var row = $("<div class='table-row clickable'></div>")
-		row.append("<div class='cell'>" + event.startCycle + "</div>")
-		if (event.hostCity) {
-		    row.append("<div class='cell'>" + getCountryFlagImg(event.hostCountryCode) + event.hostCity + "</div>")
+    var olympicsTable = $("#eventCanvas #olympicsTable")
+    
+    olympicsTable.children("div.table-row").remove()
+    
+    //sort the list
+    loadedOlympicsEvents.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
+    
+    $.each(loadedOlympicsEvents, function(index, event) {
+        var row = $("<div class='table-row clickable'></div>")
+        row.append("<div class='cell'>" + event.startCycle + "</div>")
+        if (event.hostCity) {
+            row.append("<div class='cell'>" + getCountryFlagImg(event.hostCountryCode) + event.hostCity + "</div>")
         } else {
             row.append("<div class='cell'>(Voting)</div>")
         }
-		row.append("<div class='cell'>" + event.remainingDuration + " week(s)</div>")
-		row.append("<div class='cell'>" + event.status + "</div>")
-		row.data('event', event)
+        row.append("<div class='cell'>" + event.remainingDuration + " week(s)</div>")
+        row.append("<div class='cell'>" + event.status + "</div>")
+        row.data('event', event)
 
-		row.click(function() {
-		   loadOlympicsDetails(row)
-		})
+        row.click(function() {
+           loadOlympicsDetails(row)
+        })
 
-		olympicsTable.append(row)
-	});
+        olympicsTable.append(row)
+    });
 
-	if (loadedOlympicsEvents.length == 0) {
-	    olympicsTable.append("<div class='table-row'><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div></div>")
-	}
+    if (loadedOlympicsEvents.length == 0) {
+        olympicsTable.append("<div class='table-row'><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div></div>")
+    }
 }
 
 function loadOlympicsDetails(row) {
@@ -70,27 +70,27 @@ function loadOlympicsDetails(row) {
     $("#olympicsDetails").data("eventId", event.id)
 
     var candidatesTable = $('#olympicsCandidatesTable')
-  	candidatesTable.children("div.table-row").remove()
+      candidatesTable.children("div.table-row").remove()
     var eventId = event.id
-  	var votingRoundsTable = $("#olympicsVotingRoundsTable")
-  	votingRoundsTable.empty()
+      var votingRoundsTable = $("#olympicsVotingRoundsTable")
+      votingRoundsTable.empty()
 
-  	$("#olympicsDetails .result").empty()
+      $("#olympicsDetails .result").empty()
 
     $.ajax({
-    		type: 'GET',
-    		url: "event/olympics/" + eventId,
-    	    contentType: 'application/json; charset=utf-8',
-    	    dataType: 'json',
-    	    success: function(details) {
-    	        var votingRoundHeaderRow = $("<div class='table-header'></div>")
-    	        var votingRoundColumns = []
-    	        votingRoundHeaderRow.append($("<div class='cell' style='width: 9%'>Round</div>"))
+            type: 'GET',
+            url: "event/olympics/" + eventId,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(details) {
+                var votingRoundHeaderRow = $("<div class='table-header'></div>")
+                var votingRoundColumns = []
+                votingRoundHeaderRow.append($("<div class='cell' style='width: 9%'>Round</div>"))
 
-    	        $.each(details.candidates, function(index, candidate) {
+                $.each(details.candidates, function(index, candidate) {
                     var candidateRow = $("<div class='table-row'></div>")
                     candidateRow.append("<div class='cell'>" + getCountryFlagImg(candidate.countryCode) + candidate.city + "</div>")
-               		candidatesTable.append(candidateRow)
+                       candidatesTable.append(candidateRow)
 
                     //populate header for votingRoundsTable
                     votingRoundHeaderRow.append("<div class='cell' style='width: 13%'>" + getCountryFlagImg(candidate.countryCode) + candidate.city + "</div>")
@@ -197,13 +197,13 @@ function loadOlympicsDetails(row) {
                     $("#olympicsDetails img.yearStatus").attr("src", "assets/images/icons/12px/status-grey.png") //all grey
                 }
 
-    	    	$("#olympicsDetails").fadeIn(200)
-    	    },
-    	    error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
-    	});
+                $("#olympicsDetails").fadeIn(200)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+        });
 }
 
 function populateGoalAndAirlineStats(event) {
@@ -356,10 +356,10 @@ function populateOlympicsCityMap(map, candidateInfo) {
               });
 
             var infowindow
-           	marker.addListener('mouseover', function(event) {
-           		$("#olympicAirportPopup .airportName").text(airport.name + "(" + airport.iata + ")")
-           		infowindow = new google.maps.InfoWindow({
-           		       maxWidth : 800,
+               marker.addListener('mouseover', function(event) {
+                   $("#olympicAirportPopup .airportName").text(airport.name + "(" + airport.iata + ")")
+                   infowindow = new google.maps.InfoWindow({
+                          maxWidth : 800,
                        disableAutoPan : true
                  });
                  var popup = $("#olympicAirportPopup").clone()
@@ -367,13 +367,13 @@ function populateOlympicsCityMap(map, candidateInfo) {
                  infowindow.setContent(popup[0])
 
 
-           		infowindow.open(map, marker);
-           	})
-           	marker.addListener('mouseout', function(event) {
-           		infowindow.close()
-           		infowindow.setMap(null)
-           	})
-           	olympicsMapElements.push(marker)
+                   infowindow.open(map, marker);
+               })
+               marker.addListener('mouseout', function(event) {
+                   infowindow.close()
+                   infowindow.setMap(null)
+               })
+               olympicsMapElements.push(marker)
 
      })
 
@@ -448,16 +448,16 @@ function initOlympicsVoteMaps(mapDivs) { //only called once, see https://stackov
 
 
 function toggleTableSortOrder(sortHeader, updateTableFunction) {
-	if (sortHeader.data("sort-order") == "ascending") {
-		sortHeader.data("sort-order", "descending")
-	} else {
-		sortHeader.data("sort-order", "ascending")
-	}
-	
-	sortHeader.siblings().removeClass("selected")
-	sortHeader.addClass("selected")
-	
-	updateTableFunction(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
+    if (sortHeader.data("sort-order") == "ascending") {
+        sortHeader.data("sort-order", "descending")
+    } else {
+        sortHeader.data("sort-order", "ascending")
+    }
+    
+    sortHeader.siblings().removeClass("selected")
+    sortHeader.addClass("selected")
+    
+    updateTableFunction(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
 }
 
 function toggleOlympicTableSortOrder(sortHeader) {
@@ -466,28 +466,28 @@ function toggleOlympicTableSortOrder(sortHeader) {
 
 function confirmOlympicsVotes() {
     var airlineId = activeAirline.id
-	var data = { } //airportId : precedence
-	$("#olympicsVoteModal .number-button").each(function() {
-	    data[$(this).data("airportId")] = $(this).data("precedence")
-	})
+    var data = { } //airportId : precedence
+    $("#olympicsVoteModal .number-button").each(function() {
+        data[$(this).data("airportId")] = $(this).data("precedence")
+    })
 
     var eventId = $("#olympicsDetails").data("eventId")
-	$.ajax({
-		type: 'PUT',
-		url: "event/olympics/" + eventId + "/airlines/" + activeAirline.id + "/votes",
-	    data: JSON.stringify(data),
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(airline) {
-	        closeModal($("#olympicsVoteModal"))
-	        loadOlympicsDetails($('#olympicsTable .table-row.selected'))
-	        checkPendingActions()
-	    },
+    $.ajax({
+        type: 'PUT',
+        url: "event/olympics/" + eventId + "/airlines/" + activeAirline.id + "/votes",
+        data: JSON.stringify(data),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(airline) {
+            closeModal($("#olympicsVoteModal"))
+            loadOlympicsDetails($('#olympicsTable .table-row.selected'))
+            checkPendingActions()
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function revertOlympicsVotes() {
@@ -531,19 +531,19 @@ function updateEventRewardModal(rewardCategory) {
     }
 
     $.ajax({
-    		type: 'GET',
-    		url: "event/" + eventId + "/airline/" + activeAirline.id + "/reward/" + rewardCategory,
-    	    contentType: 'application/json; charset=utf-8',
-    	    async: false,
-    	    dataType: 'json',
-    	    success: function(result) {
-    	        $("#eventRewardModal .rewardTitle").text(result.title)
-    	        showEventRewardOptionsTable(eventId, result.options)
+            type: 'GET',
+            url: "event/" + eventId + "/airline/" + activeAirline.id + "/reward/" + rewardCategory,
+            contentType: 'application/json; charset=utf-8',
+            async: false,
+            dataType: 'json',
+            success: function(result) {
+                $("#eventRewardModal .rewardTitle").text(result.title)
+                showEventRewardOptionsTable(eventId, result.options)
             },
             error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
     });
 }
 
@@ -574,7 +574,7 @@ function showEventRewardOptionsTable(eventId, rewardOptions) {
 
 
 function pickEventReward(eventId, categoryId, optionId) {
-	$.ajax({
+    $.ajax({
         type: 'PUT',
         url: "event/" + eventId + "/airline/" + activeAirline.id + "/reward/category/" + categoryId + "/option/" + optionId,
         contentType: 'application/json; charset=utf-8',
@@ -635,19 +635,19 @@ function showOlympicsRankingModal() {
 }
 
 function getOlympicsAirlineRankingRow(rank, entry) {
-	var row = $("<div class='table-row'></div>")
-	row.append("<div class='cell'>" + rank + "</div>")
+    var row = $("<div class='table-row'></div>")
+    row.append("<div class='cell'>" + rank + "</div>")
     row.append("<div class='cell'>" + getAirlineSpan(entry.airlineId, entry.airlineName) + "</div>")
     row.append("<div class='cell' style='text-align: right;'>" + commaSeparateNumber(entry.score) + "</div>")
-	return row
+    return row
 }
 
 function getOlympicsCountryRankingRow(rank, entry) {
-	var row = $("<div class='table-row'></div>")
-	row.append("<div class='cell'>" + rank + "</div>")
+    var row = $("<div class='table-row'></div>")
+    row.append("<div class='cell'>" + rank + "</div>")
     row.append("<div class='cell'>" + getCountryFlagImg(entry.countryCode) + entry.countryName + "</div>")
     row.append("<div class='cell' style='text-align: right;'>" + commaSeparateNumber(entry.count) + "</div>")
     row.append("<div class='cell' style='text-align: right;'>" + Math.round(entry.percentage) + "%</div>")
-	return row
+    return row
 }
 

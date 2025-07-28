@@ -59,15 +59,15 @@
 
 
 .tooltip .tooltiptext:not(.below) {
-	bottom: 125%;	
+    bottom: 125%;    
 }
 
 .tooltip .tooltiptext.below {
-	top: 125%;
+    top: 125%;
 }
 
 .tooltip .tooltiptext img {
-	border-radius: 0.5em 0.5em 0.5em 0.5em;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
 }
 
 .tooltip .tooltiptext::after {
@@ -84,13 +84,13 @@
 }
 
 .tooltip .tooltiptext:not(.below)::after {
-	top: 100%;
-	border-color: #555 transparent transparent transparent;
+    top: 100%;
+    border-color: #555 transparent transparent transparent;
 }
 
 .tooltip .tooltiptext.below::after {
-	bottom: 100%;
-	border-color: transparent transparent #555 transparent;
+    bottom: 100%;
+    border-color: transparent transparent #555 transparent;
 }
 
 .tooltip:hover .tooltiptext {

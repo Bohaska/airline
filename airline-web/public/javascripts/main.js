@@ -13,43 +13,43 @@ var polylines = []
 var airports = undefined
 
 $( document ).ready(function() {
-	mobileCheck()
-	$('#tutorialHtml').load('assets/html/tutorial.html')
+    mobileCheck()
+    $('#tutorialHtml').load('assets/html/tutorial.html')
     $('#noticeHtml').load('assets/html/notice.html', initNotices)
-	populateNavigation()
+    populateNavigation()
     history.replaceState({"onclickFunction" : "showWorldMap()"}, null, "/") //set the initial state
 
-	window.addEventListener('orientationchange', refreshMobileLayout)
+    window.addEventListener('orientationchange', refreshMobileLayout)
 
     populateLookups()
-	if ($.cookie('sessionActive')) {
-		loadUser(false)
-	} else {
-		hideUserSpecificElements()
-		refreshLoginBar()
-		getAirports();
-//		printConsole("Please log in")
+    if ($.cookie('sessionActive')) {
+        loadUser(false)
+    } else {
+        hideUserSpecificElements()
+        refreshLoginBar()
+        getAirports();
+//        printConsole("Please log in")
         showAbout();
         refreshWallpaper()
-	}
+    }
 
     registerEscape()
     updateAirlineColors()
-	initTabGroup()
+    initTabGroup()
 
-	populateTooltips()
-	checkAutoplaySettings()
+    populateTooltips()
+    checkAutoplaySettings()
 
-	
-	if ($("#floatMessage").val()) {
-		showFloatMessage($("#floatMessage").val())
-	}
-	$(window).scroll(function()
-	{
-  		$('#floatBackButton').animate({top: ($(window).scrollTop() + 100) + "px" },{queue: false, duration: 350});
-	});
+    
+    if ($("#floatMessage").val()) {
+        showFloatMessage($("#floatMessage").val())
+    }
+    $(window).scroll(function()
+    {
+          $('#floatBackButton').animate({top: ($(window).scrollTop() + 100) + "px" },{queue: false, duration: 350});
+    });
 
-	$('#chattext').jemoji({
+    $('#chattext').jemoji({
         folder : 'assets/images/emoji/'
         //btn:    $('#emojiButton') //button is buggy and hard to select (not categorized), lets not enable it now
     });
@@ -62,7 +62,7 @@ $( document ).ready(function() {
 
 //    startFirework(10000)
 
-	//plotSeatConfigurationGauge($("#seatConfigurationGauge"), {"first" : 0, "business" : 0, "economy" : 220}, 220)
+    //plotSeatConfigurationGauge($("#seatConfigurationGauge"), {"first" : 0, "business" : 0, "economy" : 220}, 220)
 })
 
 $(window).on('focus', function() {
@@ -107,19 +107,19 @@ function closeMapControlPanelById(elementId) {
         default:
             console.log("Escape closing not supported for:", elementId);
             return;
-	}
+    }
 }
 
 
 function mobileCheck() {
-	if (isMobileDevice()) { //assume it's a less powerful device
-		refreshMobileLayout()
+    if (isMobileDevice()) { //assume it's a less powerful device
+        refreshMobileLayout()
 
-		//turn off animation by default
-		currentAnimationStatus = false
+        //turn off animation by default
+        currentAnimationStatus = false
 
-		//registerSwipe()
-	}
+        //registerSwipe()
+    }
 }
 
 function isMobileDevice() {
@@ -127,133 +127,133 @@ function isMobileDevice() {
 }
 
 function refreshMobileLayout() {
-	if (window.screen.availWidth < window.screen.availHeight) { //only toggle layout change if it's landscape
-		$("#reputationLevel").hide()
+    if (window.screen.availWidth < window.screen.availHeight) { //only toggle layout change if it's landscape
+        $("#reputationLevel").hide()
     } else {
         $("#reputationLevel").show()
-	}
-	delete(map)
-	//yike, what if we miss something...the list below is kinda random
-	//initMap()
-	if (airports) {
-	    addMarkers(airports)
     }
-	if (activeAirline) {
-	    updateLinksInfo()
-	    updateAirportMarkers(activeAirline)
+    delete(map)
+    //yike, what if we miss something...the list below is kinda random
+    //initMap()
+    if (airports) {
+        addMarkers(airports)
+    }
+    if (activeAirline) {
+        updateLinksInfo()
+        updateAirportMarkers(activeAirline)
     }
 }
 
 function showFloatMessage(message, timeout) {
-	timeout = timeout || 3000
-	$("#floatMessageBox").text(message)
-	var centerX = $("#floatMessageBox").parent().width() / 2 - $("#floatMessageBox").width() / 2 
-	$("#floatMessageBox").css({ top:"-=20px", left: centerX, opacity:100})
-	$("#floatMessageBox").show()
-	$("#floatMessageBox").animate({ top:"0px" }, "fast", function() {
-		if (timeout > 0) {
-			setTimeout(function() { 
-				console.log("closing")
-				$('#floatMessageBox').animate({ top:"-=20px",opacity:0 }, "slow", function() {
-					$('#floatMessageBox').hide()
-				})
-			}, timeout)
-		}
-	})
-	
-	//scroll the message box to the top offset of browser's scroll bar
-	$(window).scroll(function()
-	{
-  		$('#floatMessageBox').animate({top:$(window).scrollTop()+"px" },{queue: false, duration: 350});
-	});
+    timeout = timeout || 3000
+    $("#floatMessageBox").text(message)
+    var centerX = $("#floatMessageBox").parent().width() / 2 - $("#floatMessageBox").width() / 2 
+    $("#floatMessageBox").css({ top:"-=20px", left: centerX, opacity:100})
+    $("#floatMessageBox").show()
+    $("#floatMessageBox").animate({ top:"0px" }, "fast", function() {
+        if (timeout > 0) {
+            setTimeout(function() { 
+                console.log("closing")
+                $('#floatMessageBox').animate({ top:"-=20px",opacity:0 }, "slow", function() {
+                    $('#floatMessageBox').hide()
+                })
+            }, timeout)
+        }
+    })
+    
+    //scroll the message box to the top offset of browser's scroll bar
+    $(window).scroll(function()
+    {
+          $('#floatMessageBox').animate({top:$(window).scrollTop()+"px" },{queue: false, duration: 350});
+    });
 }
 
 function refreshLoginBar() {
-	if (!activeUser) {
-		$("#loginDiv").show();
-		$("#logoutDiv").hide();
-	} else {
-		$("#currentUserName").empty()
-		$("#currentUserName").append(activeUser.userName + getUserLevelImg(activeUser.level))
-		$("#logoutDiv").show();
+    if (!activeUser) {
+        $("#loginDiv").show();
+        $("#logoutDiv").hide();
+    } else {
+        $("#currentUserName").empty()
+        $("#currentUserName").append(activeUser.userName + getUserLevelImg(activeUser.level))
+        $("#logoutDiv").show();
         $("#loginDiv").hide();
-	}
+    }
 }
 
 
 function loadUser(isLogin) {
-	var ajaxCall = {
-	  type: "POST",
-	  url: "login",
-	  success: function(user) {
-		  if (user) {
-		      closeAbout()
-		      activeUser = user
-			  $.cookie('sessionActive', 'true');
-			  $("#loginUserName").val("")
-			  $("#loginPassword").val("")
+    var ajaxCall = {
+      type: "POST",
+      url: "login",
+      success: function(user) {
+          if (user) {
+              closeAbout()
+              activeUser = user
+              $.cookie('sessionActive', 'true');
+              $("#loginUserName").val("")
+              $("#loginPassword").val("")
 
-			  if (isLogin) {
-			  	  showFloatMessage("Successfully logged in")
-				  showAnnoucement()
-			  }
+              if (isLogin) {
+                    showFloatMessage("Successfully logged in")
+                  showAnnoucement()
+              }
               refreshWallpaper()
-    		  refreshLoginBar()
-//			  printConsole('') //clear console
-			  getAirports()
-			  showUserSpecificElements();
-			  updateChatTabs()
-			  initAdminActions()
-			  
-			  if (window.location.hostname != 'localhost') {
-				  FS.identify(user.id, {
-					  displayName: user.userName,
-					  email: user.email
-					 });
-		      }
-		  }
-		  if (user.airlineIds.length > 0) {
-			  selectAirline(user.airlineIds[0])
-			  loadAllCountries() //load country again for relationship
-			  //loadAllLogs()
-			  addAirlineSpecificMapControls(map)
+              refreshLoginBar()
+//              printConsole('') //clear console
+              getAirports()
+              showUserSpecificElements();
+              updateChatTabs()
+              initAdminActions()
+              
+              if (window.location.hostname != 'localhost') {
+                  FS.identify(user.id, {
+                      displayName: user.userName,
+                      email: user.email
+                     });
+              }
+          }
+          if (user.airlineIds.length > 0) {
+              selectAirline(user.airlineIds[0])
+              loadAllCountries() //load country again for relationship
+              //loadAllLogs()
+              addAirlineSpecificMapControls(map)
               initPrompts()
-		  }
-		  updateAirlineLabelColors()
-		  $('.button.login').removeClass('loading')
+          }
+          updateAirlineLabelColors()
+          $('.button.login').removeClass('loading')
 
-	  },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	    	if (jqXHR.status == 401) {
-	    		showFloatMessage("Incorrect username or password")
-	    	} else if (jqXHR.status == 400) {
-	    		showFloatMessage("Session expired. Please log in again")
-		    } else if (jqXHR.status == 403) {
-	    		showFloatMessage("You have been banned for violating the game rules. Please contact admins on Discord for assistance.")
-	    	} else {
-	    	    showFloatMessage("Error logging in, error code " + jqXHR.status + ". Please try again. Contact admins on Discord if the issue persists.")
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    	}
-	    	$('.button.login').removeClass('loading')
-	    }
-	}
-	if (isLogin) {
-		var userName = $("#loginUserName").val()
-		var password = $("#loginPassword").val()
-		ajaxCall.headers = {
-			    "Authorization": "Basic " + btoa(userName + ":" + password)
-		}
+      },
+        error: function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 401) {
+                showFloatMessage("Incorrect username or password")
+            } else if (jqXHR.status == 400) {
+                showFloatMessage("Session expired. Please log in again")
+            } else if (jqXHR.status == 403) {
+                showFloatMessage("You have been banned for violating the game rules. Please contact admins on Discord for assistance.")
+            } else {
+                showFloatMessage("Error logging in, error code " + jqXHR.status + ". Please try again. Contact admins on Discord if the issue persists.")
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+            $('.button.login').removeClass('loading')
+        }
+    }
+    if (isLogin) {
+        var userName = $("#loginUserName").val()
+        var password = $("#loginPassword").val()
+        ajaxCall.headers = {
+                "Authorization": "Basic " + btoa(userName + ":" + password)
+        }
 
-	}
-	
-	return $.ajax(ajaxCall);
+    }
+    
+    return $.ajax(ajaxCall);
 }
 
 function passwordLogin(e) {
-	if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
-		login()
-	}
+    if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+        login()
+    }
 }
 
 function login()  {
@@ -262,87 +262,87 @@ function login()  {
 }
 
 function onGoogleLogin(googleUser) {
-	var profile = googleUser.getBasicProfile();
+    var profile = googleUser.getBasicProfile();
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-	console.log('Name: ' + profile.getName());
-	console.log('Image URL: ' + profile.getImageUrl());
-	console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-	loginType='plain'
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    loginType='plain'
 }
 
 function logout() {
-	$.ajax
-	({
-	  type: "POST",
-	  url: "logout",
-	  async: false,
-	  success: function(message) {
-	    	console.log(message)
-	    	activeUser = null
-	    	activeAirline = null
-	    	airlineLabelColors = {}
-	    	hideUserSpecificElements()
-	    	$.removeCookie('sessionActive')
-	    	//refreshLoginBar()
-	    	//showFloatMessage("Successfully logged out")
-	    	location.reload();
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
-	
-	removeMarkers()
+    $.ajax
+    ({
+      type: "POST",
+      url: "logout",
+      async: false,
+      success: function(message) {
+            console.log(message)
+            activeUser = null
+            activeAirline = null
+            airlineLabelColors = {}
+            hideUserSpecificElements()
+            $.removeCookie('sessionActive')
+            //refreshLoginBar()
+            //showFloatMessage("Successfully logged out")
+            location.reload();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
+    
+    removeMarkers()
 }
 
 function showUserSpecificElements() {
-	$('.user-specific-tab').show()
-	$('.topBarDetails').show()
-	$('.topBarDetails').parent().removeClass('hide-empty') //hack to avoid empty floating div for modern layout
+    $('.user-specific-tab').show()
+    $('.topBarDetails').show()
+    $('.topBarDetails').parent().removeClass('hide-empty') //hack to avoid empty floating div for modern layout
 }
 
 function hideUserSpecificElements() {
-	$('.user-specific-tab').hide()
-	$('.topBarDetails').hide()
-	$('.topBarDetails').parent().addClass('hide-empty') //hack to avoid empty floating div for modern layout
+    $('.user-specific-tab').hide()
+    $('.topBarDetails').hide()
+    $('.topBarDetails').parent().addClass('hide-empty') //hack to avoid empty floating div for modern layout
 }
 
 
 function initMap() {
-	initStyles()
+    initStyles()
   map = new google.maps.Map(document.getElementById('map'), {
-	center: {lat: 20, lng: 150.644},
-   	zoom : 2,
-   	minZoom : 2,
-   	gestureHandling: 'greedy',
-   	styles: getMapStyles(),
-	mapTypeId: getMapTypes(),
-   	restriction: {
+    center: {lat: 20, lng: 150.644},
+       zoom : 2,
+       minZoom : 2,
+       gestureHandling: 'greedy',
+       styles: getMapStyles(),
+    mapTypeId: getMapTypes(),
+       restriction: {
                 latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
               }
   });
-	
+    
   google.maps.event.addListener(map, 'zoom_changed', function() {
-	    var zoom = map.getZoom();
-	    // iterate over markers and call setVisible
-	    $.each(markers, function( key, marker ) {
-	        marker.setVisible(isShowMarker(marker, zoom));
-	    })
+        var zoom = map.getZoom();
+        // iterate over markers and call setVisible
+        $.each(markers, function( key, marker ) {
+            marker.setVisible(isShowMarker(marker, zoom));
+        })
   });
   
   google.maps.event.addListener(map, 'maptypeid_changed', function() { 
-		var mapType = map.getMapTypeId();
-		$.cookie('currentMapTypes', mapType);
+        var mapType = map.getMapTypeId();
+        $.cookie('currentMapTypes', mapType);
   });
 
   addCustomMapControls(map)
 }
 
 function addCustomMapControls(map) {
-//			<div id="toggleMapChristmasButton" class="googleMapIcon" onclick="toggleChristmasMarker()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/bauble.png")' title='Merry Christmas!' style="vertical-align: middle;"/></div>-->
-//			<div id="toggleMapAnimationButton" class="googleMapIcon" onclick="toggleMapAnimation()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/arrow-step-over.png")' title='toggle flight marker animation' style="vertical-align: middle;"/></div>-->
-//			<div id="toggleMapLightButton" class="googleMapIcon" onclick="toggleMapLight()" align="center" style="display: none;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/switch.png")' title='toggle dark/light themed map' style="vertical-align: middle;"/></div>-->
+//            <div id="toggleMapChristmasButton" class="googleMapIcon" onclick="toggleChristmasMarker()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/bauble.png")' title='Merry Christmas!' style="vertical-align: middle;"/></div>-->
+//            <div id="toggleMapAnimationButton" class="googleMapIcon" onclick="toggleMapAnimation()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/arrow-step-over.png")' title='toggle flight marker animation' style="vertical-align: middle;"/></div>-->
+//            <div id="toggleMapLightButton" class="googleMapIcon" onclick="toggleMapLight()" align="center" style="display: none;"><span class="alignHelper"></span><img src='@routes.Assets.versioned("images/icons/switch.png")' title='toggle dark/light themed map' style="vertical-align: middle;"/></div>-->
    var toggleMapChristmasButton = $('<div id="toggleMapChristmasButton" class="googleMapIcon" onclick="toggleChristmasMarker()" align="center" style="display: none; margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/bauble.png" title=\'Merry Christmas!\' style="vertical-align: middle;"/></div>')
    var toggleMapAnimationButton = $('<div id="toggleMapAnimationButton" class="googleMapIcon" onclick="toggleMapAnimation()" align="center" style="margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/arrow-step-over.png" title=\'toggle flight marker animation\' style="vertical-align: middle;"/></div>')
    var toggleChampionButton = $('<div id="toggleChampionButton" class="googleMapIcon" onclick="toggleChampionMap()" align="center"  style="margin-bottom: 10px;"><span class="alignHelper"></span><img src="assets/images/icons/crown.png" title=\'toggle champion\' style="vertical-align: middle;"/></div>')
@@ -422,43 +422,43 @@ function LinkHistoryControl(controlDiv, map) {
 
 
 function updateAllPanels(airlineId) {
-	updateAirlineInfo(airlineId)
-	
-//	if (activeAirline) {
-//		if (christmasFlag) {
-//		    printConsole("Breaking news - Santa went missing!!! Whoever finds Santa will be rewarded handsomely! He could be hiding in one of the size 6 or above airports! View the airport page to track him down!", true, true)
-//		}
+    updateAirlineInfo(airlineId)
+    
+//    if (activeAirline) {
+//        if (christmasFlag) {
+//            printConsole("Breaking news - Santa went missing!!! Whoever finds Santa will be rewarded handsomely! He could be hiding in one of the size 6 or above airports! View the airport page to track him down!", true, true)
+//        }
 //
-//	}
-	
+//    }
+    
 }
 
 //does not remove or add any components
 function refreshPanels(airlineId) {
-	$.ajax({
-		type: 'GET',
-		url: "airlines/" + airlineId,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: false,
-	    success: function(airline) {
-	    	activeAirline = airline
-	    	refreshTopBar(airline)
-	    	if ($("#worldMapCanvas").is(":visible")) {
-	    		refreshLinks()
-	    	}
-	    	if ($("#linkDetails").is(":visible") || $("#linkDetails").hasClass("active")) {
-	    		refreshLinkDetails(selectedLink)
-	    	}
-	    	if ($("#linksCanvas").is(":visible")) {
-	    		loadLinksTable()
-	    	}
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+    $.ajax({
+        type: 'GET',
+        url: "airlines/" + airlineId,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(airline) {
+            activeAirline = airline
+            refreshTopBar(airline)
+            if ($("#worldMapCanvas").is(":visible")) {
+                refreshLinks()
+            }
+            if ($("#linkDetails").is(":visible") || $("#linkDetails").hasClass("active")) {
+                refreshLinkDetails(selectedLink)
+            }
+            if ($("#linksCanvas").is(":visible")) {
+                loadLinksTable()
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 var totalmillisecPerWeek = 7 * 24 * 60 * 60 * 1000
@@ -470,26 +470,26 @@ var currentTickTimer
 var tickTimerCreator
 
 function updateTime(cycle, fraction, cycleDurationEstimation) {
-	$(".currentTime").attr("title", "Current Cycle: " + cycle)
-	gameTimeStart = (cycle + fraction) * totalmillisecPerWeek
+    $(".currentTime").attr("title", "Current Cycle: " + cycle)
+    gameTimeStart = (cycle + fraction) * totalmillisecPerWeek
 
     var initialDurationTillNextTick
-	if (cycleDurationEstimation > 0) { //update incrementPerInterval
-	    initialDurationTillNextTick = cycleDurationEstimation * (1 - fraction)
-	    hasTickEstimation = true
-	}
+    if (cycleDurationEstimation > 0) { //update incrementPerInterval
+        initialDurationTillNextTick = cycleDurationEstimation * (1 - fraction)
+        hasTickEstimation = true
+    }
 
-	var wallClockStart = new Date()
+    var wallClockStart = new Date()
 
-	//how much wall clock duration should be multiplied as game time duration
-	var timeMultiplier = cycleDurationEstimation > 0 ?
-	    totalmillisecPerWeek / cycleDurationEstimation :
-		totalmillisecPerWeek / (30 * 60 * 1000) //by default 30 minutes per week
+    //how much wall clock duration should be multiplied as game time duration
+    var timeMultiplier = cycleDurationEstimation > 0 ?
+        totalmillisecPerWeek / cycleDurationEstimation :
+        totalmillisecPerWeek / (30 * 60 * 1000) //by default 30 minutes per week
 
 
-	if (currentTickTimer) {
-	    clearInterval(currentTickTimer)
-	}
+    if (currentTickTimer) {
+        clearInterval(currentTickTimer)
+    }
 
 
     var updateTimerFunction = function() {
@@ -519,7 +519,7 @@ function updateTime(cycle, fraction, cycleDurationEstimation) {
         return newTimer
     }
 
-	currentTickTimer = tickTimerCreator()
+    currentTickTimer = tickTimerCreator()
 }
 
 
@@ -534,68 +534,68 @@ document.addEventListener('visibilitychange', function () {
 
 
 //function printConsole(message, messageLevel, activateConsole, persistMessage) {
-//	messageLevel = messageLevel || 1
-//	activateConsole = activateConsole || false
-//	persistMessage = persistMessage || false
-//	var messageClass
-//	if (messageLevel == 1) {
-//		messageClass = 'actionMessage'
-//	} else {
-//		messageClass = 'errorMessage'
-//	}
+//    messageLevel = messageLevel || 1
+//    activateConsole = activateConsole || false
+//    persistMessage = persistMessage || false
+//    var messageClass
+//    if (messageLevel == 1) {
+//        messageClass = 'actionMessage'
+//    } else {
+//        messageClass = 'errorMessage'
+//    }
 //
-//	if (message == '') { //try to clear message, check if there was a persistent message
-//		var previousMessage = $('#console #consoleMessage').data('persistentMessage')
-//		if (previousMessage) {
-//			message = previousMessage
-//		}
-//	}
+//    if (message == '') { //try to clear message, check if there was a persistent message
+//        var previousMessage = $('#console #consoleMessage').data('persistentMessage')
+//        if (previousMessage) {
+//            message = previousMessage
+//        }
+//    }
 //
-//	if (persistMessage) {
-//		$('#console #consoleMessage').data('persistentMessage', message)
-//	}
-//	var consoleVisible = $('#console #consoleMessage').is(':visible')
+//    if (persistMessage) {
+//        $('#console #consoleMessage').data('persistentMessage', message)
+//    }
+//    var consoleVisible = $('#console #consoleMessage').is(':visible')
 //
-//	if (consoleVisible) {
-//		$('#console #consoleMessage').fadeOut('slow', function() { //fade out and reset positions
-//			$('#console #consoleMessage').text(message)
-//			$('#console #consoleMessage').removeClass().addClass(messageClass)
-//			$('#console #consoleMessage').fadeIn('slow')
-//		})
-//	} else {
-//		$('#console #consoleMessage').text(message)
-//		$('#console #consoleMessage').removeClass().addClass(messageClass)
-//		if (activateConsole) {
-//			$('#console #consoleMessage').fadeIn('slow')
-//		}
-//	}
+//    if (consoleVisible) {
+//        $('#console #consoleMessage').fadeOut('slow', function() { //fade out and reset positions
+//            $('#console #consoleMessage').text(message)
+//            $('#console #consoleMessage').removeClass().addClass(messageClass)
+//            $('#console #consoleMessage').fadeIn('slow')
+//        })
+//    } else {
+//        $('#console #consoleMessage').text(message)
+//        $('#console #consoleMessage').removeClass().addClass(messageClass)
+//        if (activateConsole) {
+//            $('#console #consoleMessage').fadeIn('slow')
+//        }
+//    }
 //}
 //
 //function toggleConsoleMessage() {
-//	if ($('#console #consoleMessage').is(':visible')) {
-//		$('#console #consoleMessage').fadeOut('slow')
-//	} else {
-//		$('#console #consoleMessage').fadeIn('slow')
-//	}
+//    if ($('#console #consoleMessage').is(':visible')) {
+//        $('#console #consoleMessage').fadeOut('slow')
+//    } else {
+//        $('#console #consoleMessage').fadeIn('slow')
+//    }
 //}
 
 function showWorldMap() {
-	setActiveDiv($('#worldMapCanvas'));
-	highlightTab($('.worldMapCanvasTab'))
-	$('#sidePanel').appendTo($('#worldMapCanvas'))
-	//closeAirportInfoPopup()
-	if (selectedLink) {
-		selectLinkFromMap(selectedLink, !activeAirportPopupInfoWindow) //do not refocus if there's a popup, stay where it is
-	}
-	checkTutorial('worldMap')
+    setActiveDiv($('#worldMapCanvas'));
+    highlightTab($('.worldMapCanvasTab'))
+    $('#sidePanel').appendTo($('#worldMapCanvas'))
+    //closeAirportInfoPopup()
+    if (selectedLink) {
+        selectLinkFromMap(selectedLink, !activeAirportPopupInfoWindow) //do not refocus if there's a popup, stay where it is
+    }
+    checkTutorial('worldMap')
 }
 
 //switch to map view w/o considering leaving current tab
 function switchMap() {
     var mapCanvas = $('#worldMapCanvas')
     var existingActiveDiv = mapCanvas.siblings(":visible").filter(function (index) {
-		return $(this).css("clear") != "both"
-	})
+        return $(this).css("clear") != "both"
+    })
     if (existingActiveDiv.length > 0) {
         existingActiveDiv.fadeOut(200, function() {
             mapCanvas.fadeIn(200)
@@ -604,13 +604,13 @@ function switchMap() {
 }
 
 function showAnnoucement() {
-	// Get the modal
-	var modal = $('#announcementModal')
-	// Get the <span> element that closes the modal
-	$('#announcementContainer').empty()
-	$('#announcementContainer').load('assets/html/announcement.html')
+    // Get the modal
+    var modal = $('#announcementModal')
+    // Get the <span> element that closes the modal
+    $('#announcementContainer').empty()
+    $('#announcementContainer').load('assets/html/announcement.html')
 
-	modal.fadeIn(1000)
+    modal.fadeIn(1000)
 }
 
 function populateTooltips() {
@@ -647,77 +647,77 @@ var airlineGradeLookup
 function populateLookups() {
     loadAllCountries()
     $.ajax({
-		type: 'GET',
-		url: "lookups",
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    async: false,
-	    success: function(result) {
-	    	airlineGradeLookup = result.airlineGradeLookup
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+        type: 'GET',
+        url: "lookups",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        async: false,
+        success: function(result) {
+            airlineGradeLookup = result.airlineGradeLookup
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function showTutorial() {
-	// Get the modal
-	var modal = $('#tutorialModal')
-	modal.fadeIn(1000)
+    // Get the modal
+    var modal = $('#tutorialModal')
+    modal.fadeIn(1000)
 }
 
 function promptConfirm(prompt, targetFunction, param) {
-	$('#confirmationModal .confirmationButton').data('targetFunction', targetFunction)
-	if (typeof param != 'undefined') {
-		$('#confirmationModal .confirmationButton').data('targetFunctionParam', param)
-	}
-	$('#confirmationPrompt').html(prompt)
-	$('#confirmationModal').fadeIn(200)
+    $('#confirmationModal .confirmationButton').data('targetFunction', targetFunction)
+    if (typeof param != 'undefined') {
+        $('#confirmationModal .confirmationButton').data('targetFunctionParam', param)
+    }
+    $('#confirmationPrompt').html(prompt)
+    $('#confirmationModal').fadeIn(200)
 }
 
 function executeConfirmationTarget() {
-	var targetFunction = $('#confirmationModal .confirmationButton').data('targetFunction')
-	var targetFunctionParam = $('#confirmationModal .confirmationButton').data('targetFunctionParam')
-	if (typeof targetFunctionParam != 'undefined') {
-		targetFunction(targetFunctionParam) 
-	} else {
-		targetFunction()
-	}
+    var targetFunction = $('#confirmationModal .confirmationButton').data('targetFunction')
+    var targetFunctionParam = $('#confirmationModal .confirmationButton').data('targetFunctionParam')
+    if (typeof targetFunctionParam != 'undefined') {
+        targetFunction(targetFunctionParam) 
+    } else {
+        targetFunction()
+    }
 }
 
 function promptSelection(question, choices, targetFunction) {
-	$('#selectionModal .question').text(question)
-	$('#selectionModal .selections').empty()
-	$.each(choices, function(index, choice) {
-	    var $selectionButton = $('<div class="button">' + choice + '</div>')
+    $('#selectionModal .question').text(question)
+    $('#selectionModal .selections').empty()
+    $.each(choices, function(index, choice) {
+        var $selectionButton = $('<div class="button">' + choice + '</div>')
         $('#selectionModal .selections').append($selectionButton)
         $selectionButton.click(function() {
             targetFunction(choice)
             closeModal($('#selectionModal'))
         })
-	})
+    })
 
-	$('#selectionModal').fadeIn(200)
+    $('#selectionModal').fadeIn(200)
 }
 
 
 function updateAirlineColors() {
-	var url = "colors"
+    var url = "colors"
     $.ajax({
-		type: 'GET',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	airlineColors = result
-	    },
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            airlineColors = result
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function updateAirlineLabelColors(callback) {
@@ -745,14 +745,14 @@ function updateAirlineLabelColors(callback) {
 }
 
 function assignAirlineColors(dataSet, colorProperty) {
-	$.each(dataSet, function(index, entry) {
-		if (entry[colorProperty]) {
-			var airlineColor = airlineColors[entry[colorProperty]]
-			if (airlineColor) {
-				entry.color = airlineColor
-			}
-		}
-	})
+    $.each(dataSet, function(index, entry) {
+        if (entry[colorProperty]) {
+            var airlineColor = airlineColors[entry[colorProperty]]
+            if (airlineColor) {
+                entry.color = airlineColor
+            }
+        }
+    })
 }
 
 function populateNavigation(parent) { //change all the tabs to do fake url

@@ -3,69 +3,69 @@ function adminAction(action, targetUserId, callback) {
 }
 
 function adminActionWithData(action, targetUserId, data, callback) {
-	var url = "/admin-action/" + action + "/" + targetUserId
-	var selectedAirlineId =  $("#rivalDetails .adminActions").data("airlineId")
+    var url = "/admin-action/" + action + "/" + targetUserId
+    var selectedAirlineId =  $("#rivalDetails .adminActions").data("airlineId")
 
-	$.ajax({
-		type: 'PUT',
-		url: url,
-	    data: JSON.stringify(data),
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
+    $.ajax({
+        type: 'PUT',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
             showRivalsCanvas(selectedAirlineId)
             if (callback) {
                 callback()
             }
-	    },
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function adminMultiAction(action, targetUserIds, callback) {
-	var url = "/admin-multi-action/" + action
-	var selectedAirlineId =  $("#rivalDetails .adminActions").data("airlineId")
+    var url = "/admin-multi-action/" + action
+    var selectedAirlineId =  $("#rivalDetails .adminActions").data("airlineId")
 
     var data = {
         "userIds" : targetUserIds
      }
-	$.ajax({
-		type: 'PUT',
-		url: url,
-	    data: JSON.stringify(data),
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	        showRivalsCanvas(selectedAirlineId)
-	        if (callback) {
+    $.ajax({
+        type: 'PUT',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            showRivalsCanvas(selectedAirlineId)
+            if (callback) {
                 callback()
             }
-	    },
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 
 function invalidateImage(imageType) {
-	var url = "/admin/invalidate-image/" + activeAirportId +  "/" + imageType
-	$.ajax({
-		type: 'GET',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
+    var url = "/admin/invalidate-image/" + activeAirportId +  "/" + imageType
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
             showAirportDetails(activeAirportId)
-	    },
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
-	});
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
 }
 function isAdmin() {
     return activeUser && activeUser.adminStatus
@@ -324,18 +324,18 @@ function promptBroadcastMessage() {
 function sendBroadcastMessage() {
     var url = "/admin/send-broadcast-message"
     var data = { "message" : $('#sendBroadcastMessageModal .sendMessage').val() }
-    	$.ajax({
-    		type: 'PUT',
-    		url: url,
-    	    data: JSON.stringify(data),
-    	    contentType: 'application/json; charset=utf-8',
-    	    dataType: 'json',
-    	    success: function(result) {
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result) {
                 closeModal($('#sendBroadcastMessageModal'))
-    	    },
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
-    	});
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+        });
 }

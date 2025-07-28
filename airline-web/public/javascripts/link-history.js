@@ -6,30 +6,30 @@ function showLinkHistoryView() {
     fromLinkCanvas = $('#linksCanvas').is(":visible")
     $('.exitPaxMap').data("fromLinkCanvas", fromLinkCanvas)
 
-	if (!$('#worldMapCanvas').is(":visible")) {
-		showWorldMap()
-	}
+    if (!$('#worldMapCanvas').is(":visible")) {
+        showWorldMap()
+    }
 
-	loadCurrentAirlineAlliance(function(allianceDetails) {
-		currentAirlineAllianceMembers = []
-		if (allianceDetails.allianceId) {
-			var alliance = loadedAlliancesById[allianceDetails.allianceId]
-			if (alliance) {
-				$.each(alliance.members, function(index, member) {
-					currentAirlineAllianceMembers.push(member.airlineId)
-				})
-			}
-		}
-	})
-	clearAllPaths() //clear all flight paths
+    loadCurrentAirlineAlliance(function(allianceDetails) {
+        currentAirlineAllianceMembers = []
+        if (allianceDetails.allianceId) {
+            var alliance = loadedAlliancesById[allianceDetails.allianceId]
+            if (alliance) {
+                $.each(alliance.members, function(index, member) {
+                    currentAirlineAllianceMembers.push(member.airlineId)
+                })
+            }
+        }
+    })
+    clearAllPaths() //clear all flight paths
 
     //populate control panel
-	$("#linkHistoryControlPanel .transitAirlineList .table-row").remove()
+    $("#linkHistoryControlPanel .transitAirlineList .table-row").remove()
 
-	$("#linkHistoryControlPanel .routeList").empty()
-	$("#linkHistoryControlPanel").data("showForward", true)
-	var link = loadedLinksById[selectedLink]
-	var forwardLinkDescription = "<div style='display: flex; align-items: center;' class='clickable selected' onclick='toggleLinkHistoryDirection(true, $(this))'>" + getAirportText(link.fromAirportCity, link.fromAirportCode) + "<img src='assets/images/icons/arrow.png'>" + getAirportText(link.toAirportCity, link.toAirportCode) + "</div>"
+    $("#linkHistoryControlPanel .routeList").empty()
+    $("#linkHistoryControlPanel").data("showForward", true)
+    var link = loadedLinksById[selectedLink]
+    var forwardLinkDescription = "<div style='display: flex; align-items: center;' class='clickable selected' onclick='toggleLinkHistoryDirection(true, $(this))'>" + getAirportText(link.fromAirportCity, link.fromAirportCode) + "<img src='assets/images/icons/arrow.png'>" + getAirportText(link.toAirportCity, link.toAirportCode) + "</div>"
     var backwardLinkDescription = "<div style='display: flex; align-items: center;' class='clickable' onclick='toggleLinkHistoryDirection(false, $(this))'>" + getAirportText(link.toAirportCity, link.toAirportCode) + "<img src='assets/images/icons/arrow.png'>" + getAirportText(link.fromAirportCity, link.fromAirportCode) + "</div>"
 
     $("#linkHistoryControlPanel .routeList").append(forwardLinkDescription)
@@ -38,7 +38,7 @@ function showLinkHistoryView() {
     $("#linkHistoryControlPanel").show()
 
     $('#linkHistoryControlPanel').data('cycleDelta', 0)
-	loadLinkHistory(selectedLink)
+    loadLinkHistory(selectedLink)
 }
 
 function loadLinkHistory(linkId) {
@@ -47,7 +47,7 @@ function loadLinkHistory(linkId) {
         path.shadowPath.setMap(null)
     })
     historyPaths = {}
-	var linkInfo = loadedLinksById[linkId]
+    var linkInfo = loadedLinksById[linkId]
     var airlineNamesById = {}
     var cycleDelta = $('#linkHistoryControlPanel').data('cycleDelta')
     $("#linkHistoryControlPanel .transitAirlineList").empty()
@@ -154,84 +154,84 @@ function toggleLinkHistoryDirection(showForward, routeDiv) {
 }
 
 function hideLinkHistoryView() {
-	$.each(historyPaths, function(index, path) {
-	    path.setMap(null)
-	})
+    $.each(historyPaths, function(index, path) {
+        path.setMap(null)
+    })
     historyPaths = {}
 
-	clearHistoryFlightMarkers()
-	updateLinksInfo() //redraw all flight paths
+    clearHistoryFlightMarkers()
+    updateLinksInfo() //redraw all flight paths
 
-	$("#linkHistoryControlPanel").hide()
+    $("#linkHistoryControlPanel").hide()
 
-	if ($('.exitPaxMap').data("fromLinkCanvas")) {
-	    showLinksDetails()
-	}
+    if ($('.exitPaxMap').data("fromLinkCanvas")) {
+        showLinksDetails()
+    }
 }
 
 function drawLinkHistoryPath(link, inverted, watchedLinkId, step) {
-	var from = new google.maps.LatLng({lat: link.fromLatitude, lng: link.fromLongitude})
-	var to = new google.maps.LatLng({lat: link.toLatitude, lng: link.toLongitude})
-	var pathKey = link.fromAirportId + "|"  + link.toAirportId + "|" + inverted
+    var from = new google.maps.LatLng({lat: link.fromLatitude, lng: link.fromLongitude})
+    var to = new google.maps.LatLng({lat: link.toLatitude, lng: link.toLongitude})
+    var pathKey = link.fromAirportId + "|"  + link.toAirportId + "|" + inverted
 
-	var lineSymbol = {
-	    path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
-	};
+    var lineSymbol = {
+        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+    };
 
-	var isWatchedLink = link.linkId == watchedLinkId
+    var isWatchedLink = link.linkId == watchedLinkId
 
-	var relatedPath
-	if (!historyPaths[pathKey]) {
-		relatedPath = new google.maps.Polyline({
-			 geodesic: true,
-		     strokeColor: "#DC83FC",
-		     strokeOpacity: 0.8,
-		     strokeWeight: 2,
-		     path: [from, to],
-		     icons: [{
-			      icon: lineSymbol,
-			      offset: '50%'
-			    }],
-		     zIndex : 1100,
-		     inverted : inverted,
-		     watched : isWatchedLink,
-		     step : step
-		});
+    var relatedPath
+    if (!historyPaths[pathKey]) {
+        relatedPath = new google.maps.Polyline({
+             geodesic: true,
+             strokeColor: "#DC83FC",
+             strokeOpacity: 0.8,
+             strokeWeight: 2,
+             path: [from, to],
+             icons: [{
+                  icon: lineSymbol,
+                  offset: '50%'
+                }],
+             zIndex : 1100,
+             inverted : inverted,
+             watched : isWatchedLink,
+             step : step
+        });
 
-		shadowPath = new google.maps.Polyline({
-			 geodesic: true,
-		     strokeOpacity: 0.0001,
-		     strokeWeight: 25,
-		     path: [from, to],
-		     zIndex : 401,
-		     inverted : inverted,
-		     link : link,
-		     thisAirlinePassengers : 0,
-		     thisAlliancePassengers : 0,
-		     otherAirlinePassengers : 0
-		});
+        shadowPath = new google.maps.Polyline({
+             geodesic: true,
+             strokeOpacity: 0.0001,
+             strokeWeight: 25,
+             path: [from, to],
+             zIndex : 401,
+             inverted : inverted,
+             link : link,
+             thisAirlinePassengers : 0,
+             thisAlliancePassengers : 0,
+             otherAirlinePassengers : 0
+        });
 
-		relatedPath.shadowPath = shadowPath
+        relatedPath.shadowPath = shadowPath
 
-		historyPaths[pathKey] = relatedPath
-	} else {
-		relatedPath = historyPaths[pathKey]
-	}
+        historyPaths[pathKey] = relatedPath
+    } else {
+        relatedPath = historyPaths[pathKey]
+    }
 
-	if (link.airlineId == activeAirline.id) {
-		relatedPath.shadowPath.thisAirlinePassengers += link.passenger
-	} else if (currentAirlineAllianceMembers.length > 0 && $.inArray(link.airlineId, currentAirlineAllianceMembers) != -1) {
-		relatedPath.shadowPath.thisAlliancePassengers += link.passenger
-	} else {
-		relatedPath.shadowPath.otherAirlinePassengers += link.passenger
-	}
+    if (link.airlineId == activeAirline.id) {
+        relatedPath.shadowPath.thisAirlinePassengers += link.passenger
+    } else if (currentAirlineAllianceMembers.length > 0 && $.inArray(link.airlineId, currentAirlineAllianceMembers) != -1) {
+        relatedPath.shadowPath.thisAlliancePassengers += link.passenger
+    } else {
+        relatedPath.shadowPath.otherAirlinePassengers += link.passenger
+    }
 }
 
 function clearHistoryFlightMarkers() {
     $.each(historyFlightMarkers, function(index, markersOnAStep) {
         $.each(markersOnAStep, function(index, marker) {
         //window.clearInterval(marker.animation)
-    	    marker.setMap(null)
+            marker.setMap(null)
         })
     })
     historyFlightMarkers = []
@@ -265,10 +265,10 @@ function animateHistoryFlightMarkers(framesPerAnimation) {
                     marker.setPosition(newPosition)
                 }
             }
-  		})
-  		if (currentFrame == framesPerAnimation) {
-      	   fadeOutMarkers(historyFlightMarkers[currentStep], animationInterval)
-  		   currentStep = (++ currentStep) % historyFlightMarkers.length
+          })
+          if (currentFrame == framesPerAnimation) {
+             fadeOutMarkers(historyFlightMarkers[currentStep], animationInterval)
+             currentStep = (++ currentStep) % historyFlightMarkers.length
            currentFrame = 0
         } else {
            currentFrame ++
@@ -297,12 +297,12 @@ function fadeOutMarkers(markers, animationInterval) {
 
 
 function drawHistoryFlightMarker(line, framesPerAnimation, totalPassengers) {
-	if (currentAnimationStatus) {
-		var from = line.getPath().getAt(0)
-		var to = line.getPath().getAt(1)
-		var icon
+    if (currentAnimationStatus) {
+        var from = line.getPath().getAt(0)
+        var to = line.getPath().getAt(1)
+        var icon
         if (totalPassengers > 200) {
-	       icon = "dot-5.png"
+           icon = "dot-5.png"
         } else if (totalPassengers > 100) {
            icon = "dot-4.png"
         } else if (totalPassengers > 50) {
@@ -313,11 +313,11 @@ function drawHistoryFlightMarker(line, framesPerAnimation, totalPassengers) {
            icon = "dot-1.png"
         }
 
-		var image = {
-	        url: "assets/images/markers/" + icon,
-	        origin: new google.maps.Point(0, 0),
-	        anchor: new google.maps.Point(6, 6),
-	    };
+        var image = {
+            url: "assets/images/markers/" + icon,
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(6, 6),
+        };
 
         var marker = new google.maps.Marker({
             position: from,
@@ -338,7 +338,7 @@ function drawHistoryFlightMarker(line, framesPerAnimation, totalPassengers) {
             historyFlightMarkers[step] = historyFlightMarkersOfThisStep
         }
         historyFlightMarkersOfThisStep.push(marker)
-	}
+    }
 }
 
 
@@ -432,7 +432,7 @@ function showLinkHistory() {
                      maxWidth : 400});
 
                 var popup = $("#linkHistoryPopup").clone()
-    			popup.show()
+                popup.show()
                 infowindow.setContent(popup[0])
 
                 infowindow.setPosition(event.latLng);

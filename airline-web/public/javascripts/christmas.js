@@ -22,15 +22,15 @@ function updateSantaClausModal() {
 
     var url = "santa-claus/attempt-status/" + activeAirportId + "/" + activeAirline.id
     $.ajax({
-    		type: 'GET',
-    		url: url,
-    	    contentType: 'application/json; charset=utf-8',
-    	    dataType: 'json',
-    	    success: function(result) {
-    	        if ($.isEmptyObject(result)) { //not a valid target
-    	            return
-    	        }
-    	        $("#santaClausAttemptsLeft").text(result.attemptsLeft)
+            type: 'GET',
+            url: url,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result) {
+                if ($.isEmptyObject(result)) { //not a valid target
+                    return
+                }
+                $("#santaClausAttemptsLeft").text(result.attemptsLeft)
                 if (typeof result.difficulty === 'undefined') {
                     // Enable both options
                     $("#santaClausModal .difficultyOptions").show();
@@ -43,7 +43,7 @@ function updateSantaClausModal() {
                 }
 
                 var guessedThisAirport = false
-    	        $.each(result.guesses, function(index, guess) {
+                $.each(result.guesses, function(index, guess) {
                     var row = $("<div class='table-row'></div>")
                     row.append("<div class='cell label'>" + getAirportText(guess.city, guess.airportCode) + "</div>")
                     row.append("<div class='cell label'>" + guess.distanceText + "</div>")
@@ -99,12 +99,12 @@ function updateSantaClausModal() {
                     }
                  }
                  $("#santaClausButton").show() //valid target
-    	    },
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
-    	});
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+        });
 }
 
 function showSantaClausAttemptStatus() {
@@ -130,66 +130,66 @@ function getAwardOptionsTable() {
     table.children(".table-row").remove()
 
     $.ajax({
-    		type: 'GET',
-    		url: url,
-    	    contentType: 'application/json; charset=utf-8',
-    	    dataType: 'json',
-    	    success: function(result) {
-    	    	$.each(result, function(index, option) {
+            type: 'GET',
+            url: url,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(result) {
+                $.each(result, function(index, option) {
                     var row = $("<div class='table-row'></div>")
                     //row.append("<div class='cell'><a href='#' class='round-button tick' onclick=pickSantaClassAward(" + option.id + ")></a></div>")
                     row.append("<div class='cell'><a href='#' class='round-button tick' onclick=pickSantaClassAward(" + option.id + ")></a></div>")
                     row.append("<div class='cell label'>" + option.description + "</div>")
                     table.append(row)
                 });
-    	    },
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    }
-    	});
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            }
+        });
 }
 
 function pickSantaClassAward(optionId) {
-	var url = "santa-claus/pick-award/" + activeAirline.id + "/" + optionId
-	$.ajax({
-        		type: 'GET',
-        		url: url,
-        	    contentType: 'application/json; charset=utf-8',
-        	    dataType: 'json',
-        	    success: function(result) {
-        	    	updateSantaClausModal() //this refresh the table
+    var url = "santa-claus/pick-award/" + activeAirline.id + "/" + optionId
+    $.ajax({
+                type: 'GET',
+                url: url,
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(result) {
+                    updateSantaClausModal() //this refresh the table
                     updateAirlineInfo(activeAirline.id)
-        	    },
+                },
                 error: function(jqXHR, textStatus, errorThrown) {
-        	            console.log(JSON.stringify(jqXHR));
-        	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-        	    }
-        	});
+                        console.log(JSON.stringify(jqXHR));
+                        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                }
+            });
 }
 
 function guessSantaClaus() {
-	var url = "santa-claus/guess/" + activeAirportId + "/" + activeAirline.id + "/" +  $("#santaClausModal .difficulty:checked").val()
+    var url = "santa-claus/guess/" + activeAirportId + "/" + activeAirline.id + "/" +  $("#santaClausModal .difficulty:checked").val()
 
-	$.ajax({
-		type: 'GET',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    success: function(result) {
-	    	updateSantaClausModal() //this refresh the modal and shows reward if it's the correct guess
-	    },
+    $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {
+            updateSantaClausModal() //this refresh the modal and shows reward if it's the correct guess
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
-	    beforeSend: function() {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
+        beforeSend: function() {
             $('body .loadingSpinner').show()
         },
         complete: function(){
             $('body .loadingSpinner').hide()
         }
-	});
+    });
 }
 
 
@@ -197,28 +197,28 @@ function guessSantaClaus() {
 var christmasMarker = false
 var snowflakeCount = 50
 function toggleChristmasMarker() {
-	if (!christmasMarker) {
-		currentAnimationStatus = true
-		christmasMarker = true
-		document.getElementById('christmasMusic').play()
-		$("body").addClass('christmas')
+    if (!christmasMarker) {
+        currentAnimationStatus = true
+        christmasMarker = true
+        document.getElementById('christmasMusic').play()
+        $("body").addClass('christmas')
 
         putSnowflakes($("#main"), snowflakeCount)
-	} else {
-		christmasMarker = false
-		document.getElementById('christmasMusic').pause()
-		$.each(flightMarkers, function(index, markersByLinkId) {
-			$.each(markersByLinkId.markers, function(index2, marker) {
-				marker.icon = {
-			        url: "assets/images/markers/dot.png",
-			        origin: new google.maps.Point(0, 0),
-			        anchor: new google.maps.Point(6, 6),
-			    };
-			})
-		})
-		$("body").removeClass('christmas')
-		$("#main").children(".snowflake").remove()
-	}
+    } else {
+        christmasMarker = false
+        document.getElementById('christmasMusic').pause()
+        $.each(flightMarkers, function(index, markersByLinkId) {
+            $.each(markersByLinkId.markers, function(index2, marker) {
+                marker.icon = {
+                    url: "assets/images/markers/dot.png",
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(6, 6),
+                };
+            })
+        })
+        $("body").removeClass('christmas')
+        $("#main").children(".snowflake").remove()
+    }
 }
 
 //.snowflake:nth-of-type(1){left:10%;-webkit-animation-delay:1s,1s;animation-delay:1s,1s}
@@ -252,34 +252,34 @@ function removeSnowflakes(container) {
 
 
 var flightMarkerImageWeight = {
-	"assets/images/markers/dot.png" : 2000,
-	"assets/images/markers/christmas/snowflake.png" : 200,
-	"assets/images/markers/christmas/star.png" : 50,
-	"assets/images/markers/christmas/holly.png" : 20,
-	"assets/images/markers/christmas/bauble.png" : 20,
-	"assets/images/markers/christmas/candy-cane.png" : 10,
-	"assets/images/markers/christmas/gingerbread-man.png" : 10,
-	"assets/images/markers/christmas/santa-hat.png" : 2,
+    "assets/images/markers/dot.png" : 2000,
+    "assets/images/markers/christmas/snowflake.png" : 200,
+    "assets/images/markers/christmas/star.png" : 50,
+    "assets/images/markers/christmas/holly.png" : 20,
+    "assets/images/markers/christmas/bauble.png" : 20,
+    "assets/images/markers/christmas/candy-cane.png" : 10,
+    "assets/images/markers/christmas/gingerbread-man.png" : 10,
+    "assets/images/markers/christmas/santa-hat.png" : 2,
 }
 
 var flightMarkerWeightTotal = 0
 
 $.each(flightMarkerImageWeight, function(image, weight) {
-	flightMarkerWeightTotal += weight
+    flightMarkerWeightTotal += weight
 })
 
 function randomFlightMarker() {
-	var random = Math.random()
-	var acc = 0
-	var pickedImage = ""
-	$.each(flightMarkerImageWeight, function(image, weight) {
-		acc += weight / flightMarkerWeightTotal
-		if (acc >= random) {
-			pickedImage = image
-			return false;
-		}
-	})
-	return pickedImage
+    var random = Math.random()
+    var acc = 0
+    var pickedImage = ""
+    $.each(flightMarkerImageWeight, function(image, weight) {
+        acc += weight / flightMarkerWeightTotal
+        if (acc >= random) {
+            pickedImage = image
+            return false;
+        }
+    })
+    return pickedImage
 }
 
 

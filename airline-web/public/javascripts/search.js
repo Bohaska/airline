@@ -5,17 +5,17 @@ function showSearchCanvas(historyAirline) {
     var titlesContainer = $("#searchCanvas div.titlesContainer")
     positionTitles(titlesContainer)
     setActiveDiv($("#searchCanvas"))
-	$("#searchCanvas").css("display", "flex")
-	highlightTab($('.searchCanvasTab'))
-	$("#routeSearchResult").empty()
-	if (isMobileDevice()) {
-	   $('#searchCanvas .banner').hide()
-	} else {
-	   showBanner()
+    $("#searchCanvas").css("display", "flex")
+    highlightTab($('.searchCanvasTab'))
+    $("#routeSearchResult").empty()
+    if (isMobileDevice()) {
+       $('#searchCanvas .banner').hide()
+    } else {
+       showBanner()
     }
-	$("#historySearchResult .table-row").empty()
-	$('#searchCanvas .searchContainer input').val('')
-	$('#searchCanvas .searchContainer input').removeData("selectedId")
+    $("#historySearchResult .table-row").empty()
+    $('#searchCanvas .searchContainer input').val('')
+    $('#searchCanvas .searchContainer input').removeData("selectedId")
 
     refreshSearchDiv(titlesContainer.children('div.selected'))
     var titleSelections =  titlesContainer.children('div.titleSelection')
@@ -370,35 +370,35 @@ function searchLinkHistory() {
 
 
 function updateLinkHistoryTable(sortProperty, sortOrder) {
-	var linkHistoryTable = $("#searchCanvas .linkHistorySearchTable")
-	linkHistoryTable.children("div.table-row").remove()
+    var linkHistoryTable = $("#searchCanvas .linkHistorySearchTable")
+    linkHistoryTable.children("div.table-row").remove()
 
     var loadedData = linkHistoryTable.data('entries')
-	//sort the list
-	//loadedLinks.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
-	loadedData = sortPreserveOrder(loadedData, sortProperty, sortOrder == "ascending")
+    //sort the list
+    //loadedLinks.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
+    loadedData = sortPreserveOrder(loadedData, sortProperty, sortOrder == "ascending")
 
 
-	$.each(loadedData, function(index, link) {
-		var row = $("<div class='table-row'></div>")
-		row.append("<div class='cell'>" + getCycleDeltaText(link.cycleDelta) + "</div>")
+    $.each(loadedData, function(index, link) {
+        var row = $("<div class='table-row'></div>")
+        row.append("<div class='cell'>" + getCycleDeltaText(link.cycleDelta) + "</div>")
         row.append("<div class='cell'>" + getAirlineLogoImg(link.airlineId) + link.airlineName + "</div>")
-		row.append("<div class='cell'>" + getCountryFlagImg(link.fromCountryCode) + getAirportText(link.fromAirportCity, link.fromAirportIata) + "</div>")
-		row.append("<div class='cell'>" + getCountryFlagImg(link.toCountryCode) + getAirportText(link.toAirportCity, link.toAirportIata) + "</div>")
-//		row.append("<div class='cell'>" + link.airplaneModelName + "</div>")
-		$("<div class='cell' align='right'></div>").appendTo(row).append(getCapacitySpan(link.capacity, link.frequency))
-		$("<div class='cell' align='right'></div>").appendTo(row).append(getCapacityDeltaSpan(link.capacityDelta))
-		$("<div class='cell'></div>").appendTo(row).text(toLinkClassValueString(link.price, '$'))
-		$("<div class='cell'></div>").appendTo(row).append(getPriceDeltaSpan(link.priceDelta))
+        row.append("<div class='cell'>" + getCountryFlagImg(link.fromCountryCode) + getAirportText(link.fromAirportCity, link.fromAirportIata) + "</div>")
+        row.append("<div class='cell'>" + getCountryFlagImg(link.toCountryCode) + getAirportText(link.toAirportCity, link.toAirportIata) + "</div>")
+//        row.append("<div class='cell'>" + link.airplaneModelName + "</div>")
+        $("<div class='cell' align='right'></div>").appendTo(row).append(getCapacitySpan(link.capacity, link.frequency))
+        $("<div class='cell' align='right'></div>").appendTo(row).append(getCapacityDeltaSpan(link.capacityDelta))
+        $("<div class='cell'></div>").appendTo(row).text(toLinkClassValueString(link.price, '$'))
+        $("<div class='cell'></div>").appendTo(row).append(getPriceDeltaSpan(link.priceDelta))
 
 
-		linkHistoryTable.append(row)
-	});
+        linkHistoryTable.append(row)
+    });
 
-	if (loadedData.length == 0) {
-		var row = $("<div class='table-row'><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div></div>")
-		linkHistoryTable.append(row)
-	}
+    if (loadedData.length == 0) {
+        var row = $("<div class='table-row'><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div></div>")
+        linkHistoryTable.append(row)
+    }
 }
 
 function getCycleDeltaText(cycleDelta) {
@@ -474,16 +474,16 @@ function getPriceDeltaSpan(priceDelta) {
 }
 
 function toggleTableSortOrder(sortHeader, updateTableFunction) {
-	if (sortHeader.data("sort-order") == "ascending") {
-		sortHeader.data("sort-order", "descending")
-	} else {
-		sortHeader.data("sort-order", "ascending")
-	}
+    if (sortHeader.data("sort-order") == "ascending") {
+        sortHeader.data("sort-order", "descending")
+    } else {
+        sortHeader.data("sort-order", "ascending")
+    }
 
-	sortHeader.siblings().removeClass("selected")
-	sortHeader.addClass("selected")
+    sortHeader.siblings().removeClass("selected")
+    sortHeader.addClass("selected")
 
-	updateTableFunction(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
+    updateTableFunction(sortHeader.data("sort-property"), sortHeader.data("sort-order"))
 }
 
 
@@ -721,29 +721,29 @@ function search(event, input, retry) {
     var resultContainer = input.closest('div.searchInput').siblings('div.searchResult')
     var searchType = input.closest('div.searchInput').data('searchType')
     var phrase = input.val()
-	var url = "search-" + searchType + "?input=" + phrase
+    var url = "search-" + searchType + "?input=" + phrase
     if (currentSearchAjax) {
         currentSearchAjax.abort()
     }
 
-	currentSearchAjax = $.ajax({
-		type: 'GET',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    dataType: 'json',
-	    beforeSend: function () {
-	        input.parent().find(".spinner").show(0)
-	        searching = true
-	    },
-	    success: function(searchResult) {
-	  //      input.prop('disabled', false);
-	        //resultContainer.removeData("selectedIndex")
-	        resultContainer.find("div.searchResultEntry, div.message").remove()
-	        if (searchResult.message) {
-	            resultContainer.append("<div class='message'>" + searchResult.message + "</div>")
-	        }
+    currentSearchAjax = $.ajax({
+        type: 'GET',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        beforeSend: function () {
+            input.parent().find(".spinner").show(0)
+            searching = true
+        },
+        success: function(searchResult) {
+      //      input.prop('disabled', false);
+            //resultContainer.removeData("selectedIndex")
+            resultContainer.find("div.searchResultEntry, div.message").remove()
+            if (searchResult.message) {
+                resultContainer.append("<div class='message'>" + searchResult.message + "</div>")
+            }
 
-	        if (searchResult.entries) {
+            if (searchResult.entries) {
                 $.each(searchResult.entries, function(index, entry) {
                     var textEntry
                     if (searchType === "airport") {
@@ -769,17 +769,17 @@ function search(event, input, retry) {
                 })
             }
             resultContainer.show()
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
         complete:function() {
               //Hide the loader over here
               input.parent().find(".spinner").hide()
               currentSearchAjax = undefined
         }
-	});
+    });
 }
 
 
@@ -800,12 +800,12 @@ function researchFlight(fromAirportId, toAirportId) {
                 loadAirportImage(fromAirportId, $('#researchSearchResult img.fromAirport') )
                 loadAirportImage(toAirportId, $('#researchSearchResult img.toAirport'))
                 $("#researchSearchResult .fromAirportText").text(result.fromAirportText)
-		        $("#researchSearchResult .fromAirportText")[0].setAttribute("onclick", `showAirportDetails(${fromAirportId})`)
+                $("#researchSearchResult .fromAirportText")[0].setAttribute("onclick", `showAirportDetails(${fromAirportId})`)
                 $("#researchSearchResult .fromAirport .population").text(commaSeparateNumber(result.fromAirport.population))
                 $("#researchSearchResult .fromAirport .incomeLevel").text(result.fromAirport.incomeLevel)
                 $("#researchSearchResult .toAirportText").text(result.toAirportText)
-		        $("#researchSearchResult .toAirportText")[0].setAttribute("onclick", `showAirportDetails(${toAirportId})`)
-		        populateNavigation($("#researchSearchResult"))
+                $("#researchSearchResult .toAirportText")[0].setAttribute("onclick", `showAirportDetails(${toAirportId})`)
+                populateNavigation($("#researchSearchResult"))
                 $("#researchSearchResult .toAirport .population").text(commaSeparateNumber(result.toAirport.population))
                 $("#researchSearchResult .toAirport .incomeLevel").text(result.toAirport.incomeLevel)
 

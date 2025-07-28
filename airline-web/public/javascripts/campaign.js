@@ -64,57 +64,57 @@ function updateCampaignTable() {
             loadedCampaigns = result
             refreshCampaignTable()
             var selectedSortHeader = $('#campaignModal .campaignTableHeader .cell.selected')
-		    refreshCampaignTable(selectedSortHeader.data('sort-property'), selectedSortHeader.data('sort-order'))
+            refreshCampaignTable(selectedSortHeader.data('sort-property'), selectedSortHeader.data('sort-order'))
         },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    }
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
     });
 
 }
 
 function refreshCampaignTable(sortProperty, sortOrder) {
-	var $campaignTable = $("#campaignModal .campaignTable")
-	$campaignTable.children("div.table-row").remove()
+    var $campaignTable = $("#campaignModal .campaignTable")
+    $campaignTable.children("div.table-row").remove()
 
-	//sort the list
-	//loadedLinks.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
-	loadedCampaigns = sortPreserveOrder(loadedCampaigns, sortProperty, sortOrder == "ascending")
+    //sort the list
+    //loadedLinks.sort(sortByProperty(sortProperty, sortOrder == "ascending"))
+    loadedCampaigns = sortPreserveOrder(loadedCampaigns, sortProperty, sortOrder == "ascending")
 
     var selectedCampaign = $('#campaignModal').data('selectedCampaign')
-	$.each(loadedCampaigns, function(index, campaign) {
-		var row = $("<div class='table-row clickable' onclick='selectCampaign($(this))'></div>")
-		row.data("campaign", campaign)
+    $.each(loadedCampaigns, function(index, campaign) {
+        var row = $("<div class='table-row clickable' onclick='selectCampaign($(this))'></div>")
+        row.data("campaign", campaign)
 
-		row.append("<div class='cell'>" + getCountryFlagImg(campaign.principalAirport.countryCode) + getAirportText(campaign.principalAirport.city, campaign.principalAirport.iata) + "</div>")
-		row.append("<div class='cell'>" + campaign.radius + "</div>")
-		row.append("<div class='cell'>" + campaign.level + "</div>")
-		row.append("<div class='cell'>" + campaign.population + "</div>")
-		row.append("<div class='cell'>" + campaign.area.length + "</div>")
+        row.append("<div class='cell'>" + getCountryFlagImg(campaign.principalAirport.countryCode) + getAirportText(campaign.principalAirport.city, campaign.principalAirport.iata) + "</div>")
+        row.append("<div class='cell'>" + campaign.radius + "</div>")
+        row.append("<div class='cell'>" + campaign.level + "</div>")
+        row.append("<div class='cell'>" + campaign.population + "</div>")
+        row.append("<div class='cell'>" + campaign.area.length + "</div>")
 
-		if (selectedCampaign && selectedCampaign.id == campaign.id) {
-			row.addClass("selected")
-		}
+        if (selectedCampaign && selectedCampaign.id == campaign.id) {
+            row.addClass("selected")
+        }
 
-		$campaignTable.append(row)
-	});
+        $campaignTable.append(row)
+    });
 
-	if (loadedCampaigns.length == 0) {
-	    $campaignTable.append("<div class='table-row'><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div></div>")
+    if (loadedCampaigns.length == 0) {
+        $campaignTable.append("<div class='table-row'><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div><div class='cell'>-</div></div>")
 
-	    $('#campaignModal .addCampaign').addClass('glow')
-	} else {
-	    $('#campaignModal .addCampaign').removeClass('glow')
-	}
+        $('#campaignModal .addCampaign').addClass('glow')
+    } else {
+        $('#campaignModal .addCampaign').removeClass('glow')
+    }
 }
 function selectCampaign(row) {
     //update table
-	row.siblings().removeClass("selected")
-	row.addClass("selected")
-	var campaign = row.data('campaign')
-	$('#campaignModal').data('selectedCampaign', campaign)
-	$('#campaignModal .campaignMap').data('radius', campaign.radius)
+    row.siblings().removeClass("selected")
+    row.addClass("selected")
+    var campaign = row.data('campaign')
+    $('#campaignModal').data('selectedCampaign', campaign)
+    $('#campaignModal .campaignMap').data('radius', campaign.radius)
     $('#campaignModal .campaignMap').data('selectedAirportId', campaign.principalAirport.id)
 
     var $delegateSection = $('#campaignModal div.delegateSection')
@@ -129,7 +129,7 @@ function selectCampaign(row) {
     $('#campaignModal .campaignDetails .update').show()
     $('#campaignModal .campaignDetails .delete').show()
 
-	refreshCampaign()
+    refreshCampaign()
 }
 
 function draftCampaign(selectedAirportId) {
@@ -278,11 +278,11 @@ function populateCampaignAirportMarkers(campaignMap, airports, hasCoverage) {
               });
 
             var infowindow
-           	marker.addListener('mouseover', function(event) {
-           		$("#campaignAirportPopup .airportName").text(getAirportText(airport.city, airport.iata))
-           		$("#campaignAirportPopup .airportPopulation").text(airport.population)
-           		infowindow = new google.maps.InfoWindow({
-           		       disableAutoPan : true
+               marker.addListener('mouseover', function(event) {
+                   $("#campaignAirportPopup .airportName").text(getAirportText(airport.city, airport.iata))
+                   $("#campaignAirportPopup .airportPopulation").text(airport.population)
+                   infowindow = new google.maps.InfoWindow({
+                          disableAutoPan : true
                  });
 
                  var popup = $("#campaignAirportPopup").clone()
@@ -290,13 +290,13 @@ function populateCampaignAirportMarkers(campaignMap, airports, hasCoverage) {
                  infowindow.setContent(popup[0])
 
 
-           		infowindow.open(campaignMap, marker);
-           	})
-           	marker.addListener('mouseout', function(event) {
-           		infowindow.close()
-           		infowindow.setMap(null)
-           	})
-           	campaignMapElements.push(marker)
+                   infowindow.open(campaignMap, marker);
+               })
+               marker.addListener('mouseout', function(event) {
+                   infowindow.close()
+                   infowindow.setMap(null)
+               })
+               campaignMapElements.push(marker)
 
      })
 }

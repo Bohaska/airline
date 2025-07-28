@@ -3,13 +3,13 @@ var firstAllianceMessageId = -1
 var firstGeneralMessageId = -1
 
 function updateChatTabs() {
-	if (activeUser.allianceName && activeUser.allianceRole != 'APPLICANT') {
-		$("#allianceChatTab").text(activeUser.allianceName)
-		$("#allianceChatTab").data('roomId', activeUser.allianceId)
-		$("#allianceChatTab").show()
-	} else {
-		$("#allianceChatTab").hide()
-	}
+    if (activeUser.allianceName && activeUser.allianceRole != 'APPLICANT') {
+        $("#allianceChatTab").text(activeUser.allianceName)
+        $("#allianceChatTab").data('roomId', activeUser.allianceId)
+        $("#allianceChatTab").show()
+    } else {
+        $("#allianceChatTab").hide()
+    }
 }
 
 /**
@@ -116,22 +116,22 @@ angular.module("ChatApp", []).controller("ChatController", function($scope, $tim
    // connect to websockets endpoint of our server
     var port = window.location.port
     var limit = new RateLimit(60)
-	var wsProtocol
+    var wsProtocol
 
-	if (window.location.protocol == "https:"){
-		wsProtocol = "wss:"
-		if (!port) {
-			port = 443
-		}
-	} else {
-		wsProtocol = "ws:"
-		if (!port) {
-			// Change this for production
-			port = 9000
-		}
-	}
+    if (window.location.protocol == "https:"){
+        wsProtocol = "wss:"
+        if (!port) {
+            port = 443
+        }
+    } else {
+        wsProtocol = "ws:"
+        if (!port) {
+            // Change this for production
+            port = 9000
+        }
+    }
 
-	var wsUri = wsProtocol + "//" +  window.location.hostname + ":" + port + "/chat";
+    var wsUri = wsProtocol + "//" +  window.location.hostname + ":" + port + "/chat";
     ws = new ReconnectingWebSocket(function() {
         return wsUri + "?reconnect=true&lastMessageId=" + lastMessageId
     });
@@ -172,25 +172,25 @@ angular.module("ChatApp", []).controller("ChatController", function($scope, $tim
   };
 
    ws.onopen = function () {
-	    $("#live-chat i").css({"background-image":"url(\"../../assets/images/icons/32px/balloon-chat.png\")"});
-		$timeout(function(){
+        $("#live-chat i").css({"background-image":"url(\"../../assets/images/icons/32px/balloon-chat.png\")"});
+        $timeout(function(){
             $('#chat-box #chatBox-1 ul').append('<li class="status">Chat Connected</li>')
-		});
-	    $timeout(function(){ 
-			var scroller = document.getElementById("chatBox-1");
-		    scroller.scrollTop = scroller.scrollHeight;
-		});
+        });
+        $timeout(function(){ 
+            var scroller = document.getElementById("chatBox-1");
+            scroller.scrollTop = scroller.scrollHeight;
+        });
    };
    
    ws.onclose = function () {
-	   $("#live-chat i").css({"background-image":"url(\"../../assets/images/icons/32px/balloon-chat-red.png\")"});
-	   $timeout(function(){ 
-			            $('#chat-box #chatBox-1 ul').append('<li class="status">Chat Disconnected</li>')
-	   });
-	   $timeout(function(){ 
-			var scroller = document.getElementById("chatBox-1");
-		    scroller.scrollTop = scroller.scrollHeight;
-		});
+       $("#live-chat i").css({"background-image":"url(\"../../assets/images/icons/32px/balloon-chat-red.png\")"});
+       $timeout(function(){ 
+                        $('#chat-box #chatBox-1 ul').append('<li class="status">Chat Disconnected</li>')
+       });
+       $timeout(function(){ 
+            var scroller = document.getElementById("chatBox-1");
+            scroller.scrollTop = scroller.scrollHeight;
+        });
    }
    
   // what to do when we receive message from the webserver
@@ -200,15 +200,15 @@ angular.module("ChatApp", []).controller("ChatController", function($scope, $tim
         return
      //ok
     }
-	var r_text = msg.data;
-	//console.log(r_text);
-	var r_msg = JSON.parse(r_text);
+    var r_text = msg.data;
+    //console.log(r_text);
+    var r_msg = JSON.parse(r_text);
 
     $('#chat-box .chat-history.tab-content div.loading').remove()
     var $activeHistory = $("#chat-box .chat-history.current")
 
-	if (r_msg.type === 'newSession') { //session join message
-	    $('#chat-box .chat-history.tab-content ul li.message').remove()
+    if (r_msg.type === 'newSession') { //session join message
+        $('#chat-box .chat-history.tab-content ul li.message').remove()
         for (i = 0; i < r_msg.messages.length ; i ++) {
             pushMessage(r_msg.messages[i])
         }
@@ -328,9 +328,9 @@ function buildPrefix(r_msg) {
     }
 
     var dateString = monthString + " " + dateString + " " + hourString + ":" + minuteString
-//	var airlineSpan = $("<span>" + airlineName + "</span>")
-//	var userIcon = getUserLevelImg(userLevel)
-//	airlineSpan.append(userIcon)
+//    var airlineSpan = $("<span>" + airlineName + "</span>")
+//    var userIcon = getUserLevelImg(userLevel)
+//    airlineSpan.append(userIcon)
 
     var prefix = "[" + dateString + "] " + airlineName + ": "
     return prefix

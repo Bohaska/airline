@@ -2,12 +2,12 @@ function showAirportAssets(airport) {
   var $assetsDetailsDiv = $('#airportCanvas div.assetsDetails').empty()
 
   $.ajax({
-  		type: 'GET',
-  		url: "airports/" + airport.id + "/assets",
-  		contentType: 'application/json; charset=utf-8',
-  		dataType: 'json',
-  	    success: function(assets) {
-  	        $.each(assets, function(index, asset) {
+          type: 'GET',
+          url: "airports/" + airport.id + "/assets",
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          success: function(assets) {
+              $.each(assets, function(index, asset) {
                 var $assetDiv = $('<div style="min-height : 85px; max-width : 270px;" class="section clickable">')
                 $assetDiv.click( function() {
                     showAssetModal(asset)
@@ -75,13 +75,13 @@ function showAirportAssets(airport) {
                     $assetDiv.append($boostSpan)
                 })
                 $assetsDetailsDiv.append($assetDiv)
-  	        })
-  	    },
+              })
+          },
           error: function(jqXHR, textStatus, errorThrown) {
-  	            console.log(JSON.stringify(jqXHR));
-  	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-  	    }
-  	});
+                  console.log(JSON.stringify(jqXHR));
+                  console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+          }
+      });
 }
 
 function downgradeAsset(asset) {
@@ -89,68 +89,68 @@ function downgradeAsset(asset) {
 }
 
 function buildOrModifyAsset(asset, downgrade) {
-	var url = "airlines/" + activeAirline.id + (downgrade ? "/airport-asset/downgrade/" : "/airport-asset/") + asset.id
-	var assetData = {
-			"name" : $("#airportAssetDetailsModal .assetNameInput").val(),
-			}
-	$.ajax({
-		type: 'PUT',
-		url: url,
-	    contentType: 'application/json; charset=utf-8',
-	    data: JSON.stringify(assetData),
-	    dataType: 'json',
-	    success: function(result) {
-	    	if (result.nameRejection) {
-	    		$('#airportAssetDetailsModal .assetNameWarningDiv .warning').text(result.nameRejection)
-	    		$('#airportAssetDetailsModal .assetNameWarningDiv').show()
-	    	} else {
-	    		refreshPanels(activeAirline.id)
-	    		showAssetModal(result)
-	    		var postUpdateFunc = $("#airportAssetDetailsModal").data('postUpdateFunc')
-	    		if (postUpdateFunc) {
-	    		    postUpdateFunc()
-	    		}
-	    	}
-	    },
+    var url = "airlines/" + activeAirline.id + (downgrade ? "/airport-asset/downgrade/" : "/airport-asset/") + asset.id
+    var assetData = {
+            "name" : $("#airportAssetDetailsModal .assetNameInput").val(),
+            }
+    $.ajax({
+        type: 'PUT',
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(assetData),
+        dataType: 'json',
+        success: function(result) {
+            if (result.nameRejection) {
+                $('#airportAssetDetailsModal .assetNameWarningDiv .warning').text(result.nameRejection)
+                $('#airportAssetDetailsModal .assetNameWarningDiv').show()
+            } else {
+                refreshPanels(activeAirline.id)
+                showAssetModal(result)
+                var postUpdateFunc = $("#airportAssetDetailsModal").data('postUpdateFunc')
+                if (postUpdateFunc) {
+                    postUpdateFunc()
+                }
+            }
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-	            console.log(JSON.stringify(jqXHR));
-	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-	    },
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        },
         beforeSend: function() {
             $('body .loadingSpinner').show()
         },
         complete: function(){
             $('body .loadingSpinner').hide()
         }
-	});
+    });
 }
 
 
 function sellAsset(asset) {
-	var url = "airlines/" + activeAirline.id + "/airport-asset/" + asset.id
-    	$.ajax({
-    		type: 'DELETE',
-    		url: url,
-    	    contentType: 'application/json; charset=utf-8',
-    	    success: function(result) {
+    var url = "airlines/" + activeAirline.id + "/airport-asset/" + asset.id
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            contentType: 'application/json; charset=utf-8',
+            success: function(result) {
                 refreshPanels(activeAirline.id)
                 closeModal($("#airportAssetDetailsModal"))
                 var postUpdateFunc = $("#airportAssetDetailsModal").data('postUpdateFunc')
                 if (postUpdateFunc) {
                     postUpdateFunc()
                 }
-    	    },
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-    	            console.log(JSON.stringify(jqXHR));
-    	            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-    	    },
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+            },
             beforeSend: function() {
                 $('body .loadingSpinner').show()
             },
             complete: function(){
                 $('body .loadingSpinner').hide()
             }
-    	});
+        });
 }
 
 
@@ -358,7 +358,7 @@ function showAssetVisitorDetails(countryRanking, paxByType) {
     $('#airportAssetDetailsModal .visitorByAir').show()
 
     var max = 5;
-	var index = 0;
+    var index = 0;
     $('#airportAssetDetailsModal .topCountryTable .table-row').remove()
     $.each(countryRanking, function(key, entry) {
         $('#airportAssetDetailsModal .topCountryTable').append("<div class='table-row data-row'><div class='cell' style='width: 70%;'>" + getCountryFlagImg(entry.countryCode) + entry.countryName
